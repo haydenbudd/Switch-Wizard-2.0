@@ -72,7 +72,9 @@ export function ResultsPage({
   materialFilter,
   setMaterialFilter
 }: ResultsPageProps) {
-  
+  // Guard against undefined props in environments like Figma Make
+  if (!wizardState || !filterProducts) return null;
+
   // Primary filtered list based on wizard state
   const wizardMatches = filterProducts();
 

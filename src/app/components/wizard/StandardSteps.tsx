@@ -47,6 +47,9 @@ export function StandardSteps({
   onBack,
   onContinue,
 }: StandardStepsProps) {
+  // Guard against undefined props in environments like Figma Make
+  if (!wizardState || !categories) return null;
+
   // Helper to handle single-select progression
   const handleSingleSelect = (
     value: string,

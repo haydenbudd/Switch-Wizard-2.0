@@ -12,6 +12,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, highlight = false }: ProductCardProps) {
+  if (!product) return null;
   const isMedical = (product.applications || []).includes('medical');
   const isFlagship = product.flagship;
 

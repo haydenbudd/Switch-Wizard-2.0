@@ -58,6 +58,8 @@ export function MedicalFlow({
   onGeneratePDF,
   onReset,
 }: MedicalFlowProps) {
+  // Guard against undefined props in environments like Figma Make
+  if (!wizardState || !products) return null;
 
   const isCustomPath = wizardState.selectedMedicalPath === 'custom';
 
