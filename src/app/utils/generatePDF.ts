@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import { Product, Option } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { trackPDFDownload } from '@/app/utils/analytics';
+import { LINEMASTER_LOGO_BASE64 } from '@/app/utils/logoBase64';
 
 export interface GeneratePDFOptions {
   wizardState: WizardState;
@@ -32,26 +33,35 @@ export function generatePDF(opts: GeneratePDFOptions) {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Enhanced Header with gradient effect
-  doc.setFillColor(99, 102, 241); // Indigo
-  doc.rect(0, 0, pageWidth, 25, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(24);
-  doc.setFont('helvetica', 'bold');
-  doc.text('LINEMASTER', 15, 12);
+  // Header with logo
+  doc.setFillColor(255, 255, 255);
+  doc.rect(0, 0, pageWidth, 30, 'F');
 
+  // Logo — original is 1323x496, render at ~50x19mm in the header
+  const logoW = 50;
+  const logoH = logoW * (496 / 1323);
+  doc.addImage(LINEMASTER_LOGO_BASE64, 'PNG', 15, 3, logoW, logoH);
+
+  // Subtitle below logo
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
+  doc.setTextColor(80, 80, 80);
   const subtitle = wizardState.flow === 'medical' ? 'Medical Product Specifications' : 'Product Finder Results';
-  doc.text(subtitle, 15, 20);
+  doc.text(subtitle, 15, 24);
 
-  // Add date
+  // Accent line under header
+  doc.setDrawColor(99, 102, 241);
+  doc.setLineWidth(0.8);
+  doc.line(15, 28, pageWidth - 15, 28);
+
+  // Date on right
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   doc.setFontSize(9);
-  doc.text(`Generated: ${date}`, pageWidth - 15, 20, { align: 'right' });
+  doc.setTextColor(130, 130, 130);
+  doc.text(`Generated: ${date}`, pageWidth - 15, 24, { align: 'right' });
 
   doc.setTextColor(0, 0, 0);
-  let yPos = 35;
+  let yPos = 38;
 
   // Requirements Section
   doc.setFontSize(14);

@@ -37,7 +37,7 @@ export function Header({ onReset }: HeaderProps) {
                   <img
                     src="/Linemaster Blue Corporate Logo 2.png"
                     alt="Linemaster"
-                    className="h-7"
+                    className="h-9"
                   />
                   <div className="hidden sm:block h-4 w-px bg-foreground/10" />
                   <span className="hidden sm:block text-sm font-medium text-muted-foreground tracking-tight">
