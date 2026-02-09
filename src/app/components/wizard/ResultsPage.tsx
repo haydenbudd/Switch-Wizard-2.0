@@ -181,7 +181,7 @@ export function ResultsPage({
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Recommended Products</h2>
+            <h2 className="text-3xl font-bold text-foreground">Recommended Products</h2>
             <p className="text-muted-foreground mt-1">
               {finalResults.length} matches found based on your criteria
             </p>
@@ -199,7 +199,7 @@ export function ResultsPage({
         </div>
 
         {/* Active Filters Display */}
-        <div className="flex flex-wrap gap-2 items-center bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg border border-border/50">
+        <div className="flex flex-wrap gap-2 items-center glass-card p-3 rounded-xl">
           <span className="text-sm font-medium text-muted-foreground mr-2">Filters:</span>
           
           {wizardState.selectedApplication && (
@@ -242,7 +242,7 @@ export function ResultsPage({
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between sticky top-20 z-30 bg-white/80 dark:bg-black/80 backdrop-blur-lg p-4 rounded-xl border shadow-sm">
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between sticky top-16 z-30 glass-card p-4 rounded-2xl">
           <EnhancedSearch 
             searchTerm={searchTerm} 
             onSearchChange={setSearchTerm}
@@ -377,7 +377,7 @@ export function ResultsPage({
 
       {/* Floating Action Button for Mobile */}
       <div className="fixed bottom-6 right-6 md:hidden z-40">
-        <Button size="icon" className="h-12 w-12 rounded-full shadow-xl bg-blue-600 hover:bg-blue-700" onClick={onBack}>
+        <Button size="icon" className="h-12 w-12 rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90" onClick={onBack}>
           <ArrowLeft className="w-5 h-5" />
         </Button>
       </div>

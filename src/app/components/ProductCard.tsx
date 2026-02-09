@@ -29,24 +29,24 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
   return (
     <GlassCard 
       className={`h-full flex flex-col group relative overflow-hidden transition-all duration-500 ${
-        highlight ? 'border-blue-500/30 shadow-xl shadow-blue-500/10' : ''
+        highlight ? 'border-primary/30 shadow-xl shadow-primary/10' : ''
       }`}
       hoverEffect={true}
     >
       {/* Featured/Flagship Badge */}
       {isFlagship && (
         <div className="absolute top-4 right-4 z-20">
-          <Badge className="bg-yellow-400/90 text-yellow-950 border-yellow-200 backdrop-blur-sm shadow-sm flex items-center gap-1">
-            <Star className="w-3 h-3 fill-yellow-700" />
+          <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-[11px] tracking-wide uppercase">
+            <Star className="w-3 h-3 fill-current opacity-70" />
             Top Choice
           </Badge>
         </div>
       )}
 
       {/* Product Image Area */}
-      <div className="relative aspect-[4/3] -mx-6 -mt-6 mb-4 bg-gradient-to-b from-gray-50/50 to-transparent dark:from-white/5 p-6 flex items-center justify-center overflow-hidden">
+      <div className="relative aspect-[4/3] -mx-6 -mt-6 mb-4 bg-gradient-to-b from-secondary/80 to-transparent p-6 flex items-center justify-center overflow-hidden">
         {/* Background blobs for depth */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors duration-500" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-500" />
         
         {product.image ? (
           <ImageWithFallback
@@ -65,7 +65,7 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
         )}
         
         {/* Quick specs overlay on hover */}
-        <div className="absolute inset-x-0 bottom-0 p-3 bg-white/90 dark:bg-black/80 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-between text-xs font-medium z-20 border-t border-white/10">
+        <div className="absolute inset-x-0 bottom-0 p-3 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-between text-xs font-medium z-20 border-t border-border/30">
           <span>{product.ip}</span>
           <span className="capitalize">{product.material}</span>
           <span className="capitalize">{product.duty} Duty</span>
@@ -76,7 +76,7 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
       <div className="flex flex-col flex-1">
         <div className="mb-2">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-xl text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+            <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
               {product.series}
             </h3>
             {product.part_number && (
@@ -85,10 +85,10 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
               </span>
             )}
           </div>
-          <div className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-1 capitalize flex items-center gap-2">
+          <div className="text-sm text-primary/80 font-medium mb-1 capitalize flex items-center gap-2">
             {product.technology}
             <span className="w-1 h-1 rounded-full bg-current opacity-50" />
-            <span className={product.duty === 'heavy' ? 'text-orange-600 dark:text-orange-400' : ''}>
+            <span className={product.duty === 'heavy' ? 'text-[var(--accent-warm)]' : ''}>
               {product.duty} Duty
             </span>
           </div>
@@ -125,7 +125,7 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
             rel="noopener noreferrer"
             className="w-full"
           >
-            <Button className="w-full group/btn bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/20 text-white border-0">
+            <Button className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 text-primary-foreground border-0 transition-all duration-300">
               View Details
               <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
             </Button>

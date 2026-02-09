@@ -39,10 +39,10 @@
   --accent-warm-foreground: #ffffff;
 
   /* Enhanced glass — crisper, more substance */
-  --glass-bg: rgba(255, 255, 255, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.45);
-  --glass-shadow: 0 4px 24px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.04);
-  --glass-shadow-inset: rgba(255, 255, 255, 0.6) 0px 1px 0px 0px inset;
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.07), 0 1.5px 4px rgba(15, 23, 42, 0.05);
+  --glass-shadow-inset: rgba(255, 255, 255, 0.7) 0px 1px 0px 0px inset, rgba(255, 255, 255, 0.15) 0px 0px 0px 0.5px inset;
   --glass-blur: 20px;
   --glass-bg-hover: rgba(255, 255, 255, 0.82);
 
@@ -50,6 +50,7 @@
   --selection-bg: rgba(30, 64, 175, 0.06);
   --selection-border: rgba(30, 64, 175, 0.25);
   --selection-ring: rgba(30, 64, 175, 0.15);
+  --selection-glow: 0 0 0 1px rgba(30, 64, 175, 0.12), 0 4px 16px rgba(30, 64, 175, 0.10);
 
   /* Sidebar */
   --sidebar: rgba(255, 255, 255, 0.72);
@@ -97,13 +98,14 @@
   --glass-bg: rgba(15, 23, 42, 0.55);
   --glass-border: rgba(226, 232, 240, 0.07);
   --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
-  --glass-shadow-inset: rgba(226, 232, 240, 0.05) 0px 1px 0px 0px inset;
+  --glass-shadow-inset: rgba(226, 232, 240, 0.06) 0px 1px 0px 0px inset, rgba(226, 232, 240, 0.03) 0px 0px 0px 0.5px inset;
   --glass-blur: 24px;
   --glass-bg-hover: rgba(30, 41, 59, 0.72);
 
   --selection-bg: rgba(59, 130, 246, 0.08);
   --selection-border: rgba(59, 130, 246, 0.30);
   --selection-ring: rgba(59, 130, 246, 0.15);
+  --selection-glow: 0 0 0 1px rgba(59, 130, 246, 0.18), 0 4px 16px rgba(59, 130, 246, 0.12);
 
   --sidebar: rgba(15, 23, 42, 0.72);
   --sidebar-foreground: #e2e8f0;
@@ -291,12 +293,32 @@ body {
 @keyframes card-enter {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
+}
+
+/* Refined pulse ring — replaces jarring animate-ping */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  70% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-glass-appear {

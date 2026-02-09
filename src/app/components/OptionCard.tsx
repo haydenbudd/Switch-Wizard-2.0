@@ -36,7 +36,7 @@ export function OptionCard({
       className={cn(
         "h-full flex flex-col items-center text-center justify-center min-h-[180px] relative transition-all duration-300 animate-card-enter",
         selected
-          ? "border-primary/30 bg-primary/[0.04] dark:bg-primary/[0.08] ring-2 ring-primary/15 shadow-lg shadow-primary/8"
+          ? "border-primary/25 bg-primary/[0.03] dark:bg-primary/[0.06] shadow-[var(--selection-glow)]"
           : "hover:border-primary/15",
         isDisabled && "opacity-50 cursor-not-allowed grayscale",
         className
@@ -44,8 +44,8 @@ export function OptionCard({
       style={{ animationDelay: `${index * 60}ms` } as React.CSSProperties}
     >
       {selected && (
-        <div className="absolute top-3 right-3 h-6 w-6 bg-primary rounded-full flex items-center justify-center text-white shadow-md shadow-primary/25 animate-in zoom-in duration-200">
-          <Check className="w-3.5 h-3.5" />
+        <div className="absolute top-3 right-3 h-5 w-5 bg-primary rounded-full flex items-center justify-center text-white shadow-sm shadow-primary/30 animate-in zoom-in duration-150">
+          <Check className="w-3 h-3" strokeWidth={3} />
         </div>
       )}
 
@@ -53,7 +53,7 @@ export function OptionCard({
         "w-16 h-16 flex items-center justify-center rounded-2xl mb-4 transition-all duration-300",
         selected
           ? "bg-primary text-white shadow-lg shadow-primary/25 scale-110"
-          : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-primary/10 group-hover:text-primary dark:group-hover:bg-primary/15 dark:group-hover:text-primary"
+          : "bg-secondary text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary dark:group-hover:bg-primary/15 dark:group-hover:text-primary"
       )}>
         {Icon ? <Icon className="w-7 h-7" /> : <div className="w-7 h-7" />}
       </div>
@@ -72,7 +72,7 @@ export function OptionCard({
       )}
 
       {count !== undefined && count > 0 && (
-        <span className="mt-3 text-xs font-medium text-muted-foreground bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full tabular-nums">
+        <span className="mt-3 text-xs font-medium text-muted-foreground bg-secondary px-2.5 py-1 rounded-full tabular-nums">
           {count} {count === 1 ? 'product' : 'products'}
         </span>
       )}

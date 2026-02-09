@@ -24,15 +24,15 @@ export function GlassCard({
       style={style}
       className={cn(
         "glass-card rounded-2xl p-6 transition-all duration-300 relative overflow-hidden group",
-        hoverEffect && "hover:shadow-lg hover:-translate-y-1",
+        hoverEffect && "hover:shadow-lg hover:-translate-y-0.5",
         interactive && "cursor-pointer active:scale-[0.98]",
         className
       )}
     >
-      {/* Shine effect on hover */}
+      {/* Shine sweep on hover */}
       {hoverEffect && (
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[inherit]">
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[800ms] ease-out bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
         </div>
       )}
       

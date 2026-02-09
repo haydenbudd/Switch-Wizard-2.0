@@ -21,14 +21,7 @@ export function Header({ onReset }: HeaderProps) {
       <div className="mx-auto px-2 sm:px-4 pt-2">
         <div className="relative w-full" style={{ minHeight: 52 }}>
           <div
-            className="relative overflow-hidden will-change-transform rounded-[20px] px-4 transition-all duration-300"
-            style={{
-              backdropFilter: 'blur(var(--glass-blur)) saturate(160%)',
-              WebkitBackdropFilter: 'blur(var(--glass-blur)) saturate(160%)',
-              background: 'var(--glass-bg)',
-              boxShadow: 'var(--glass-shadow), var(--glass-shadow-inset)',
-              border: '1px solid var(--glass-border)',
-            }}
+            className="relative overflow-hidden will-change-transform rounded-[20px] px-4 transition-all duration-300 glass-card"
           >
             <div className="relative">
               <div className="flex items-center justify-between h-[52px]">
@@ -40,7 +33,7 @@ export function Header({ onReset }: HeaderProps) {
                     className="h-9"
                   />
                   <div className="hidden sm:block h-4 w-px bg-foreground/10" />
-                  <span className="hidden sm:block text-sm font-medium text-muted-foreground tracking-tight">
+                  <span className="hidden sm:block text-sm font-medium text-muted-foreground tracking-tight" style={{ fontFamily: 'var(--font-display)' }}>
                     Product Finder
                   </span>
                 </div>

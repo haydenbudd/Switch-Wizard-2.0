@@ -102,6 +102,12 @@ export function StandardSteps({
           </p>
         </motion.div>
 
+        <div className="flex items-center gap-4 max-w-5xl mx-auto mb-8">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">Choose Your Industry</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {(categories || []).map((category, i) => (
             <motion.div
@@ -173,7 +179,7 @@ export function StandardSteps({
           <span className="uppercase">Step {getDisplayStep(wizardState.step)} of {totalSteps}</span>
           <span className="tabular-nums">{progressPercent}%</span>
         </div>
-        <div className="h-1.5 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-border rounded-full overflow-hidden">
           <motion.div
             className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full progress-glow"
             initial={{ width: 0 }}
@@ -206,7 +212,10 @@ export function StandardSteps({
             {/* Step 1: Technology */}
             {wizardState.step === 1 && (
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Select Technology</h2>
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Select Technology</h2>
+                  <p className="text-muted-foreground">Choose the switching mechanism for your application</p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {(technologies || [])
                     .filter((t) => t.availableFor?.includes(wizardState.selectedApplication))
@@ -229,7 +238,10 @@ export function StandardSteps({
             {/* Step 2: Action */}
             {wizardState.step === 2 && (
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Select Action Type</h2>
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Select Action Type</h2>
+                  <p className="text-muted-foreground">How should the switch activate and deactivate?</p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
@@ -252,7 +264,10 @@ export function StandardSteps({
             {/* Step 3: Environment */}
             {wizardState.step === 3 && (
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Operating Environment</h2>
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Operating Environment</h2>
+                  <p className="text-muted-foreground">Where will the switch be used?</p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                   {(environments || []).map((env, i) => (
                     <OptionCard
@@ -274,7 +289,10 @@ export function StandardSteps({
             {/* Step 4: Duty Rating */}
             {wizardState.step === 4 && (
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Duty Rating</h2>
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Duty Rating</h2>
+                  <p className="text-muted-foreground">How heavy will the usage be?</p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
@@ -295,7 +313,10 @@ export function StandardSteps({
             {/* Step 5: Connection Type */}
             {wizardState.step === 5 && (
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Connection Type</h2>
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Connection Type</h2>
+                  <p className="text-muted-foreground">How should the switch connect to your equipment?</p>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
                   {(connections || []).map((conn, i) => (
                     <OptionCard
@@ -317,7 +338,10 @@ export function StandardSteps({
             {/* Step 6: Safety Guard */}
             {wizardState.step === 6 && (
               <div className="space-y-6">
-                <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Safety Guard</h2>
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Safety Guard</h2>
+                  <p className="text-muted-foreground">Do you need protection against accidental activation?</p>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                   <OptionCard
                     id="yes"
@@ -362,7 +386,7 @@ export function StandardSteps({
                           hoverEffect={!isSelected}
                           className={`p-5 transition-all duration-200 animate-card-enter ${
                             isSelected
-                              ? 'ring-2 ring-primary/25 bg-primary/[0.04]'
+                              ? 'border-primary/25 bg-primary/[0.03] dark:bg-primary/[0.06] shadow-[var(--selection-glow)]'
                               : ''
                           }`}
                           onClick={() => handleMultiSelect(feat.id, wizardState.selectedFeatures, wizardState.setSelectedFeatures)}
@@ -372,7 +396,7 @@ export function StandardSteps({
                             <div className={`w-9 h-9 flex items-center justify-center rounded-lg shrink-0 transition-all duration-200 ${
                               isSelected
                                 ? 'bg-primary text-white shadow-sm shadow-primary/20'
-                                : 'bg-slate-100 dark:bg-slate-800 text-transparent'
+                                : 'bg-secondary text-transparent'
                             }`}>
                               <Check className="w-4.5 h-4.5" />
                             </div>
@@ -392,7 +416,7 @@ export function StandardSteps({
                   <Button
                     size="lg"
                     onClick={onContinue}
-                    className="px-10 bg-gradient-to-r from-primary to-primary/85 hover:from-primary/90 hover:to-primary/75 shadow-lg shadow-primary/15 transition-all duration-300 hover:shadow-xl hover:shadow-primary/20"
+                    className="px-10 bg-gradient-to-r from-primary to-primary/85 hover:from-primary/90 hover:to-primary/75 shadow-lg shadow-primary/15 transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-0.5"
                   >
                     View Results <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
