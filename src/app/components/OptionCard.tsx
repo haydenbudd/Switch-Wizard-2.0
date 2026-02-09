@@ -27,17 +27,18 @@ export function OptionCard({
   className,
   index = 0,
 }: OptionCardProps) {
+  const isDisabled = disabled || count === 0;
   return (
     <GlassCard
-      interactive={!disabled}
-      hoverEffect={!disabled && !selected}
-      onClick={() => !disabled && onClick()}
+      interactive={!isDisabled}
+      hoverEffect={!isDisabled && !selected}
+      onClick={() => !isDisabled && onClick()}
       className={cn(
         "h-full flex flex-col items-center text-center justify-center min-h-[180px] relative transition-all duration-300 animate-card-enter",
         selected
           ? "border-primary/30 bg-primary/[0.04] dark:bg-primary/[0.08] ring-2 ring-primary/15 shadow-lg shadow-primary/8"
           : "hover:border-primary/15",
-        disabled && "opacity-50 cursor-not-allowed grayscale",
+        isDisabled && "opacity-50 cursor-not-allowed grayscale",
         className
       )}
       style={{ animationDelay: `${index * 60}ms` } as React.CSSProperties}
@@ -73,6 +74,11 @@ export function OptionCard({
       {count !== undefined && count > 0 && (
         <span className="mt-3 text-xs font-medium text-muted-foreground bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-full tabular-nums">
           {count} {count === 1 ? 'product' : 'products'}
+        </span>
+      )}
+      {count === 0 && (
+        <span className="mt-3 text-xs font-medium text-red-400 dark:text-red-500 bg-red-50 dark:bg-red-950/30 px-2.5 py-1 rounded-full">
+          No products available
         </span>
       )}
     </GlassCard>

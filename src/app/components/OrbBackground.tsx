@@ -8,23 +8,41 @@ interface Orb {
   y: number;
   r: number;
   color: string;
-  // Base drift velocity
   vx: number;
   vy: number;
-  // How strongly this orb follows the mouse (0–1)
   mouseInfluence: number;
 }
 
-const LIGHT_COLORS = [
-  'rgba(30, 64, 175, 0.18)',    // Deep Blue
-  'rgba(59, 130, 246, 0.14)',   // Blue
-  'rgba(5, 150, 105, 0.10)',    // Emerald
+interface StaticOrb {
+  cx: number; // center x as fraction of width
+  cy: number; // center y as fraction of height
+  rx: number; // x radius as fraction of width
+  ry: number; // y radius as fraction of height
+  color: string;
+}
+
+const LIGHT_ANIMATED = [
+  'rgba(30, 64, 175, 0.13)',
+  'rgba(59, 130, 246, 0.10)',
 ];
 
-const DARK_COLORS = [
-  'rgba(59, 130, 246, 0.16)',   // Blue
-  'rgba(30, 64, 175, 0.12)',    // Deep Blue
-  'rgba(5, 150, 105, 0.08)',    // Emerald
+const DARK_ANIMATED = [
+  'rgba(59, 130, 246, 0.11)',
+  'rgba(30, 64, 175, 0.08)',
+];
+
+const LIGHT_STATIC: StaticOrb[] = [
+  { cx: 0.15, cy: 0.1,  rx: 0.35, ry: 0.35, color: 'rgba(147, 170, 255, 0.30)' },
+  { cx: 0.75, cy: 0.05, rx: 0.25, ry: 0.25, color: 'rgba(120, 150, 245, 0.18)' },
+  { cx: 0.85, cy: 0.85, rx: 0.35, ry: 0.30, color: 'rgba(216, 180, 254, 0.25)' },
+  { cx: 0.10, cy: 0.90, rx: 0.25, ry: 0.25, color: 'rgba(253, 186, 210, 0.16)' },
+];
+
+const DARK_STATIC: StaticOrb[] = [
+  { cx: 0.15, cy: 0.1,  rx: 0.35, ry: 0.35, color: 'rgba(147, 170, 255, 0.10)' },
+  { cx: 0.75, cy: 0.05, rx: 0.25, ry: 0.25, color: 'rgba(120, 150, 245, 0.07)' },
+  { cx: 0.85, cy: 0.85, rx: 0.35, ry: 0.30, color: 'rgba(216, 180, 254, 0.09)' },
+  { cx: 0.10, cy: 0.90, rx: 0.25, ry: 0.25, color: 'rgba(253, 186, 210, 0.07)' },
 ];
 
 export function OrbBackground() {
@@ -59,10 +77,10 @@ export function OrbBackground() {
     resize();
 
     const isDark = resolvedTheme === 'dark';
-    const colors = isDark ? DARK_COLORS : LIGHT_COLORS;
+    const animColors = isDark ? DARK_ANIMATED : LIGHT_ANIMATED;
+    const staticOrbs = isDark ? DARK_STATIC : LIGHT_STATIC;
     const fadeTarget = isDark ? 'rgba(0, 0, 0, 0)' : 'rgba(255, 255, 255, 0)';
 
-    // Mouse position (starts at center)
     let mouseX = width / 2;
     let mouseY = height / 2;
 
@@ -73,11 +91,10 @@ export function OrbBackground() {
 
     window.addEventListener('mousemove', handleMouseMove);
 
-    // Initialize orbs
+    // Animated orbs: large, gentle movement
     const orbs: Orb[] = [
-      { x: width * 0.2, y: height * 0.3, r: 300, color: colors[0], vx: 0.3, vy: 0.15, mouseInfluence: 0.08 },
-      { x: width * 0.8, y: height * 0.2, r: 400, color: colors[1], vx: -0.2, vy: 0.25, mouseInfluence: 0.05 },
-      { x: width * 0.5, y: height * 0.8, r: 350, color: colors[2], vx: 0.15, vy: -0.2, mouseInfluence: 0.06 },
+      { x: width * 0.25, y: height * 0.35, r: 450, color: animColors[0], vx: 0.15, vy: 0.08, mouseInfluence: 0.03 },
+      { x: width * 0.75, y: height * 0.25, r: 480, color: animColors[1], vx: -0.12, vy: 0.12, mouseInfluence: 0.02 },
     ];
 
     let animationFrameId: number;
@@ -85,20 +102,34 @@ export function OrbBackground() {
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
 
+      // Draw static orbs first (background layer)
+      staticOrbs.forEach((s) => {
+        const cx = s.cx * width;
+        const cy = s.cy * height;
+        const r = Math.max(s.rx * width, s.ry * height);
+
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        g.addColorStop(0, s.color);
+        g.addColorStop(1, fadeTarget);
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle = g;
+        ctx.fill();
+      });
+
+      // Draw animated orbs on top
       orbs.forEach((orb) => {
-        // Attract toward mouse with easing
         const dx = mouseX - orb.x;
         const dy = mouseY - orb.y;
         orb.x += dx * orb.mouseInfluence + orb.vx;
         orb.y += dy * orb.mouseInfluence + orb.vy;
 
-        // Soft bounce off edges
-        if (orb.x < -100) orb.vx = Math.abs(orb.vx);
-        if (orb.x > width + 100) orb.vx = -Math.abs(orb.vx);
-        if (orb.y < -100) orb.vy = Math.abs(orb.vy);
-        if (orb.y > height + 100) orb.vy = -Math.abs(orb.vy);
+        if (orb.x < -200) orb.vx = Math.abs(orb.vx);
+        if (orb.x > width + 200) orb.vx = -Math.abs(orb.vx);
+        if (orb.y < -200) orb.vy = Math.abs(orb.vy);
+        if (orb.y > height + 200) orb.vy = -Math.abs(orb.vy);
 
-        // Draw orb with radial gradient
         const g = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, orb.r);
         g.addColorStop(0, orb.color);
         g.addColorStop(1, fadeTarget);
@@ -124,7 +155,8 @@ export function OrbBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: 1 }}
     />
   );
 }

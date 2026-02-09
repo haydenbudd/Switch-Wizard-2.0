@@ -156,7 +156,7 @@ function WizardApp() {
       if (state.selectedDuty && product.duty !== state.selectedDuty) return false;
       if (state.selectedTechnology !== 'pneumatic' && state.selectedConnection && product.connector_type !== state.selectedConnection) return false;
       if (state.selectedGuard === 'yes' && !(product.features || []).includes('shield')) return false;
-      if (state.selectedGuard === 'no' && (product.features || []).includes('shield')) return false;
+      // "no" = no preference, don't exclude shielded products
 
       if (state.selectedFeatures.length > 0) {
         const hardwareFeatures = state.selectedFeatures.filter(
@@ -224,7 +224,7 @@ function WizardApp() {
         if (wizardState.selectedTechnology !== 'pneumatic' && wizardState.selectedConnection && p.connector_type !== wizardState.selectedConnection) return false;
         const hasShield = (p.features || []).includes('shield');
         if (optionId === 'yes') return hasShield;
-        if (optionId === 'no') return !hasShield;
+        // 'no' = no preference, show all products
         return true;
       }).length;
     }
@@ -332,6 +332,7 @@ function WizardApp() {
     return (
       <MedicalFlow
         wizardState={wizardState}
+        products={products}
         consoleStyles={consoleStyles}
         pedalCounts={pedalCounts}
         medicalTechnicalFeatures={medicalTechnicalFeatures}
@@ -348,8 +349,9 @@ function WizardApp() {
 
   // Standard flow
   return (
-    <div className="min-h-screen mesh-gradient-light relative z-10 grain-overlay">
-      <OrbBackground />
+    <>
+    <OrbBackground />
+    <div className="min-h-screen relative z-10 grain-overlay">
       <Header onReset={handleReset} />
 
       {wizardState.step >= 0 && wizardState.step <= 7 && (
@@ -405,6 +407,7 @@ function WizardApp() {
         />
       )}
     </div>
+    </>
   );
 }
 

@@ -110,15 +110,15 @@ export function StandardSteps({
               <GlassCard
                 hoverEffect
                 interactive
-                className="p-10 transition-all duration-300 group"
+                className="p-10 h-full transition-all duration-300 group"
                 onClick={() => onCategorySelect(category.id)}
               >
-                <div className="flex flex-col items-center text-center space-y-5">
-                  <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105">
+                <div className="flex flex-col items-center text-center h-full">
+                  <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5">
                     {category.icon && <category.icon className="w-8 h-8" />}
                   </div>
-                  <h3 className="text-xl font-semibold tracking-tight">{category.label}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <h3 className="text-xl font-semibold tracking-tight mb-3">{category.label}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mt-auto">
                     {category.description}
                   </p>
                 </div>
@@ -376,6 +376,9 @@ export function StandardSteps({
                             <div>
                               <h3 className="font-semibold text-[15px] mb-0.5">{feat.label}</h3>
                               <p className="text-sm text-muted-foreground leading-snug">{feat.description}</p>
+                              {(feat.id === 'custom_cable' || feat.id === 'custom_connector') && (
+                                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Requires custom solution quote</p>
+                              )}
                             </div>
                           </div>
                         </GlassCard>

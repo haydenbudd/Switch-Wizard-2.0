@@ -51,7 +51,7 @@ export const categories: Option[] = [
     id: 'industrial',
     label: 'Industrial & Manufacturing',
     icon: Building2,
-    description: 'Manufacturing, automotive, construction, utilities & more',
+    description: 'Heavy-duty, rugged industrial environments',
   },
   {
     id: 'medical',
@@ -158,7 +158,7 @@ export const technologies: Option[] = [
     label: 'RF Wireless',
     icon: Radio,
     description: 'Cord-free operation.',
-    availableFor: ['manufacturing', 'automotive', 'construction', 'utilities', 'defense', 'general'],
+    availableFor: ['manufacturing', 'automotive', 'construction', 'utilities', 'agriculture', 'defense', 'general'],
   },
 ];
 

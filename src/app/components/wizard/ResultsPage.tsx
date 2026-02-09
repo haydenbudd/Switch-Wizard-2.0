@@ -104,7 +104,7 @@ export function ResultsPage({
     // Corded Filter
     if (cordedFilter !== 'all') {
       result = result.filter(p => {
-        if (!p.connector_type) return true;
+        if (!p.connector_type) return false;
         const isPrewired = p.connector_type.includes('pre-wired') || p.connector_type.includes('plug');
         return cordedFilter === 'corded' ? isPrewired : !isPrewired;
       });
@@ -122,7 +122,10 @@ export function ResultsPage({
         return (dutyOrder[b.duty as keyof typeof dutyOrder] || 0) - (dutyOrder[a.duty as keyof typeof dutyOrder] || 0);
       }
       if (sortBy === 'ip') {
-        const getIpVal = (ip: string) => parseInt(ip.replace(/\D/g, '') || '0');
+        const getIpVal = (ip: string) => {
+          if (ip.toUpperCase().includes('X')) return 80; // IPX8 = high water protection
+          return parseInt(ip.replace(/\D/g, '') || '0');
+        };
         return getIpVal(b.ip) - getIpVal(a.ip);
       }
       return 0; // Relevance is default order
@@ -357,11 +360,13 @@ export function ResultsPage({
 
             {alternatives && (
               <div className="space-y-4">
-                <p className="text-sm font-medium">Alternative Suggestions:</p>
+                <p className="text-sm text-muted-foreground">
+                  {alternatives.products.length} {alternatives.products.length === 1 ? 'product' : 'products'} available if you adjust your filters
+                </p>
                 <Button variant="outline" onClick={() => removeWizardFilter(alternatives.relaxed as any)}>
-                  Remove "{alternatives.relaxed}" filter
+                  Remove {alternatives.relaxed === 'all' ? 'all filters' : `"${alternatives.relaxed}" filter`} ({alternatives.products.length} results)
                 </Button>
-                <Button variant="link" onClick={onReset}>Clear all filters</Button>
+                <Button variant="link" onClick={onReset}>Start over</Button>
               </div>
             )}
           </div>

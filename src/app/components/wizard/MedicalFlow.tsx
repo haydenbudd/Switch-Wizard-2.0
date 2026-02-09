@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Check, Heart, Package, Settings, Info, Phone, Ma
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { Option } from '@/app/data/options';
+import type { Product } from '@/app/lib/api';
 import { ProgressDots } from '@/app/components/ProgressDots';
 import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -24,6 +25,7 @@ const MEDICAL_ENVIRONMENTS = [
 
 interface MedicalFlowProps {
   wizardState: WizardState;
+  products: Product[];
   consoleStyles: Option[];
   pedalCounts: Option[];
   medicalTechnicalFeatures: Option[];
@@ -44,6 +46,7 @@ const CUSTOM_DISPLAY_TOTAL = 2;
 
 export function MedicalFlow({
   wizardState,
+  products,
   consoleStyles,
   pedalCounts,
   medicalTechnicalFeatures,
@@ -57,6 +60,18 @@ export function MedicalFlow({
 }: MedicalFlowProps) {
 
   const isCustomPath = wizardState.selectedMedicalPath === 'custom';
+
+  // Medical products filtered by application
+  const medicalProducts = products.filter(p => p.applications.includes('medical') && p.technology === 'electrical');
+
+  const getActionCount = (actionId: string) =>
+    medicalProducts.filter(p => p.actions.includes(actionId)).length;
+
+  const getEnvironmentCount = (envId: string) => {
+    const base = medicalProducts.filter(p => p.actions.includes(wizardState.selectedAction));
+    if (envId === 'wet') return base.filter(p => p.ip === 'IP68').length;
+    return base.length; // 'any' = no filter
+  };
   const displayStep = wizardState.step + 1; // category = step 1, so internal step 1 = display step 2
 
   const handleForkSelect = (path: 'stock' | 'custom') => {
@@ -270,6 +285,7 @@ export function MedicalFlow({
                   description={action.description}
                   icon={action.icon}
                   selected={wizardState.selectedAction === action.id}
+                  count={getActionCount(action.id)}
                   onClick={() => handleActionSelect(action.id)}
                   index={i}
                 />
@@ -297,6 +313,7 @@ export function MedicalFlow({
                   description={env.description}
                   icon={env.icon}
                   selected={wizardState.selectedEnvironment === env.id}
+                  count={getEnvironmentCount(env.id)}
                   onClick={() => handleEnvironmentSelect(env.id)}
                   index={i}
                 />
