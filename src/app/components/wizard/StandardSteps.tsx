@@ -73,8 +73,8 @@ export function StandardSteps({
 
   // Filter applications by parent category if selected
   const filteredApplications = wizardState.selectedCategory
-    ? applications.filter(app => app.parentCategory === wizardState.selectedCategory)
-    : applications;
+    ? (applications || []).filter(app => app.parentCategory === wizardState.selectedCategory)
+    : (applications || []);
 
   const progressPercent = Math.round((getProgressStep(wizardState.step) / totalSteps) * 100);
 
@@ -100,7 +100,7 @@ export function StandardSteps({
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {categories.map((category, i) => (
+          {(categories || []).map((category, i) => (
             <motion.div
               key={category.id}
               initial={{ opacity: 0, y: 20 }}
@@ -205,7 +205,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Select Technology</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {technologies
+                  {(technologies || [])
                     .filter((t) => t.availableFor?.includes(wizardState.selectedApplication))
                     .map((tech, i) => (
                       <OptionCard
@@ -228,7 +228,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Select Action Type</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {actions
+                  {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
                     .map((action, i) => (
                       <OptionCard
@@ -251,7 +251,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Operating Environment</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                  {environments.map((env, i) => (
+                  {(environments || []).map((env, i) => (
                     <OptionCard
                       key={env.id}
                       id={env.id}
@@ -273,7 +273,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Duty Rating</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {duties.map((duty, i) => (
+                  {(duties || []).map((duty, i) => (
                     <OptionCard
                       key={duty.id}
                       label={duty.label}
@@ -294,7 +294,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-center mb-10 tracking-tight">Connection Type</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-                  {connections.map((conn, i) => (
+                  {(connections || []).map((conn, i) => (
                     <OptionCard
                       key={conn.id}
                       id={conn.id}
@@ -348,7 +348,7 @@ export function StandardSteps({
                   <p className="text-muted-foreground">Select any that apply, or skip to view results.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  {features
+                  {(features || [])
                     .filter((f) => !f.hideFor?.includes(wizardState.selectedTechnology))
                     .map((feat, i) => {
                       const isSelected = wizardState.selectedFeatures.includes(feat.id);

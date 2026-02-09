@@ -201,26 +201,26 @@ export function ResultsPage({
           <span className="text-sm font-medium text-muted-foreground mr-2">Filters:</span>
           
           {wizardState.selectedApplication && (
-            <FilterChip 
-              label={applications.find(a => a.id === wizardState.selectedApplication)?.label || wizardState.selectedApplication} 
+            <FilterChip
+              label={(applications || []).find(a => a.id === wizardState.selectedApplication)?.label || wizardState.selectedApplication}
               onRemove={() => removeWizardFilter('application')}
             />
           )}
           {wizardState.selectedTechnology && (
-            <FilterChip 
-              label={technologies.find(t => t.id === wizardState.selectedTechnology)?.label || wizardState.selectedTechnology} 
+            <FilterChip
+              label={(technologies || []).find(t => t.id === wizardState.selectedTechnology)?.label || wizardState.selectedTechnology}
               onRemove={() => removeWizardFilter('technology')}
             />
           )}
           {wizardState.selectedAction && (
-            <FilterChip 
-              label={actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction} 
+            <FilterChip
+              label={(actions || []).find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction}
               onRemove={() => removeWizardFilter('action')}
             />
           )}
           {wizardState.selectedEnvironment && wizardState.selectedEnvironment !== 'any' && (
-            <FilterChip 
-              label={environments.find(e => e.id === wizardState.selectedEnvironment)?.label || wizardState.selectedEnvironment} 
+            <FilterChip
+              label={(environments || []).find(e => e.id === wizardState.selectedEnvironment)?.label || wizardState.selectedEnvironment}
               onRemove={() => removeWizardFilter('environment')}
             />
           )}

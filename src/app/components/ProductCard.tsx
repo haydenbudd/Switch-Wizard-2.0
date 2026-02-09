@@ -12,7 +12,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, highlight = false }: ProductCardProps) {
-  const isMedical = product.applications.includes('medical');
+  const isMedical = (product.applications || []).includes('medical');
   const isFlagship = product.flagship;
 
   // Icon mapping for features
@@ -111,7 +111,7 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
           ))}
           {(product.features?.length || 0) > 3 && (
             <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-normal">
-              +{product.features!.length - 3}
+              +{(product.features?.length || 0) - 3}
             </Badge>
           )}
         </div>

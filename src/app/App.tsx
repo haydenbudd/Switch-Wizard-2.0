@@ -67,7 +67,7 @@ function WizardApp() {
   };
 
   const handleCategorySelect = (categoryId: string) => {
-    const cat = categories.find((c) => c.id === categoryId);
+    const cat = (categories || []).find((c) => c.id === categoryId);
     wizardState.setSelectedCategory(categoryId);
 
     // Medical category auto-advances to medical flow
@@ -150,7 +150,7 @@ function WizardApp() {
   const filterProducts = (overrides: Partial<typeof wizardState> = {}) => {
     const state = { ...wizardState, ...overrides };
 
-    return products.filter((product) => {
+    return (products || []).filter((product) => {
       if (state.selectedApplication && !product.applications.includes(state.selectedApplication)) return false;
       if (state.selectedTechnology && product.technology !== state.selectedTechnology) return false;
       if (state.selectedAction && !product.actions.includes(state.selectedAction)) return false;
@@ -177,19 +177,20 @@ function WizardApp() {
   };
 
   const getProductCount = (step: number, optionId?: string) => {
+    const safeProducts = products || [];
     if (step === 1) {
-      return products.filter(p =>
+      return safeProducts.filter(p =>
         p.applications.includes(wizardState.selectedApplication) &&
         p.technology === optionId
       ).length;
     } else if (step === 2) {
-      return products.filter(p =>
+      return safeProducts.filter(p =>
         p.applications.includes(wizardState.selectedApplication) &&
         p.technology === wizardState.selectedTechnology &&
         p.actions.includes(optionId || '')
       ).length;
     } else if (step === 3) {
-      return products.filter(p => {
+      return safeProducts.filter(p => {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
@@ -198,7 +199,7 @@ function WizardApp() {
         return true;
       }).length;
     } else if (step === 4) {
-      return products.filter(p => {
+      return safeProducts.filter(p => {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
@@ -207,7 +208,7 @@ function WizardApp() {
         return p.duty === optionId;
       }).length;
     } else if (step === 5) {
-      return products.filter(p => {
+      return safeProducts.filter(p => {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
@@ -217,7 +218,7 @@ function WizardApp() {
         return p.connector_type === optionId;
       }).length;
     } else if (step === 6) {
-      return products.filter(p => {
+      return safeProducts.filter(p => {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
@@ -248,7 +249,7 @@ function WizardApp() {
       if (withoutDuty.length > 0) return { products: withoutDuty, relaxed: 'duty' as const };
     }
     if (wizardState.selectedEnvironment) {
-      const withoutEnvironment = products.filter((product) => {
+      const withoutEnvironment = (products || []).filter((product) => {
         if (!product.applications.includes(wizardState.selectedApplication)) return false;
         if (product.technology !== wizardState.selectedTechnology) return false;
         if (!product.actions.includes(wizardState.selectedAction)) return false;
@@ -257,7 +258,7 @@ function WizardApp() {
       if (withoutEnvironment.length > 0) return { products: withoutEnvironment, relaxed: 'environment' as const };
     }
     if (wizardState.selectedAction) {
-      const withoutAction = products.filter((product) => {
+      const withoutAction = (products || []).filter((product) => {
         if (!product.applications.includes(wizardState.selectedApplication)) return false;
         if (product.technology !== wizardState.selectedTechnology) return false;
         return true;
@@ -265,13 +266,13 @@ function WizardApp() {
       if (withoutAction.length > 0) return { products: withoutAction, relaxed: 'action' as const };
     }
     if (wizardState.selectedTechnology) {
-      const withoutTechnology = products.filter((product) => {
+      const withoutTechnology = (products || []).filter((product) => {
         if (!product.applications.includes(wizardState.selectedApplication)) return false;
         return true;
       });
       if (withoutTechnology.length > 0) return { products: withoutTechnology, relaxed: 'technology' as const };
     }
-    const allForApplication = products.filter((product) => product.applications.includes(wizardState.selectedApplication));
+    const allForApplication = (products || []).filter((product) => product.applications.includes(wizardState.selectedApplication));
     return { products: allForApplication, relaxed: 'all' as const };
   };
 
