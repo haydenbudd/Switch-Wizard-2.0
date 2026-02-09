@@ -10,12 +10,14 @@ import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage } from '@/app/components/wizard/ResultsPage';
 
-// Lazy load admin panel — @vite-ignore lets the build succeed even when the
-// file doesn't exist in environments like Figma Make.
+// Lazy load admin panel — the path is in a variable so Vite's static import
+// analysis can't resolve it, which prevents build failures in Figma Make.
+// The .catch() provides a fallback component if the file doesn't exist at runtime.
+const adminModulePath = '@/app/components/admin/AdminContainer';
 const AdminContainer = lazy(() =>
-  import(/* @vite-ignore */ '@/app/components/admin/AdminContainer').then(module => ({
-    default: module.AdminContainer
-  }))
+  import(/* @vite-ignore */ adminModulePath)
+    .then(module => ({ default: module.AdminContainer }))
+    .catch(() => ({ default: () => null }))
 );
 
 function WizardApp() {
