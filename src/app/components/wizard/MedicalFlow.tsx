@@ -62,7 +62,7 @@ export function MedicalFlow({
   const isCustomPath = wizardState.selectedMedicalPath === 'custom';
 
   // Medical products filtered by application
-  const medicalProducts = products.filter(p => p.applications.includes('medical') && p.technology === 'electrical');
+  const medicalProducts = (products || []).filter(p => p.applications.includes('medical') && p.technology === 'electrical');
 
   const getActionCount = (actionId: string) =>
     medicalProducts.filter(p => p.actions.includes(actionId)).length;
