@@ -1,4 +1,4 @@
-import { useState, Suspense, lazy, useMemo } from 'react';
+import { useState, useEffect, useCallback, Suspense, lazy, useMemo } from 'react';
 import { Router } from '@/app/components/Router';
 import { Header } from '@/app/components/Header';
 import { OrbBackground } from '@/app/components/OrbBackground';
@@ -10,9 +10,10 @@ import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage } from '@/app/components/wizard/ResultsPage';
 
-// Lazy load admin panel
+// Lazy load admin panel — @vite-ignore lets the build succeed even when the
+// file doesn't exist in environments like Figma Make.
 const AdminContainer = lazy(() =>
-  import('@/app/components/admin/AdminContainer').then(module => ({
+  import(/* @vite-ignore */ '@/app/components/admin/AdminContainer').then(module => ({
     default: module.AdminContainer
   }))
 );
@@ -414,14 +415,33 @@ function WizardApp() {
 export default function App() {
   return (
     <Router>
-      {(path, navigate) => {
-        if (path.startsWith('/admin')) {
-          return <Suspense fallback={<div>Loading...</div>}>
-            <AdminContainer />
-          </Suspense>;
-        }
-        return <WizardApp />;
-      }}
+      {(path, navigate) => <AppShell path={path} navigate={navigate} />}
     </Router>
   );
+}
+
+function AppShell({ path, navigate }: { path: string; navigate: (to: string) => void }) {
+  const toggle = useCallback(() => {
+    navigate(path.startsWith('/admin') ? '/' : '/admin');
+  }, [path, navigate]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        toggle();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [toggle]);
+
+  if (path.startsWith('/admin')) {
+    return (
+      <Suspense fallback={<div>Loading...</div>}>
+        <AdminContainer />
+      </Suspense>
+    );
+  }
+  return <WizardApp />;
 }
