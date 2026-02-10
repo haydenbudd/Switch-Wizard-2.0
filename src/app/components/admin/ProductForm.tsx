@@ -114,12 +114,32 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
         <div className="space-y-2">
           <Label>IP Rating</Label>
-          <Input {...register('ip')} placeholder="e.g. IP68" />
+          <Select onValueChange={(val) => setValue('ip', val)} defaultValue={initialData?.ip}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select IP rating" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="IPXX">IPXX (Basic / Open)</SelectItem>
+              <SelectItem value="IP20">IP20 (Dry)</SelectItem>
+              <SelectItem value="IP56">IP56 (Splash Proof)</SelectItem>
+              <SelectItem value="IP68">IP68 (Submersible)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
           <Label>Connector Type</Label>
-          <Input {...register('connector_type')} placeholder="e.g. pre-wired, screw-terminal" />
+          <Select onValueChange={(val) => setValue('connector_type', val === 'none' ? undefined as any : val)} defaultValue={initialData?.connector_type || 'none'}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select connector type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">None / N/A</SelectItem>
+              <SelectItem value="screw-terminal">Screw Terminal</SelectItem>
+              <SelectItem value="quick-connect">Quick Connect</SelectItem>
+              <SelectItem value="pre-wired">Pre-Wired Cable</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">

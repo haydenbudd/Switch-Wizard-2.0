@@ -218,6 +218,7 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
                 <ProductForm
+                  key={editingProduct?.id || 'new'}
                   initialData={editingProduct || undefined}
                   onSubmit={isCreating ? handleCreateProduct : handleUpdateProduct}
                   isLoading={loading}
