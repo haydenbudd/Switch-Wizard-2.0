@@ -32,7 +32,7 @@ export function GlassCard({
       {/* Shine sweep on hover */}
       {hoverEffect && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[inherit]">
-          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[800ms] ease-out bg-gradient-to-r from-transparent via-white/[0.07] to-transparent" />
+          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[800ms] ease-out bg-gradient-to-r from-transparent via-black/[0.04] dark:via-white/[0.07] to-transparent" />
         </div>
       )}
       

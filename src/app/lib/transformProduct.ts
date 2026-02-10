@@ -57,9 +57,13 @@ function deriveActions(row: StockSwitchRow): string[] {
 }
 
 function deriveConnectorType(row: StockSwitchRow): string | undefined {
-  // Map known Connection values
+  // Pneumatic and wireless products don't have electrical connectors
+  if (row['Pneumatic Flow Control'] === 'Yes' || row.Wireless === 'Yes') {
+    return undefined;
+  }
+
+  // Map unambiguous Connection values
   switch (row.Connection) {
-    case 'Terminals Only':
     case 'NPT Conduit Entry':
       return 'screw-terminal';
     case 'Connector':
@@ -70,6 +74,16 @@ function deriveConnectorType(row: StockSwitchRow): string | undefined {
       return 'pre-wired';
     case 'Wireless (No Wiring)':
       return undefined;
+    case 'Terminals Only': {
+      // "Terminals Only" = no cord, user wires it. Actual terminal type
+      // varies by series — quick-connect tabs vs screw/solder terminals.
+      // Verified against linemaster.com product pages (Feb 2026)
+      const s = (row.series || '').toLowerCase();
+      if (s.includes('classic') || s.includes('treadlite') || s.includes('aquiline')) {
+        return 'quick-connect';
+      }
+      return 'screw-terminal';
+    }
   }
 
   // For null Connection, infer from series when possible
