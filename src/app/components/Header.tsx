@@ -8,12 +8,12 @@ interface HeaderProps {
 }
 
 export function Header({ onReset }: HeaderProps) {
-  const { resolvedTheme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const { navigate } = useRouter();
-  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setIsDark(document.documentElement.classList.contains('dark'));
   }, []);
 
   return (
@@ -42,16 +42,17 @@ export function Header({ onReset }: HeaderProps) {
                 <div className="hidden sm:flex items-center gap-0.5">
                   <button
                     className="p-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
-                    title={resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
+                    title={isDark ? 'Light mode' : 'Dark mode'}
                     onClick={() => {
-                      const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
-                      setTheme(newTheme);
-                      // Fallback for sandboxed environments (e.g. Figma Make)
-                      // where next-themes may not be able to manipulate the DOM
-                      document.documentElement.classList.toggle('dark', newTheme === 'dark');
+                      const next = !isDark;
+                      setIsDark(next);
+                      setTheme(next ? 'dark' : 'light');
+                      // Direct DOM toggle for sandboxed environments (e.g. Figma Make)
+                      // where next-themes cannot manipulate the DOM
+                      document.documentElement.classList.toggle('dark', next);
                     }}
                   >
-                    {mounted && resolvedTheme === 'dark' ? (
+                    {isDark ? (
                       <Sun className="w-[18px] h-[18px] text-muted-foreground" />
                     ) : (
                       <Moon className="w-[18px] h-[18px] text-muted-foreground" />
