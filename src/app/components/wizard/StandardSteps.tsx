@@ -153,7 +153,7 @@ export function StandardSteps({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {filteredApplications.map((app, i) => (
             <OptionCard
               key={app.id}
@@ -268,7 +268,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Operating Environment</h2>
                   <p className="text-muted-foreground">Where will the switch be used?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                   {(environments || []).map((env, i) => (
                     <OptionCard
                       key={env.id}

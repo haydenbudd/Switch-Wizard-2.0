@@ -188,22 +188,28 @@ export const actions: Option[] = [
 
 export const environments: Option[] = [
   {
+    id: 'open',
+    label: 'Open / Unprotected',
+    icon: Sparkles,
+    description: 'IPXX — basic or no ingress protection.',
+  },
+  {
     id: 'dry',
     label: 'Dry / Indoor',
     icon: Sun,
-    description: 'IP20 sufficient.',
+    description: 'IP20 — protected from solid objects.',
   },
   {
     id: 'damp',
     label: 'Damp / Splash',
     icon: CloudRain,
-    description: 'IP56 recommended.',
+    description: 'IP56 — splash and dust proof.',
   },
   {
     id: 'wet',
     label: 'Wet / Washdown',
     icon: Droplets,
-    description: 'IP68 required.',
+    description: 'IP68 — fully submersible.',
   },
   {
     id: 'any',

@@ -103,8 +103,7 @@ function deriveConnectorType(row: StockSwitchRow): string | undefined {
 }
 
 function normalizeIp(raw: string | null): string {
-  if (!raw) return 'IP20';
-  if (raw === 'IPXX') return 'IP20';
+  if (!raw) return 'IPXX';
   if (raw === 'IPX8') return 'IP68';
   return raw;
 }
