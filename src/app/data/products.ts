@@ -151,7 +151,7 @@ export const products: Product[] = [
     ip: 'IP20',
     actions: ['momentary', 'maintained'],
     material: 'Formed Steel',
-    connector_type: 'quick-connect',
+    connector_type: 'pre-wired',
     description: 'Air-actuated electrical switch.',
     applications: ['manufacturing', 'utilities', 'general', 'medical'],
     features: [],

@@ -73,15 +73,16 @@ function deriveConnectorType(row: StockSwitchRow): string | undefined {
   }
 
   // For null Connection, infer from series when possible
+  // Verified against linemaster.com product pages (Feb 2026)
   const series = (row.series || '').toLowerCase();
-  if (series.includes('hercules') || series.includes('clipper') || series.includes('vanguard') || series.includes('atlas') || series.includes('nautilus')) {
+  if (series.includes('hercules') || series.includes('clipper') || series.includes('atlas') || series.includes('nautilus') || series.includes('compact') || series.includes('lektro')) {
     return 'screw-terminal';
   }
-  if (series.includes('varior') || series.includes('dolphin') || series.includes('gem') || series.includes('air seal') || series.includes('treadlite') || series.includes('executive')) {
-    return 'pre-wired';
-  }
-  if (series.includes('classic')) {
+  if (series.includes('classic') || series.includes('treadlite') || series.includes('aquiline')) {
     return 'quick-connect';
+  }
+  if (series.includes('varior') || series.includes('dolphin') || series.includes('gem') || series.includes('air seal') || series.includes('vanguard') || series.includes('executive')) {
+    return 'pre-wired';
   }
 
   return undefined;
