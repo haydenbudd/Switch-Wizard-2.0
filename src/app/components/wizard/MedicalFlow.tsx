@@ -102,13 +102,14 @@ export function MedicalFlow({
         return (
           <div className="flex items-center justify-center min-h-[400px]">
             <GlassCard className="max-w-2xl w-full p-8 md:p-10">
-              <p className="text-sm font-semibold text-blue-500 tracking-wide mb-2">
-                STEP 2 OF {STOCK_DISPLAY_TOTAL}
-              </p>
-
-              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-                How would you like to proceed?
-              </h2>
+              <div className="text-center mb-6">
+                <p className="text-sm font-semibold text-blue-500 tracking-wide mb-2">
+                  STEP 2 OF {STOCK_DISPLAY_TOTAL}
+                </p>
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                  How would you like to proceed?
+                </h2>
+              </div>
 
               <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-8 flex gap-3">
                 <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />

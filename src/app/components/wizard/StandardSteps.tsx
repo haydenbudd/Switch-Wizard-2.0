@@ -143,14 +143,13 @@ export function StandardSteps({
   if (wizardState.step === 0) {
     return (
       <div className="container mx-auto px-4 pt-24 pb-12">
-        <div className="flex items-center mb-10">
-          <Button variant="ghost" onClick={onBack} className="mr-4 text-muted-foreground hover:text-foreground">
-            <ChevronLeft className="w-4 h-4 mr-1" /> Back
-          </Button>
-          <div>
-            <p className="text-xs font-semibold tracking-widest uppercase text-primary/60 mb-0.5">Step 1</p>
-            <h2 className="text-2xl font-bold tracking-tight">Select Your Application</h2>
-          </div>
+        <Button variant="ghost" onClick={onBack} className="mb-4 text-muted-foreground hover:text-foreground">
+          <ChevronLeft className="w-4 h-4 mr-1" /> Back
+        </Button>
+        <div className="text-center mb-10">
+          <p className="text-xs font-semibold tracking-widest uppercase text-primary/60 mb-1">Step 1</p>
+          <h2 className="text-3xl font-bold tracking-tight mb-2">Select Your Application</h2>
+          <p className="text-muted-foreground">Choose the specific use case for your foot switch</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -216,7 +215,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Select Technology</h2>
                   <p className="text-muted-foreground">Choose the switching mechanism for your application</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                   {(technologies || [])
                     .filter((t) => t.availableFor?.includes(wizardState.selectedApplication))
                     .map((tech, i) => (
@@ -242,7 +241,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Select Action Type</h2>
                   <p className="text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
                     .map((action, i) => (
@@ -293,7 +292,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Duty Rating</h2>
                   <p className="text-muted-foreground">How heavy will the usage be?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
                       key={duty.id}
@@ -374,7 +373,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Additional Features</h2>
                   <p className="text-muted-foreground">Select any that apply, or skip to view results.</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
                   {(features || [])
                     .filter((f) => !f.hideFor?.includes(wizardState.selectedTechnology))
                     .map((feat, i) => {
