@@ -15,13 +15,22 @@ import {
   Wifi,
   BarChart3,
   Layers,
-  Shield
+  Shield,
+  AlertTriangle,
+  FolderTree,
+  PieChart,
+  TrendingUp,
+  Download
 } from 'lucide-react';
 import { ProductList } from './ProductList';
 import { ProductForm } from './ProductForm';
 import { CSVImport } from './CSVImport';
 import { BulkAttributeUpdater } from './BulkAttributeUpdater';
 import { SupabaseDebugger } from './SupabaseDebugger';
+import { DataAudit } from './DataAudit';
+import { SeriesManager } from './SeriesManager';
+import { FieldCoverage } from './FieldCoverage';
+import { WizardAnalytics } from './WizardAnalytics';
 import { Button } from '@/app/components/ui/button';
 import { Product, fetchProducts, createOrUpdateProduct, deleteProduct } from '@/app/lib/api';
 import { toast } from 'sonner';
@@ -30,7 +39,7 @@ interface AdminDashboardProps {
   onSignOut: () => void;
 }
 
-type View = 'products' | 'import' | 'settings' | 'bulk-update' | 'debug';
+type View = 'products' | 'import' | 'settings' | 'bulk-update' | 'debug' | 'audit' | 'series' | 'coverage' | 'analytics';
 
 export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
   const [currentView, setCurrentView] = useState<View>('products');
@@ -169,6 +178,46 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
             <Database className="w-4 h-4 mr-2" />
             Database Debug
           </Button>
+
+          <div className="pt-3 pb-1 px-2">
+            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">Reports</p>
+          </div>
+          <Button
+            variant={currentView === 'audit' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('audit')}
+          >
+            <AlertTriangle className="w-4 h-4 mr-2" />
+            Data Audit
+          </Button>
+          <Button
+            variant={currentView === 'series' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('series')}
+          >
+            <FolderTree className="w-4 h-4 mr-2" />
+            Series Manager
+          </Button>
+          <Button
+            variant={currentView === 'coverage' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('coverage')}
+          >
+            <PieChart className="w-4 h-4 mr-2" />
+            Field Coverage
+          </Button>
+          <Button
+            variant={currentView === 'analytics' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('analytics')}
+          >
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Wizard Analytics
+          </Button>
+
+          <div className="pt-3 pb-1 px-2">
+            <p className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wider">System</p>
+          </div>
           <Button
             variant={currentView === 'settings' ? 'secondary' : 'ghost'}
             className="w-full justify-start"
@@ -318,6 +367,25 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
                   <Button variant="outline" onClick={loadProducts} title="Refresh Products">
                     <RefreshCw className="w-4 h-4" />
                   </Button>
+                  <Button variant="outline" onClick={() => {
+                    const headers = ['id','series','part_number','technology','duty','ip','material','actions','applications','connector_type','voltage','amperage','certifications','description','image','link'];
+                    const rows = products.map(p => headers.map(h => {
+                      const val = (p as Record<string, unknown>)[h];
+                      const str = Array.isArray(val) ? val.join('; ') : String(val ?? '');
+                      return `"${str.replace(/"/g, '""')}"`;
+                    }).join(','));
+                    const csv = [headers.join(','), ...rows].join('\n');
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `products-${new Date().toISOString().slice(0, 10)}.csv`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Export CSV
+                  </Button>
                   <Button onClick={() => setIsCreating(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Product
@@ -397,6 +465,56 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
                 Inspect raw database contents and verify data integrity.
               </p>
               <SupabaseDebugger />
+            </div>
+          )}
+
+          {currentView === 'audit' && (
+            <div className="max-w-4xl mx-auto space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Data Audit</h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Scan product data for missing fields, duplicates, and inconsistencies.
+              </p>
+              <DataAudit
+                products={products}
+                onProductUpdate={async (id, data) => {
+                  await createOrUpdateProduct({ ...data, id });
+                  loadProducts();
+                }}
+                onEditProduct={(product) => {
+                  setEditingProduct(product);
+                  setCurrentView('products');
+                }}
+              />
+            </div>
+          )}
+
+          {currentView === 'series' && (
+            <div className="max-w-4xl mx-auto space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Series Manager</h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                View products grouped by series. Highlights inconsistencies within each series.
+              </p>
+              <SeriesManager products={products} />
+            </div>
+          )}
+
+          {currentView === 'coverage' && (
+            <div className="max-w-4xl mx-auto space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Field Coverage</h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Completeness report for every product field — sorted worst to best.
+              </p>
+              <FieldCoverage products={products} />
+            </div>
+          )}
+
+          {currentView === 'analytics' && (
+            <div className="max-w-5xl mx-auto space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Wizard Analytics</h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Track how users interact with the product finder wizard.
+              </p>
+              <WizardAnalytics />
             </div>
           )}
 
