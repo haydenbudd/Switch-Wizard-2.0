@@ -1,3 +1,4 @@
+import type { ElementType } from 'react';
 import {
   Factory,
   Heart,
@@ -37,7 +38,7 @@ import {
 export interface Option {
   id: string;
   label: string;
-  icon?: any;
+  icon?: ElementType;
   description: string;
   isMedical?: boolean;
   availableFor?: string[];

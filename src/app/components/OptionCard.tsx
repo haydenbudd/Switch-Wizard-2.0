@@ -1,3 +1,5 @@
+import { memo } from 'react';
+import type { ElementType } from 'react';
 import { GlassCard } from './GlassCard';
 import { cn } from '@/app/components/ui/utils';
 import { Check } from 'lucide-react';
@@ -5,7 +7,7 @@ import { Check } from 'lucide-react';
 interface OptionCardProps {
   id?: string;
   label: string;
-  icon?: any;
+  icon?: ElementType;
   description?: string;
   selected?: boolean;
   onClick: () => void;
@@ -15,7 +17,7 @@ interface OptionCardProps {
   index?: number;
 }
 
-export function OptionCard({
+export const OptionCard = memo(function OptionCard({
   id,
   label,
   icon: Icon,
@@ -33,6 +35,9 @@ export function OptionCard({
       interactive={!isDisabled}
       hoverEffect={!isDisabled && !selected}
       onClick={() => !isDisabled && onClick()}
+      aria-label={`${label}${selected ? ', selected' : ''}${isDisabled ? ', unavailable' : ''}${count !== undefined ? `, ${count} products` : ''}`}
+      aria-pressed={selected}
+      aria-disabled={isDisabled}
       className={cn(
         "h-full flex flex-col items-center text-center justify-center min-h-[180px] relative transition-all duration-300 animate-card-enter",
         selected
@@ -83,4 +88,4 @@ export function OptionCard({
       )}
     </GlassCard>
   );
-}
+});

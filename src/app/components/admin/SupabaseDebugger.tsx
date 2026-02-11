@@ -6,7 +6,7 @@ import { RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 
 export function SupabaseDebugger() {
   const [status, setStatus] = useState<'loading' | 'connected' | 'error'>('loading');
-  const [details, setDetails] = useState<any>(null);
+  const [details, setDetails] = useState<Record<string, unknown> | null>(null);
   const [tables, setTables] = useState<string[]>([]);
 
   const checkConnection = async () => {
@@ -28,14 +28,15 @@ export function SupabaseDebugger() {
       // Try to list tables (requires privileged access usually, but we can try inference)
       setTables(['products', 'options']); 
 
-    } catch (err: any) {
+    } catch (err) {
       console.error('Supabase connection error:', err);
       setStatus('error');
+      const e = err as Record<string, unknown>;
       setDetails({
-        message: err.message,
-        code: err.code,
-        hint: err.hint,
-        details: err.details
+        message: e.message ?? String(err),
+        code: e.code,
+        hint: e.hint,
+        details: e.details
       });
     }
   };

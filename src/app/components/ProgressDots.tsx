@@ -9,7 +9,7 @@ interface ProgressDotsProps {
 
 export function ProgressDots({ currentStep, totalSteps, onStepClick }: ProgressDotsProps) {
   return (
-    <div className="flex items-center justify-center space-x-2 md:space-x-4 py-6">
+    <nav aria-label="Wizard progress" className="flex items-center justify-center space-x-2 md:space-x-4 py-6">
       {Array.from({ length: totalSteps }).map((_, index) => {
         const isCompleted = index < currentStep;
         const isActive = index === currentStep;
@@ -28,6 +28,8 @@ export function ProgressDots({ currentStep, totalSteps, onStepClick }: ProgressD
 
             {/* Dot */}
             <button
+              aria-label={`Step ${index + 1}${isCompleted ? ', completed' : isActive ? ', current' : ''}`}
+              aria-current={isActive ? 'step' : undefined}
               onClick={() => onStepClick && index < currentStep && onStepClick(index)}
               disabled={!onStepClick || index >= currentStep}
               className={cn(
@@ -59,6 +61,6 @@ export function ProgressDots({ currentStep, totalSteps, onStepClick }: ProgressD
           </div>
         );
       })}
-    </div>
+    </nav>
   );
 }

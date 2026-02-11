@@ -5,7 +5,7 @@ import { AdminDashboard } from './AdminDashboard';
 import { Toaster } from 'sonner';
 
 export function AdminContainer() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

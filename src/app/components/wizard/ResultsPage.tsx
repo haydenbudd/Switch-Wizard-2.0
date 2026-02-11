@@ -125,7 +125,8 @@ export function ResultsPage({
       }
       if (sortBy === 'ip') {
         const getIpVal = (ip: string) => {
-          if (ip.toUpperCase().includes('X')) return 80; // IPX8 = high water protection
+          // IPXX means no IP protection — sort to bottom
+          if (ip === 'IPXX') return 0;
           return parseInt(ip.replace(/\D/g, '') || '0');
         };
         return getIpVal(b.ip) - getIpVal(a.ip);
@@ -145,7 +146,8 @@ export function ResultsPage({
   }, [finalResults.length, getAlternativeProducts]);
 
   // Handler for clearing specific wizard filters
-  const removeWizardFilter = (type: 'application' | 'technology' | 'action' | 'environment' | 'duty' | 'material' | 'feature', value?: string) => {
+  type FilterType = 'application' | 'technology' | 'action' | 'environment' | 'duty' | 'material' | 'feature' | 'guard' | 'features' | 'all';
+  const removeWizardFilter = (type: FilterType, value?: string) => {
     switch (type) {
       case 'application':
         wizardState.setSelectedApplication('');
@@ -168,9 +170,25 @@ export function ResultsPage({
         wizardState.setSelectedMaterial('');
         break;
       case 'feature':
+      case 'features':
         if (value) {
           wizardState.setSelectedFeatures(prev => prev.filter(f => f !== value));
+        } else {
+          wizardState.setSelectedFeatures([]);
         }
+        break;
+      case 'guard':
+        wizardState.setSelectedGuard('');
+        break;
+      case 'all':
+        wizardState.setSelectedApplication('');
+        wizardState.setSelectedTechnology('');
+        wizardState.setSelectedAction('');
+        wizardState.setSelectedEnvironment('');
+        wizardState.setSelectedDuty('');
+        wizardState.setSelectedMaterial('');
+        wizardState.setSelectedGuard('');
+        wizardState.setSelectedFeatures([]);
         break;
     }
   };
@@ -182,8 +200,8 @@ export function ResultsPage({
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
             <h2 className="text-3xl font-bold text-foreground">Recommended Products</h2>
-            <p className="text-muted-foreground mt-1">
-              {finalResults.length} matches found based on your criteria
+            <p className="text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">
+              {finalResults.length} {finalResults.length === 1 ? 'match' : 'matches'} found based on your criteria
             </p>
           </div>
           <div className="flex gap-2">
@@ -259,7 +277,7 @@ export function ResultsPage({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+                <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as 'relevance' | 'duty' | 'ip')}>
                   <DropdownMenuRadioItem value="relevance">Relevance</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="duty">Duty Rating (Heavy First)</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="ip">IP Rating (High to Low)</DropdownMenuRadioItem>
@@ -274,13 +292,13 @@ export function ResultsPage({
                   <SlidersHorizontal className="w-4 h-4" />
                   More Filters
                   {(dutyFilter.length > 0 || cordedFilter !== 'all' || materialFilter.length > 0) && (
-                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span className="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>Connection Type</DropdownMenuLabel>
-                <DropdownMenuRadioGroup value={cordedFilter} onValueChange={(v) => setCordedFilter(v as any)}>
+                <DropdownMenuRadioGroup value={cordedFilter} onValueChange={(v) => setCordedFilter(v as 'all' | 'corded' | 'cordless')}>
                   <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="corded">Pre-wired / Plug</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="cordless">Terminals (User wired)</DropdownMenuRadioItem>
@@ -292,12 +310,21 @@ export function ResultsPage({
                 {/* Simplified Multi-select via standard items for now */}
                 {['heavy', 'medium', 'light'].map(duty => (
                   <div key={duty} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
+                    role="checkbox"
+                    aria-checked={dutyFilter.includes(duty)}
+                    tabIndex={0}
                     onClick={(e) => {
                       e.preventDefault();
                       setDutyFilter(prev => prev.includes(duty) ? prev.filter(d => d !== duty) : [...prev, duty]);
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setDutyFilter(prev => prev.includes(duty) ? prev.filter(d => d !== duty) : [...prev, duty]);
+                      }
+                    }}
                   >
-                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${dutyFilter.includes(duty) ? 'bg-primary border-primary text-white' : ''}`}>
+                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${dutyFilter.includes(duty) ? 'bg-primary border-primary text-white' : ''}`} aria-hidden="true">
                       {dutyFilter.includes(duty) && <Check className="w-3 h-3" />}
                     </div>
                     <span className="capitalize text-sm">{duty}</span>
@@ -309,12 +336,21 @@ export function ResultsPage({
                 <DropdownMenuLabel>Material</DropdownMenuLabel>
                 {availableMaterials.map(mat => (
                   <div key={mat} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
+                    role="checkbox"
+                    aria-checked={materialFilter.includes(mat)}
+                    tabIndex={0}
                     onClick={(e) => {
                       e.preventDefault();
                       setMaterialFilter(prev => prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat]);
                     }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setMaterialFilter(prev => prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat]);
+                      }
+                    }}
                   >
-                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${materialFilter.includes(mat) ? 'bg-primary border-primary text-white' : ''}`}>
+                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${materialFilter.includes(mat) ? 'bg-primary border-primary text-white' : ''}`} aria-hidden="true">
                       {materialFilter.includes(mat) && <Check className="w-3 h-3" />}
                     </div>
                     <span className="text-sm">{mat}</span>
@@ -365,7 +401,7 @@ export function ResultsPage({
                 <p className="text-sm text-muted-foreground">
                   {alternatives.products.length} {alternatives.products.length === 1 ? 'product' : 'products'} available if you adjust your filters
                 </p>
-                <Button variant="outline" onClick={() => removeWizardFilter(alternatives.relaxed as any)}>
+                <Button variant="outline" onClick={() => removeWizardFilter(alternatives.relaxed as FilterType)}>
                   Remove {alternatives.relaxed === 'all' ? 'all filters' : `"${alternatives.relaxed}" filter`} ({alternatives.products.length} results)
                 </Button>
                 <Button variant="link" onClick={onReset}>Start over</Button>
@@ -377,8 +413,8 @@ export function ResultsPage({
 
       {/* Floating Action Button for Mobile */}
       <div className="fixed bottom-6 right-6 md:hidden z-40">
-        <Button size="icon" className="h-12 w-12 rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90" onClick={onBack}>
-          <ArrowLeft className="w-5 h-5" />
+        <Button size="icon" className="h-12 w-12 rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90" onClick={onBack} aria-label="Go back">
+          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
         </Button>
       </div>
     </div>

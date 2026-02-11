@@ -1,19 +1,4 @@
-export interface Product {
-  id: string;
-  series: string;
-  technology: string;
-  duty: 'heavy' | 'medium' | 'light';
-  ip: string;
-  actions: string[];
-  material: string;
-  connector_type?: string;
-  description: string;
-  applications: string[];
-  features?: string[];
-  flagship: boolean;
-  image: string;
-  link: string;
-}
+import type { Product } from '@/app/lib/api';
 
 export const products: Product[] = [
   {

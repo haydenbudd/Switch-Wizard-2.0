@@ -80,22 +80,18 @@ export async function signInWithPassword(email: string, password: string) {
     throw new Error(`Account locked. Try again in ${lockStatus.remainingTime} minutes.`);
   }
   
-  try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (error) {
-      recordFailedLogin();
-      throw error;
-    }
-    
-    recordSuccessfulLogin();
-    return data;
-  } catch (err) {
-    throw err;
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    recordFailedLogin();
+    throw error;
   }
+
+  recordSuccessfulLogin();
+  return data;
 }
 
 export async function signOut() {
@@ -141,7 +137,7 @@ export async function getCurrentUser() {
 }
 
 // Listen to auth state changes
-export function onAuthStateChange(callback: (session: any) => void) {
+export function onAuthStateChange(callback: (session: unknown) => void) {
   return supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
       localStorage.removeItem('last_activity');

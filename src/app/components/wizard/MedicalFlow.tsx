@@ -118,10 +118,14 @@ export function MedicalFlow({
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" role="radiogroup" aria-label="Choose how to proceed">
                 {/* Browse Stock Products */}
                 <div
                   onClick={() => handleForkSelect('stock')}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleForkSelect('stock'); } }}
+                  role="radio"
+                  aria-checked={wizardState.selectedMedicalPath === 'stock'}
+                  tabIndex={0}
                   className={cn(
                     "relative cursor-pointer rounded-xl p-6 border-2 transition-all duration-200",
                     wizardState.selectedMedicalPath === 'stock'
@@ -156,6 +160,10 @@ export function MedicalFlow({
                 {/* Configure Custom Solution */}
                 <div
                   onClick={() => handleForkSelect('custom')}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleForkSelect('custom'); } }}
+                  role="radio"
+                  aria-checked={wizardState.selectedMedicalPath === 'custom'}
+                  tabIndex={0}
                   className={cn(
                     "relative cursor-pointer rounded-xl p-6 border-2 transition-all duration-200",
                     wizardState.selectedMedicalPath === 'custom'
@@ -358,8 +366,8 @@ export function MedicalFlow({
 
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" size="icon" onClick={onBack} title="Back">
-            <ArrowLeft className="w-5 h-5" />
+          <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back">
+            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
           </Button>
           <div className="flex flex-col items-center">
             <span className="text-xs font-bold tracking-widest text-red-500 uppercase">Medical Division</span>

@@ -5,7 +5,6 @@ import { projectId, publicAnonKey } from '/utils/supabase/info';
 const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/make-server-a6e7a38d`;
 
 async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-  console.log('API Request:', API_BASE_URL + endpoint);
 
   try {
     const controller = new AbortController();

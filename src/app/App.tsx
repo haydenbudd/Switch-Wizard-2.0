@@ -5,7 +5,6 @@ import { OrbBackground } from '@/app/components/OrbBackground';
 import { useProductData } from '@/app/hooks/useProductData';
 import { useWizardState } from '@/app/hooks/useWizardState';
 import { trackWizardStep, trackNoResults } from '@/app/utils/analytics';
-import { generatePDF } from '@/app/utils/generatePDF';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage } from '@/app/components/wizard/ResultsPage';
@@ -45,26 +44,26 @@ function WizardApp() {
   const [cordedFilter, setCordedFilter] = useState<'all' | 'corded' | 'cordless'>('all');
   const [materialFilter, setMaterialFilter] = useState<string[]>([]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     wizardState.resetWizard();
     setSearchTerm('');
     setSortBy('relevance');
     setDutyFilter([]);
     setCordedFilter('all');
     setMaterialFilter([]);
-  };
+  }, [wizardState.resetWizard]);
 
   // Clear all selections downstream of the given step to prevent stale filter combos
-  const clearDownstreamSelections = (fromStep: number) => {
+  const clearDownstreamSelections = useCallback((fromStep: number) => {
     if (fromStep <= 1) { wizardState.setSelectedAction(''); }
     if (fromStep <= 2) { wizardState.setSelectedEnvironment(''); }
     if (fromStep <= 3) { wizardState.setSelectedDuty(''); }
     if (fromStep <= 4) { wizardState.setSelectedConnection(''); }
     if (fromStep <= 5) { wizardState.setSelectedGuard(''); }
     if (fromStep <= 6) { wizardState.setSelectedFeatures([]); }
-  };
+  }, [wizardState.setSelectedAction, wizardState.setSelectedEnvironment, wizardState.setSelectedDuty, wizardState.setSelectedConnection, wizardState.setSelectedGuard, wizardState.setSelectedFeatures]);
 
-  const handleCategorySelect = (categoryId: string) => {
+  const handleCategorySelect = useCallback((categoryId: string) => {
     const cat = (categories || []).find((c) => c.id === categoryId);
     wizardState.setSelectedCategory(categoryId);
 
@@ -78,18 +77,18 @@ function WizardApp() {
       trackWizardStep(0, 'medical', { application: 'medical' });
     }
     // Other categories stay on step 0 phase 2 to show sub-applications
-  };
+  }, [categories, clearDownstreamSelections, wizardState.setSelectedCategory, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
-  const handleApplicationSelect = (id: string) => {
+  const handleApplicationSelect = useCallback((id: string) => {
     wizardState.setSelectedApplication(id);
     wizardState.setSelectedTechnology('');
     clearDownstreamSelections(0);
     wizardState.setFlow('standard');
     setTimeout(() => wizardState.setStep(1), 150);
     trackWizardStep(0, 'standard', { application: id });
-  };
+  }, [clearDownstreamSelections, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     // Step 0 phase 2: go back to phase 1 (category selection)
     if (wizardState.step === 0 && wizardState.selectedCategory) {
       wizardState.setSelectedCategory('');
@@ -114,9 +113,9 @@ function WizardApp() {
       }
       wizardState.setStep(prevStep);
     }
-  };
+  }, [wizardState.step, wizardState.flow, wizardState.selectedCategory, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
 
-  const handleContinue = () => {
+  const handleContinue = useCallback(() => {
     let newStep = wizardState.step + 1;
     // Skip Connection Type step (index 5) for pneumatic/wireless technology
     if (newStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
@@ -130,9 +129,9 @@ function WizardApp() {
       environment: wizardState.selectedEnvironment,
       features: wizardState.selectedFeatures,
     });
-  };
+  }, [wizardState.step, wizardState.flow, wizardState.selectedTechnology, wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedFeatures, wizardState.setStep]);
 
-  const handleViewMedicalProducts = () => {
+  const handleViewMedicalProducts = useCallback(() => {
     wizardState.setSelectedTechnology('electrical');
     wizardState.setFlow('standard');
     wizardState.setStep(8);
@@ -143,9 +142,9 @@ function WizardApp() {
       environment: wizardState.selectedEnvironment,
       source: 'medical_bypass'
     });
-  };
+  }, [wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
-  const filterProducts = (overrides: Partial<typeof wizardState> = {}) => {
+  const filterProducts = useCallback((overrides: Partial<typeof wizardState> = {}) => {
     const state = { ...wizardState, ...overrides };
 
     return (products || []).filter((product) => {
@@ -175,9 +174,9 @@ function WizardApp() {
 
       return true;
     });
-  };
+  }, [products, wizardState]);
 
-  const getProductCount = (step: number, optionId?: string) => {
+  const getProductCount = useCallback((step: number, optionId?: string) => {
     const safeProducts = products || [];
     if (step === 1) {
       return safeProducts.filter(p =>
@@ -242,9 +241,9 @@ function WizardApp() {
       }).length;
     }
     return 0;
-  };
+  }, [products, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty, wizardState.selectedConnection]);
 
-  const getAlternativeProducts = () => {
+  const getAlternativeProducts = useCallback(() => {
     if (wizardState.selectedFeatures.length > 0) {
       const withoutFeatures = filterProducts({ selectedFeatures: [] });
       if (withoutFeatures.length > 0) return { products: withoutFeatures, relaxed: 'features' as const };
@@ -283,62 +282,57 @@ function WizardApp() {
     }
     const allForApplication = (products || []).filter((product) => product.applications.includes(wizardState.selectedApplication));
     return { products: allForApplication, relaxed: 'all' as const };
-  };
+  }, [filterProducts, products, wizardState]);
 
   const needsCustomSolution = useMemo(() => {
-    const filtered = filterProducts();
-    const hasCustomFeature =
-      wizardState.selectedFeatures.includes('custom_cable') ||
+    return wizardState.selectedFeatures.includes('custom_cable') ||
       wizardState.selectedFeatures.includes('custom_connector');
+  }, [wizardState.selectedFeatures]);
 
-    if (wizardState.step === 8 && filtered.length === 0) {
-      trackNoResults({
-        application: wizardState.selectedApplication,
-        technology: wizardState.selectedTechnology,
-        action: wizardState.selectedAction,
-        environment: wizardState.selectedEnvironment,
-        features: wizardState.selectedFeatures,
-      });
+  // Track no-results as a side effect (not inside useMemo)
+  useEffect(() => {
+    if (wizardState.step === 8) {
+      const filtered = filterProducts();
+      if (filtered.length === 0) {
+        trackNoResults({
+          application: wizardState.selectedApplication,
+          technology: wizardState.selectedTechnology,
+          action: wizardState.selectedAction,
+          environment: wizardState.selectedEnvironment,
+          features: wizardState.selectedFeatures,
+        });
+      }
     }
-    return hasCustomFeature;
-  }, [
-    products,
-    wizardState.step,
-    wizardState.selectedApplication,
-    wizardState.selectedTechnology,
-    wizardState.selectedAction,
-    wizardState.selectedEnvironment,
-    wizardState.selectedDuty,
-    wizardState.selectedConnection,
-    wizardState.selectedGuard,
-    wizardState.selectedFeatures,
-  ]);
+  }, [filterProducts, wizardState.step]);
 
-  const handleGeneratePDF = async () => {
+  const handleGeneratePDF = useCallback(async () => {
+    const { generatePDF } = await import('@/app/utils/generatePDF');
     await generatePDF({
       wizardState,
       matchedProducts: filterProducts(),
       applications, technologies, actions, environments, features, duties,
       consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories,
     });
-  };
+  }, [wizardState, filterProducts, applications, technologies, actions, environments, features, duties, consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories]);
 
   // Calculate total visible steps dynamically
-  const totalSteps = (() => {
+  const totalSteps = useMemo(() => {
     if (wizardState.flow === 'medical') return 6;
     let steps = 7;
     if (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') steps--;
     return steps;
-  })();
+  }, [wizardState.flow, wizardState.selectedTechnology]);
 
-  const getProgressStep = (rawStep: number) => {
+  const skipsConnectionStep = wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless';
+
+  const getProgressStep = useCallback((rawStep: number) => {
     if (rawStep <= 0) return 0;
     let step = rawStep - 1;
-    if ((wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') && rawStep > 5) step--;
+    if (skipsConnectionStep && rawStep > 5) step--;
     return step;
-  };
+  }, [skipsConnectionStep]);
 
-  const getDisplayStep = (rawStep: number) => getProgressStep(rawStep) + 1;
+  const getDisplayStep = useCallback((rawStep: number) => getProgressStep(rawStep) + 1, [getProgressStep]);
 
   // Medical flow
   if (wizardState.flow === 'medical') {
@@ -366,6 +360,7 @@ function WizardApp() {
     <OrbBackground />
     <div className="min-h-screen relative z-10 grain-overlay">
       <Header onReset={handleReset} />
+      <main>
 
       {wizardState.step >= 0 && wizardState.step <= 7 && (
         <StandardSteps
@@ -419,6 +414,7 @@ function WizardApp() {
           setMaterialFilter={setMaterialFilter}
         />
       )}
+      </main>
     </div>
     </>
   );

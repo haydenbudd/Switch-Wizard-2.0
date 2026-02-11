@@ -95,7 +95,7 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
         <div className="space-y-2">
           <Label>Duty Rating</Label>
-          <Select onValueChange={(val: any) => setValue('duty', val)} defaultValue={initialData?.duty}>
+          <Select onValueChange={(val) => setValue('duty', val as Product['duty'])} defaultValue={initialData?.duty}>
             <SelectTrigger>
               <SelectValue placeholder="Select duty" />
             </SelectTrigger>
@@ -129,7 +129,7 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
         <div className="space-y-2">
           <Label>Connector Type</Label>
-          <Select onValueChange={(val) => setValue('connector_type', val === 'none' ? undefined as any : val)} defaultValue={initialData?.connector_type || 'none'}>
+          <Select onValueChange={(val) => setValue('connector_type', val === 'none' ? undefined : val)} defaultValue={initialData?.connector_type || 'none'}>
             <SelectTrigger>
               <SelectValue placeholder="Select connector type" />
             </SelectTrigger>

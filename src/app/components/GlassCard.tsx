@@ -1,7 +1,7 @@
 import { cn } from "@/app/components/ui/utils";
-import { CSSProperties, ReactNode } from "react";
+import { CSSProperties, ReactNode, AriaAttributes } from "react";
 
-interface GlassCardProps {
+interface GlassCardProps extends Pick<AriaAttributes, 'aria-label' | 'aria-pressed' | 'aria-disabled'> {
   children: ReactNode;
   className?: string;
   hoverEffect?: boolean;
@@ -17,10 +17,19 @@ export function GlassCard({
   interactive = false,
   onClick,
   style,
+  'aria-label': ariaLabel,
+  'aria-pressed': ariaPressed,
+  'aria-disabled': ariaDisabled,
 }: GlassCardProps) {
   return (
     <div
       onClick={onClick}
+      onKeyDown={interactive && onClick ? (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-label={ariaLabel}
+      aria-pressed={ariaPressed}
+      aria-disabled={ariaDisabled}
       style={style}
       className={cn(
         "glass-card rounded-2xl p-6 transition-all duration-300 relative overflow-hidden group",

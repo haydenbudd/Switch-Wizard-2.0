@@ -102,7 +102,7 @@ export function StandardSteps({
           </p>
         </motion.div>
 
-        <div className="flex items-center gap-4 max-w-5xl mx-auto mb-8">
+        <div className="flex items-center gap-4 max-w-5xl mx-auto mb-8" aria-hidden="true">
           <div className="h-px flex-1 bg-border" />
           <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">Choose Your Industry</span>
           <div className="h-px flex-1 bg-border" />
@@ -119,6 +119,7 @@ export function StandardSteps({
               <GlassCard
                 hoverEffect
                 interactive
+                aria-label={category.label}
                 className="p-10 h-full transition-all duration-300 group"
                 onClick={() => onCategorySelect(category.id)}
               >
@@ -178,7 +179,7 @@ export function StandardSteps({
           <span className="uppercase">Step {getDisplayStep(wizardState.step)} of {totalSteps}</span>
           <span className="tabular-nums">{progressPercent}%</span>
         </div>
-        <div className="h-1.5 bg-border rounded-full overflow-hidden">
+        <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`Wizard progress: step ${getDisplayStep(wizardState.step)} of ${totalSteps}`}>
           <motion.div
             className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full progress-glow"
             initial={{ width: 0 }}
@@ -383,6 +384,8 @@ export function StandardSteps({
                           key={feat.id}
                           interactive
                           hoverEffect={!isSelected}
+                          aria-label={`${feat.label}${isSelected ? ', selected' : ''}`}
+                          aria-pressed={isSelected}
                           className={`p-5 transition-all duration-200 animate-card-enter ${
                             isSelected
                               ? 'border-primary/25 bg-primary/[0.03] dark:bg-primary/[0.06] shadow-[var(--selection-glow)]'

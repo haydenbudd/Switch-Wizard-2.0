@@ -53,7 +53,7 @@ export function CSVImport({ onImportComplete }: CSVImportProps) {
 
       const cleanedRow = row.map(val => val.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
       
-      const product: any = {};
+      const product: Record<string, unknown> = {};
       
       // Map CSV headers to Product fields
       // Supports both standard field names and common CSV column headers

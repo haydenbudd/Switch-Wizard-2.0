@@ -1,5 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import type { ElementType } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { fetchProducts, Product, Option } from '@/app/lib/api';
+import type { Option as DataOption } from '@/app/data/options';
 import {
   categories as staticCategories,
   applications as staticApplications,
@@ -18,9 +20,9 @@ import {
 } from '@/app/data/options';
 import { products as staticProducts } from '@/app/data/products';
 
-// Extend Option to allow any type for icon, as it might be a component or string
+// Extend Option to allow component icons (e.g. Lucide icons)
 interface OptionWithIcon extends Omit<Option, 'icon'> {
-  icon?: any;
+  icon?: ElementType;
   isMedical?: boolean;
   availableFor?: string[];
   hideFor?: string[];
@@ -28,7 +30,7 @@ interface OptionWithIcon extends Omit<Option, 'icon'> {
 }
 
 // Helper to process options without destroying React component icons
-function processOption(opt: any): OptionWithIcon {
+function processOption(opt: DataOption): OptionWithIcon {
   return {
     id: opt.id,
     category: opt.category || '',
@@ -90,32 +92,37 @@ export function useProductData(): ProductData {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
+  const loadData = useCallback(async (signal?: AbortSignal) => {
     try {
       setLoading(true);
       setError(null);
 
       const productsData = await fetchProducts();
 
+      if (signal?.aborted) return;
       // Use API products if available, otherwise keep static fallback
       setProducts(productsData.length > 0 ? productsData : staticProducts as Product[]);
     } catch (err) {
+      if (signal?.aborted) return;
       console.warn('API fetch failed, using static fallback data:', err);
       setProducts(staticProducts as Product[]);
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
-    loadData();
+    const controller = new AbortController();
+    loadData(controller.signal);
+    return () => controller.abort();
   }, [loadData]);
 
   // Derive unique materials from product data with user-friendly descriptions
-  const materials: OptionWithIcon[] = (() => {
-    // Create a lookup map from static data to get rich metadata like icons
+  const materials: OptionWithIcon[] = useMemo(() => {
     const metaMap = new Map(staticOptionData.materials.map(m => [m.id, m]));
-    
+
     const seen = new Set<string>();
     return products
       .filter(p => {
@@ -129,17 +136,16 @@ export function useProductData(): ProductData {
           id: p.material,
           category: 'material',
           label: p.material,
-          // Use metadata description/icon if available, otherwise fallback
           description: meta?.description || '',
           icon: meta?.icon,
           sortOrder: meta?.sortOrder || 99,
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
-  })();
+  }, [products]);
 
   // Derive unique connection types from product data with rich metadata
-  const connections: OptionWithIcon[] = (() => {
+  const connections: OptionWithIcon[] = useMemo(() => {
     const metaMap = new Map(staticOptionData.connections.map(c => [c.id, c]));
 
     const seen = new Set<string>();
@@ -162,11 +168,10 @@ export function useProductData(): ProductData {
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
-  })();
+  }, [products]);
 
   // Derive unique duty ratings with user-friendly descriptions
-  const duties: OptionWithIcon[] = (() => {
-    // Create a lookup map from static data to get rich metadata like icons
+  const duties: OptionWithIcon[] = useMemo(() => {
     const metaMap = new Map(staticOptionData.duties.map(d => [d.id, d]));
 
     const seen = new Set<string>();
@@ -188,7 +193,7 @@ export function useProductData(): ProductData {
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
-  })();
+  }, [products]);
 
   // Always use static data for wizard options — these define the UX flow and must always be available.
   // API options could supplement in the future but should never be the sole source.

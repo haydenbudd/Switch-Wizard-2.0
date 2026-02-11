@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { GlassCard } from './GlassCard';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
@@ -6,25 +7,24 @@ import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package } from 'luci
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 
+// Icon mapping for features - defined outside component to avoid re-creation on every render
+function FeatureIcon({ feature }: { feature: string }) {
+  switch (feature) {
+    case 'shield': return <Shield className="w-3 h-3 mr-1" />;
+    case 'wireless': return <Zap className="w-3 h-3 mr-1" />;
+    case 'pneumatic': return <Wind className="w-3 h-3 mr-1" />;
+    default: return <CheckCircle2 className="w-3 h-3 mr-1" />;
+  }
+}
+
 interface ProductCardProps {
   product: Product;
   highlight?: boolean; // If true, applies a featured style
 }
 
-export function ProductCard({ product, highlight = false }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, highlight = false }: ProductCardProps) {
   if (!product) return null;
-  const isMedical = (product.applications || []).includes('medical');
   const isFlagship = product.flagship;
-
-  // Icon mapping for features
-  const FeatureIcon = ({ feature }: { feature: string }) => {
-    switch (feature) {
-      case 'shield': return <Shield className="w-3 h-3 mr-1" />;
-      case 'wireless': return <Zap className="w-3 h-3 mr-1" />; // Or Wifi icon
-      case 'pneumatic': return <Wind className="w-3 h-3 mr-1" />;
-      default: return <CheckCircle2 className="w-3 h-3 mr-1" />;
-    }
-  };
 
   return (
     <GlassCard 
@@ -65,7 +65,7 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
         )}
         
         {/* Quick specs overlay on hover */}
-        <div className="absolute inset-x-0 bottom-0 p-3 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-between text-xs font-medium z-20 border-t border-border/30">
+        <div className="absolute inset-x-0 bottom-0 p-3 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-between text-xs font-medium z-20 border-t border-border/30" aria-hidden="true">
           <span>{product.ip}</span>
           <span className="capitalize">{product.material}</span>
           <span className="capitalize">{product.duty} Duty</span>
@@ -87,7 +87,7 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
           </div>
           <div className="text-sm text-primary/80 font-medium mb-1 capitalize flex items-center gap-2">
             {product.technology}
-            <span className="w-1 h-1 rounded-full bg-current opacity-50" />
+            <span className="w-1 h-1 rounded-full bg-current opacity-50" aria-hidden="true" />
             <span className={product.duty === 'heavy' ? 'text-[var(--accent-warm)]' : ''}>
               {product.duty} Duty
             </span>
@@ -119,19 +119,20 @@ export function ProductCard({ product, highlight = false }: ProductCardProps) {
 
         {/* Footer Actions */}
         <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/50">
-          <a 
-            href={product.link} 
-            target="_blank" 
+          <a
+            href={product.link}
+            target="_blank"
             rel="noopener noreferrer"
             className="w-full"
+            aria-label={`View details for ${product.series}`}
           >
-            <Button className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 text-primary-foreground border-0 transition-all duration-300">
+            <Button className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 text-primary-foreground border-0 transition-all duration-300" tabIndex={-1}>
               View Details
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
+              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
             </Button>
           </a>
         </div>
       </div>
     </GlassCard>
   );
-}
+});

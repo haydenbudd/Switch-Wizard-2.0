@@ -46,29 +46,32 @@ export function Header({ onReset }: HeaderProps) {
           <button
             className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
             title={isDark ? 'Light mode' : 'Dark mode'}
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
             onClick={handleToggleDark}
           >
             {isDark ? (
-              <Sun className="w-4 h-4 text-muted-foreground" />
+              <Sun className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             ) : (
-              <Moon className="w-4 h-4 text-muted-foreground" />
+              <Moon className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             )}
           </button>
 
           <button
             className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
             title="Admin Panel"
+            aria-label="Open admin panel"
             onClick={() => navigate('/admin')}
           >
-            <Settings className="w-4 h-4 text-muted-foreground" />
+            <Settings className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
           </button>
 
           <button
             className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
             title="Reset"
+            aria-label="Reset wizard"
             onClick={onReset}
           >
-            <RotateCcw className="w-4 h-4 text-muted-foreground" />
+            <RotateCcw className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
           </button>
         </div>
       </div>
