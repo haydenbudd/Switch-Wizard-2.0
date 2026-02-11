@@ -1,15 +1,21 @@
-import { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Package, 
-  Settings, 
-  LogOut, 
-  Plus, 
+import { useState, useEffect, useMemo } from 'react';
+import {
+  LayoutDashboard,
+  Package,
+  Settings,
+  LogOut,
+  Plus,
   Search,
   Upload,
   Database,
   RefreshCw,
-  Edit
+  Edit,
+  Zap,
+  Wind,
+  Wifi,
+  BarChart3,
+  Layers,
+  Shield
 } from 'lucide-react';
 import { ProductList } from './ProductList';
 import { ProductForm } from './ProductForm';
@@ -89,11 +95,31 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
     }
   };
 
-  const filteredProducts = products.filter(p => 
+  const filteredProducts = products.filter(p =>
     p.series.toLowerCase().includes(searchTerm.toLowerCase()) ||
     p.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (p.part_number && p.part_number.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const stats = useMemo(() => {
+    if (products.length === 0) return null;
+
+    const techCounts: Record<string, number> = {};
+    const dutyCounts: Record<string, number> = {};
+    const materialCounts: Record<string, number> = {};
+    const ipCounts: Record<string, number> = {};
+    const seriesSet = new Set<string>();
+
+    for (const p of products) {
+      techCounts[p.technology] = (techCounts[p.technology] || 0) + 1;
+      dutyCounts[p.duty] = (dutyCounts[p.duty] || 0) + 1;
+      if (p.material) materialCounts[p.material] = (materialCounts[p.material] || 0) + 1;
+      if (p.ip) ipCounts[p.ip] = (ipCounts[p.ip] || 0) + 1;
+      seriesSet.add(p.series);
+    }
+
+    return { techCounts, dutyCounts, materialCounts, ipCounts, seriesCount: seriesSet.size };
+  }, [products]);
 
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
@@ -170,6 +196,122 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
         <div className="p-8">
           {currentView === 'products' && !isCreating && !editingProduct && (
             <div className="space-y-6">
+              {/* Stats Overview */}
+              {stats && (
+                <div className="space-y-4">
+                  {/* Top row: totals */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/30">
+                          <Package className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Total Products</span>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white ml-11">{products.length}</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/30">
+                          <Layers className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Series</span>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white ml-11">{stats.seriesCount}</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="p-2 rounded-lg bg-green-50 dark:bg-green-950/30">
+                          <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">IP Ratings</span>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white ml-11">{Object.keys(stats.ipCounts).length}</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                      <div className="flex items-center gap-3 mb-1">
+                        <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/30">
+                          <BarChart3 className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">Materials</span>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white ml-11">{Object.keys(stats.materialCounts).length}</p>
+                    </div>
+                  </div>
+
+                  {/* Breakdown rows */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Technology breakdown */}
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">By Technology</h3>
+                      <div className="space-y-2">
+                        {Object.entries(stats.techCounts).sort((a, b) => b[1] - a[1]).map(([tech, count]) => (
+                          <div key={tech} className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              {tech === 'electrical' && <Zap className="w-3.5 h-3.5 text-yellow-500" />}
+                              {tech === 'pneumatic' && <Wind className="w-3.5 h-3.5 text-cyan-500" />}
+                              {tech === 'wireless' && <Wifi className="w-3.5 h-3.5 text-violet-500" />}
+                              <span className="text-sm text-gray-700 dark:text-gray-300 capitalize">{tech}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-20 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full rounded-full bg-blue-500"
+                                  style={{ width: `${(count / products.length) * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">{count}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Duty breakdown */}
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">By Duty Class</h3>
+                      <div className="space-y-2">
+                        {Object.entries(stats.dutyCounts).sort((a, b) => b[1] - a[1]).map(([duty, count]) => (
+                          <div key={duty} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-700 dark:text-gray-300 capitalize">{duty}</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-20 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full rounded-full bg-emerald-500"
+                                  style={{ width: `${(count / products.length) * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">{count}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Material breakdown (top 5) */}
+                    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Top Materials</h3>
+                      <div className="space-y-2">
+                        {Object.entries(stats.materialCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([mat, count]) => (
+                          <div key={mat} className="flex items-center justify-between">
+                            <span className="text-sm text-gray-700 dark:text-gray-300 truncate mr-2">{mat}</span>
+                            <div className="flex items-center gap-2">
+                              <div className="w-20 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full rounded-full bg-amber-500"
+                                  style={{ width: `${(count / products.length) * 100}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-medium text-gray-900 dark:text-white w-8 text-right">{count}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Product Catalog</h2>
                 <div className="flex gap-2">
@@ -194,7 +336,7 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
                 />
               </div>
 
-              <ProductList 
+              <ProductList
                 products={filteredProducts}
                 loading={loading}
                 onEdit={setEditingProduct}
