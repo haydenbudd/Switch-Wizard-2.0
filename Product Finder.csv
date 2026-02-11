@@ -1,0 +1,372 @@
+Series,Part,Syteline Status,Notes,On/Off,Wireless,Linear,Type,Type W/o Electrical,PFC,Electrical Pneumatic,Electrical Pneumatic,Pneumatic Flow Control,PFC Config,Number of Pedals,Circuits Controlled,Functions,Stages,Configuration,Interior Sub,Microswitch,Microswitch Qty,Potentiometer,Potentiometer,Guard,Connection,IP Rating,Gated,Interlock,Material,Color,Link
+Air Seal,41DH12,Active,,Main,,,Electrical Pneumatic,Electrical Pneumatic,,Electrical Pneumatic,Yes,,,1,1,1,,SPDT,,981-ZZ,1,,,,,IPXX,,,Formed Steel,Black,https://linemaster.com/product/2/air-seal-maintained/
+Air Seal,41SH12,Active,41SH12,Mom,,,Electrical Pneumatic,Electrical Pneumatic,,Electrical Pneumatic,Yes,,,1,1,1,,SPDT,,981-ZZ-1,1,,,,,IPXX,,,Formed Steel,Black,https://linemaster.com/product/1/Air-Seal-Maintained/41SH12/
+Airval- Classic,2E-20V2-S,Active,S,Mom,,Yes,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,2 Way,1,0,,,Variable ,,,,,,,,IPXX,,,Cast Aluminum,Black,https://linemaster.com/product/11/airval-classic/
+Airval- Classic,2E-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,2 Way,1,0,,,,,,,,,,,IPXX,,,Cast Aluminum,Black,https://linemaster.com/product/12/Airval-Classic/2E-30A2-S/
+Airval- Classic,3E-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,,,,,,,,,,IPXX,,,Cast Aluminum,Black,https://linemaster.com/product/13/Airval-Classic/3E-30A2-S/
+Airval- Classic,3E-20V2-S,Active,S,Mom,,Yes,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,,Variable ,,,,,,,,IPXX,,,Cast Aluminum,Black,https://linemaster.com/product/14/Airval-Classic/3E-20V2-S/
+Airval - Clipper Single,2C-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,2 Way,1,0,,,,,,,,,,,IPXX,,,Cast Iron,Black,https://linemaster.com/product/8/airval-clipper-single/
+Airval - Clipper Single,3C-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,,,,,,,,,,IPXX,,,Cast Iron,Black,https://linemaster.com/product/9/Airval-Clipper-Single/3C-30A2-S/
+Airval - Clipper Single,4C-30F2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,4 Way,1,0,,,,,,,,,,,IPXX,,,Cast Iron,Black,https://linemaster.com/product/10/Airval-Clipper-Single/4C-30F2-S/
+Airval - Clipper Twin,Twin 3C-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,2,0,,,,,,,,,,,IPXX,,,Cast Iron,Black,https://linemaster.com/product/6/airval-clipper-twin/
+Airval - Clipper Wide Treadle,3L-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,,,,,,,,,,IPXX,,,Cast Iron,Black,https://linemaster.com/product/7/airval-clipper-wide-treadle/
+Airval - Clipper Wide Treadle,3B-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,,,,,,,,,,IPXX,,,Formed Steel,Black,https://linemaster.com/product/4/airval-compact-single/
+Airval - Compact,2B-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,2 Way,1,0,,,,,,,,,,,IPXX,,,Formed Steel,Black,https://linemaster.com/product/5/Airval-Compact-Single/2B-30A2-S/
+Airval- Compact Twin,Twin 3B-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,2,0,,,,,,,,,,,IPXX,,,Formed Steel,Black,https://linemaster.com/product/3/airval-compact-twin/
+Airval Hercules Full,3H-25H2-S4H,Active,S4H,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,2 Stage,,,,,,,,,IPXX,,,Cast Iron,Orange,https://linemaster.com/product/17/airval-hercules-full-shield/
+Airval Hercules Full,3H-25H2-D4H,Active,D4H,Main,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,2 Stage,,,,,,,,,IPXX,,,Cast Iron,Orange,https://linemaster.com/product/18/Airval-Hercules-Full-Shield/3H-25H2-D4H/
+Airval Hercules Full,4H-30H2-DH,Active,DH,Main,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,4 Way,1,0,,,,,,,,,,,IPXX,,,Cast Iron,Orange,https://linemaster.com/product/19/Airval-Hercules-Full-Shield/4H-30H2-DH/
+Airval Hercules Full,4H-30H2-SH,Active,SH,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,4 Way,1,0,,,,,,,,,,,IPXX,,,Cast Iron,Orange,https://linemaster.com/product/21/Airval-Hercules-Full-Shield/4H-30H2-SH/
+Airval Hercules OX,4H-30H2-DHOX,Active,DHOX,Main,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,4 Way,1,0,,,,,,,,,OX,,IPXX,,,Cast Iron,Orange,https://linemaster.com/product/20/airval-hercules-ox-shield/
+Airval Hercules OX,4H-30H2-SHOX,Active,SHOX,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,4 Way,1,0,,,,,,,,,OX,,IPXX,,,Cast Iron,Orange,https://linemaster.com/product/22/Airval-Hercules-Ox-Shield/4H-30H2-SHOX/
+Airval Hercules OX,3H-25H2-S4HOX,Active,S4HOX,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,2 Stage,,,,,,,OX,,IPXX,,,Cast Iron,Orange,https://linemaster.com/product/490/Airval-Hercules-Ox-Shield/3H-25H2-S4HOX/
+Airval - Premier,2P-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,2 Way,1,0,,,,,,,,,,,IPXX,,,Stainless Steel,Chrome,https://linemaster.com/product/15/airval-premier/
+Airval - Premier,3P-30A2-S,Active,S,Mom,,,Pneumatic Flow Control,Pneumatic Flow Control,Pneumatic Flow Control,,,Yes,3 Way,1,0,,,,,,,,,,,IPXX,,,Stainless Steel,Chrome,https://linemaster.com/product/16/Airval-Premier/3P-30A2-S/
+Anti-Trip Hercules Full,511-B2A,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/23/anti-trip-hercules-full-shield/
+Anti-Trip Hercules Full,511-B4A,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/24/Anti-Trip-Hercules-Full-Shield/511-B4A/
+Anti-Trip Hercules Full,511-B2,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/25/Anti-Trip-Hercules-Full-Shield/511-B2/
+Anti-Trip Hercules Full,511-B4,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/26/Anti-Trip-Hercules-Full-Shield/511-B4/
+Anti-Trip Hercules Full,511-B,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/27/Anti-Trip-Hercules-Full-Shield/511-B/
+Anti-Trip Hercules Full,511-B3,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/28/Anti-Trip-Hercules-Full-Shield/511-B3/
+Anti-Trip Hercules Gated O,511-BG,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,O,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/29/anti-trip-hercules-gated-o-shield/
+Anti-Trip Hercules Gated O,511-B2GA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,O,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/30/Anti-Trip-Hercules-Gated-O-Shield/511-B2GA/
+Anti-Trip Hercules Gated O,511-B4GA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,O,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/31/Anti-Trip-Hercules-Gated-O-Shield/511-B4GA/
+Anti-Trip Hercules Gated O,511-B2G,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,O,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/32/Anti-Trip-Hercules-Gated-O-Shield/511-B2G/
+Anti-Trip Hercules Gated O,511-B4G,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,O,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/33/Anti-Trip-Hercules-Gated-O-Shield/511-B4G/
+Anti-Trip Hercules Gated O,511-B3G,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,O,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/34/Anti-Trip-Hercules-Gated-O-Shield/511-B3G/
+Anti-Trip Hercules Gated OX,511-BOXG,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,OX,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/48/anti-trip-hercules-gated-ox-shield/
+Anti-Trip Hercules Gated OX,511-B2OXG,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,OX,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/49/Anti-Trip-Hercules-Gated-Ox-Shield/511-B2OXG/
+Anti-Trip Hercules Gated OX,511-B2OXGA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,OX,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/50/Anti-Trip-Hercules-Gated-Ox-Shield/511-B2OXGA/
+Anti-Trip Hercules Gated OX,511-B3OXG,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,OX,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/51/Anti-Trip-Hercules-Gated-Ox-Shield/511-B3OXG/
+Anti-Trip Hercules Gated OX,511-B4OXG,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,OX,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/52/Anti-Trip-Hercules-Gated-Ox-Shield/511-B4OXG/
+Anti-Trip Hercules Gated OX,511-B4OXGA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,OX,,IP56,Yes,,Cast Iron,Orange,https://linemaster.com/product/53/Anti-Trip-Hercules-Gated-Ox-Shield/511-B4OXGA/
+Anti-Trip Hercules O,511-BO,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/35/anti-trip-hercules-o-shield/
+Anti-Trip Hercules O,511-B2OA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/36/Anti-Trip-Hercules-O-Shield/511-B2OA/
+Anti-Trip Hercules O,511-B4OA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/37/Anti-Trip-Hercules-O-Shield/511-B4OA/
+Anti-Trip Hercules O,511-B2OAC2,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/38/Anti-Trip-Hercules-O-Shield/511-B2OAC2/
+Anti-Trip Hercules O,511-B2O,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/39/Anti-Trip-Hercules-O-Shield/511-B2O/
+Anti-Trip Hercules O,511-B4O,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/40/Anti-Trip-Hercules-O-Shield/511-B4O/
+Anti-Trip Hercules O,511-B3O,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/41/Anti-Trip-Hercules-O-Shield/511-B3O/
+Anti-Trip Hercules OX,511-BOX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/42/anti-trip-hercules-ox-shield/
+Anti-Trip Hercules OX,511-B2OXA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/43/Anti-Trip-Hercules-Ox-Shield/511-B2OXA/
+Anti-Trip Hercules OX,511-B4OXA,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/44/Anti-Trip-Hercules-Ox-Shield/511-B4OXA/
+Anti-Trip Hercules OX,511-B2OX,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/45/Anti-Trip-Hercules-Ox-Shield/511-B2OX/
+Anti-Trip Hercules OX,511-B4OX,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/46/Anti-Trip-Hercules-Ox-Shield/511-B4OX/
+Anti-Trip Hercules OX,511-B3OX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/47/Anti-Trip-Hercules-Ox-Shield/511-B3OX/
+Aquiline Maintained Metal,971-DC3JM,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,Connector,IP20,,,Cast Zinc,Black,https://linemaster.com/product/73/aquiline-maintained-metal/
+Aquiline Maintained Metal,971-DC36JM,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,Flying Leads,IP20,,,Cast Zinc,Black,https://linemaster.com/product/74/Aquiline-Maintained-Metal/971-DC36JM/
+Aquiline Maintained Metal,971-DC38JM,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,Flying Leads,IP20,,,Cast Zinc,Black,https://linemaster.com/product/75/Aquiline-Maintained-Metal/971-DC38JM/
+Aquiline Maintained Metal,971-DJM,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,,IP20,,,Cast Zinc,Black,https://linemaster.com/product/76/Aquiline-Maintained-Metal/971-DJM/
+Aquiline Maintained Metal,971-DJ,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,,IP20,,,Cast Zinc,Black,https://linemaster.com/product/70/aquiline-maintained-polymeric/
+Aquiline Maintained Metal,971-DC26J,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,Flying Leads,IP20,,,Cast Zinc,Black,https://linemaster.com/product/70/Aquiline-Maintained-Polymeric/971-DC26J/
+Aquiline Maintained Metal,971-DC28J,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,Flying Leads,IP20,,,Cast Zinc,Black,https://linemaster.com/product/71/Aquiline-Maintained-Polymeric/971-DC28J/
+Aquiline Maintained Metal,971-DC3J,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,,965-D4,1,,,,Connector,IP20,,,Cast Zinc,Black,https://linemaster.com/product/72/Aquiline-Maintained-Polymeric/971-DC3J/
+Aquiline Metal Twin Momentary,Twin 971-SMC48,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT Each Side,,514-N3,2,,,,Flying Leads,IP20,,,Cast Zinc,Black,https://linemaster.com/product/66/aquiline-metal-twin-momentary/
+Aquiline Momentary Metal,971-SM,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,,IP20,,,Cast Zinc,Black,https://linemaster.com/product/65/Aquiline-Metal-Twin-Momentary/971-SM/
+Aquiline Momentary Metal,972-S,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,,514-N3,2,,,,,IP20,,,Cast Zinc,Black,https://linemaster.com/product/67/Aquiline-Metal-Momentary/972-S/
+Aquiline Momentary Metal,974-SM,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,,524-P6,2,,,,,IP20,,,Cast Zinc,Black,https://linemaster.com/product/68/Aquiline-Momentary-Metal/974-SM/
+Aquiline Momentary Polymeric,971-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,,IP20,,,Polymeric,Dary Gray,https://linemaster.com/product/54/aquiline-momentary-polymeric/
+Aquiline Momentary Polymeric,971-SA,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,,IP20,,,Polymeric,Light Gray,https://linemaster.com/product/55/Aquiline-Momentary-Polymeric/971-SA/
+Aquiline Momentary Polymeric,971-SB,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,,IP20,,,Polymeric,Blue,https://linemaster.com/product/56/Aquiline-Momentary-Polymeric/971-SB/
+Aquiline Momentary Polymeric,971-SC26,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Flying Leads,IP20,,,Polymeric,Dark Gray,https://linemaster.com/product/57/Aquiline-Momentary-Polymeric/971-SC26/
+Aquiline Momentary Polymeric,971-SC26A,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Flying Leads,IP20,,,Polymeric,Light Gray,https://linemaster.com/product/58/Aquiline-Momentary-Polymeric/971-SC26A/
+Aquiline Momentary Polymeric,971-SWNO210,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,522-L37,1,,,,Flying Leads,IP68,,,Polymeric,Dark Gray,https://linemaster.com/product/59/Aquiline-Momentary-Polymeric/971-SWNO210/
+Aquiline Momentary Polymeric,971-SWNO210A,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,522-L37,1,,,,Flying Leads,IP68,,,Polymeric,Light Gray,https://linemaster.com/product/60/Aquiline-Momentary-Polymeric/971-SWNO210A/
+Aquiline Momentary Polymeric,971-SY,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,,IP20,,,Polymeric,Yellow,https://linemaster.com/product/61/Aquiline-Momentary-Polymeric/971-SY/
+Aquiline Momentary Polymeric,974-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,524-P6,1,,,,,IP20,,,Polymeric,Dark Gray,https://linemaster.com/product/62/Aquiline-Momentary-Polymeric/974-S/
+Aquiline Momentary Polymeric,971-SO,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,,IP20,,,Polymeric,Orange,https://linemaster.com/product/64/Aquiline-Momentary-Polymeric/971-SO/
+Atlas Full,936-SWH,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,994-LL,994-HH,1,,,Full,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/77/atlas-full-shield/
+Atlas Full,936-SWHC4,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,994-LL,994-HH,1,,,Full,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/79/Atlas-Full-Shield/936-SWHC4/
+Atlas Full,937-SWH,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,Full,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/81/Atlas-Full-Shield/937-SWH/
+Atlas Full,937-SWHC4,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,Full,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/82/Atlas-Full-Shield/937-SWHC4/
+Atlas No Shield,936-SWN,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,994-LL,994-HH,1,,,,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/95/atlas-no-shield/
+Atlas No Shield,937-SWN,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/98/Atlas-No-Shield/937-SWN/
+Atlas No Shield,937-SWNC4,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/492/Atlas-No-Shield/937-SWNC4/
+Atlas No Shield,936-SWNC4,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,994-LL,994-HH,1,,,,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/510/Atlas-No-Shield/936-SWNC4/
+Atlas O Shield,936-SWHO,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,994-LL,994-HH,1,,,O,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/83/atlas-oversized-shield/
+Atlas O Shield,937-SWHO,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,O,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/86/Atlas-Oversized-Shield/937-SWHO/
+Atlas O Shield,937-SWHOC4,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,O,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/87/Atlas-Oversized-Shield/937-SWHOC4/
+Atlas OX Shield,936-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,994-LL,994-HH,1,,,OX,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/89/atlas-ox-shield/
+Atlas OX Shield,936-SWHOXC4,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,994-LL,994-HH,1,,,OX,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/90/Atlas-Ox-Shield/936-SWHOXC4/
+Atlas OX Shield,937-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,OX,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/93/Atlas-Ox-Shield/937-SWHOX/
+Atlas OX Shield,937-SWHOXC4,Active,,Mom,,,Electrical,,,,,,,1,1,1,,DPDT,994-T,994-M,1,,,OX,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/94/Atlas-Ox-Shield/937-SWHOXC4/
+Classic II,78SN1,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,534-SS,1,,,,,IP56,,,Cast Aluminum,Black,https://linemaster.com/product/104/classic-ii/
+Classic II,78SN2,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,,534-SS,2,,,,,IP56,,,Cast Aluminum,Black,https://linemaster.com/product/105/Classic-Ii/78SN2/
+Classic II,78SH1,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,534-SS,1,,,,,IP56,,,Cast Aluminum,Black,https://linemaster.com/product/102/Classic-Ii/78SH1/
+Classic II,78SH2,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,,534-SS,2,,,,,IP56,,,Cast Aluminum,Black,https://linemaster.com/product/103/Classic-Ii-Shielded/78SH2/
+Classic IV,88SN1-05,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,,IP68,,,Cast Aluminum,Black,https://linemaster.com/product/112/classic-iv/
+Classic IV,88SN1B-05,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Flying Leads,IP68,,,Cast Aluminum,Black,https://linemaster.com/product/113/Classic-Iv/88SN1B-05/
+Classic IV,88SN2-05,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,,514-N3,2,,,,,IP68,,,Cast Aluminum,Black,https://linemaster.com/product/114/Classic-Iv/88SN2-05/
+Classic IV Guarded,Twin 88SH1-05,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT Each Side,,514-N3,2,,,Standard,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/106/classic-iv-guarded/
+Classic IV Guarded,Twin 88SH2-05,Active,,Mom,,,Electrical,,,,,,,2,4,2,,DPDT Each Side,,514-N3,4,,,Standard,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/107/Classic-Iv-Guarded/TWIN%2088SH2-05/
+Classic IV Guarded,88SH1-05,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,Standard,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/108/Classic-Iv-Guarded/88SH1-05/
+Classic IV Guarded,88SH2-05,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,,514-N3,2,,,Standard,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/109/Classic-Iv-Guarded/88SH2-05/
+Classic IV Twin,Twin 88SN1-05,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT Each Side,,514-N3,2,,,,,IP68,,,Cast Aluminum,Black,https://linemaster.com/product/110/Classic-Iv/TWIN%2088SN1-05/
+Classic IV Twin,Twin 88SN2-05,Active,,Mom,,,Electrical,,,,,,,2,4,2,,DPDT Each Side,,514-N3,4,,,,,IP68,,,Cast Aluminum,Black,https://linemaster.com/product/111/Classic-Iv-Twin/TWIN%2088SN2-05/
+Clipper Single Maintained,632-DA,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,522-E32,522-F32,1,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/122/clipper-single-maintained/
+Clipper Single Maintained,632-DC3A,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,522-E32,522-F32,1,,,,Connector,IP20,,,Cast Iron,Black,https://linemaster.com/product/123/Clipper-Single-Maintained/632-DC3A/
+Clipper Single Maintained,634-DA,Active,,Main,,,Electrical,,,,,,,1,1,1,,DPDT,533-M-6,522-G26,1,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/128/Clipper-Single-Momentary/634-DA/
+Clipper Single Momentary,632-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,522-Z,536-Q,1,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/124/Clipper-Single-Maintained/632-S/
+Clipper Single Momentary,632-SC3,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPST NC,522-Y7,536-BB,1,,,,Connector,IP20,,,Cast Iron,Black,https://linemaster.com/product/125/Clipper-Single-Momentary/632-SC3/
+Clipper Single Momentary,632-SC36,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPST NC,522-Y7,536-BB,1,,,,Flying Leads,IP20,,,Cast Iron,Black,https://linemaster.com/product/126/Clipper-Single-Momentary/632-SC36/
+Clipper Single Momentary,633-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,522-L4,534-SS,1,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/127/Clipper-Single-Momentary/633-S/
+Clipper Single Momentary,635-S,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,522-J15,533-F3,2,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/129/Clipper-Single-Momentary/635-S/
+Clipper Single Momentary,636-S,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,522-Z7,533-F3,2,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/130/Clipper-Single-Momentary/636-S/
+Clipper Single Momentary,638-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,522-H7-3,522-A18,1,,,,,IP20,,,Cast Iron,Black,
+Clipper Single Momentary,638-SC38,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPST NC,522-H7-1,516-Z3,1,,,,Flying Leads,IP20,,,Cast Iron,Black,https://linemaster.com/product/132/Clipper-Single-Momentary/638-SC38/
+Clipper II,911-SZA,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,522-L41,1,,,,,IP65,,,Cast Aluminum,Black,https://linemaster.com/product/493/clipper-ii/
+Clipper Twin Momentary,Twin 632-S,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT Each Side,522-Z,536-Q,2,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/115/clipper-twin-momentary/
+Clipper Twin Momentary,Twin 635-S,Active,,Mom,,,Electrical,,,,,,,2,4,2,,DPDT Each Side,522-J15,533-F3,4,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/116/Clipper-Twin-Momentary/TWIN%20635-S/
+Clipper Wide Treadle Maintained,642-DA,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPST,522-E32,522-F32,1,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/117/clipper-wide-treadle-maintained/
+Clipper Wide Treadle Momentary,642-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,522-Z,536-Q,1,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/118/Clipper-Wide-Treadle-Maintained/642-S/
+Clipper Wide Treadle Momentary,646-S,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,522-Z7,533-F3,2,,,,,IP20,,,Cast Iron,Black,https://linemaster.com/product/121/Clipper-Wide-Treadle-Momentary/646-S/
+Compact,491-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,22-475-P3,1,,,,,IP20,,,Formed Steel,Black,https://linemaster.com/product/135/compact/
+Compact,491-SC3,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,536-P-21,22-475-P3,1,,,,Connector,IP20,,,Formed Steel,Black,https://linemaster.com/product/136/Compact/491-SC3/
+Compact,491-SC36,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,522-M25,22-475-P3,1,,,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/137/Compact/491-SC36/
+Compact,491-SC36MP,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,522-M25,22-475-P3,1,,,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/138/Compact/491-SC36MP/
+Compact,492-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,534-SS,1,,,,,IP20,,,Formed Steel,Black,https://linemaster.com/product/139/Compact/492-S/
+Compact Twin,Twin 491-S,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT Each Side,,22-475-P3,2,,,,,IP20,,,Formed Steel,Black,https://linemaster.com/product/133/Compact/TWIN%20491-S/
+Deluxe,81-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,533-F3,1,,,,,IP20,,,Cast Aluminum,Medium Gray,https://linemaster.com/product/141/deluxe/
+Deluxe,85-S,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,,22-475-P3,2,,,,,IP20,,,Cast Aluminum,Medium Gray,https://linemaster.com/product/142/Deluxe/85-S/
+Dolphin,D42-SNO28,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,987-T12,522-L37,1,,,,Flying Leads,IPX8,,,Polymeric,Black,https://linemaster.com/product/147/dolphin/
+Duplex,476-S,Active,,Mom,,,Electrical,,,,,,,1,2,2,,SPDT,,22-475-P3,2,,,,,IP20,,Yes,Cast Aluminum,Black,https://linemaster.com/product/148/duplex/
+Electronic AC Speed Control,982-SC3,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,998-P4,1,,,,Connector,IP20,,,Polymeric,Black,https://linemaster.com/product/486/electronic-ac-speed-control/
+Electronic AC Speed Control,982-SC36,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,998-P4,1,,,,Flying Leads,IP20,,,Polymeric,Black,https://linemaster.com/product/487/Electronic-Ac-Speed-Control/982-SC36/
+Executive,72,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT,,514-N3,2,,,,,IP20,,Yes,Cast Zinc,Medium Gray,https://linemaster.com/product/149/executive/
+Executive,74,Active,,Mom,,,Electrical,,,,,,,2,4,2,,DPDT,,514-N3,4,,,,,IP20,,Yes,Cast Zinc,Medium Gray,https://linemaster.com/product/150/Executive/74/
+Explosion Proof Industrial 500,592-EX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-J8,534-SS,1,,,Standard,,IP41,,,Cast Aluminum,Orange,https://linemaster.com/product/155/explosion-proof-industrial-500/
+Explosion Proof Industrial 500,594-EX,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-K8,534-SS,2,,,Standard,,IP41,,,Cast Aluminum,Orange,https://linemaster.com/product/156/Explosion-Proof-Industrial-500/594-EX/
+Explosion Proof Industrial 500,597-EX,Active,,Mom,,,Electrical,,,,,,,2,2,2,,DPDT,534-K8,534-SS,2,,,Standard,,IP41,,,Cast Aluminum,Orange,https://linemaster.com/product/157/Explosion-Proof-Industrial-500/597-EX/
+Explosion Proof Industrial 600,602-EX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-J8,534-SS,1,,,Standard,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/158/explosion-proof-industrial-600/
+Explosion Proof Industrial 600,604-EX,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-K8,534-SS,2,,,Standard,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/159/Explosion-Proof-Industrial-600/604-EX/
+Explosion Proof Industrial 600,607-EX,Active,,Mom,,,Electrical,,,,,,,2,2,2,,DPDT,534-K8,534-SS,2,,,Standard,,IP68,,,Cast Aluminum,Orange,https://linemaster.com/product/160/Explosion-Proof-Industrial-600/607-EX/
+Explosion Proof Medical 500,591-EX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-J8,534-SS,1,,,,,IP41,,,Cast Aluminum,Black,https://linemaster.com/product/151/explosion-proof-medical-500/
+Explosion Proof Medical 500,596-EX,Active,,Mom,,,Electrical,,,,,,,2,2,2,,DPDT,534-K8,534-SS,2,,,,,IP41,,,Cast Aluminum,Black,https://linemaster.com/product/152/Explosion-Proof-Medical-500/596-EX/
+Explosion Proof Medical 500,601-EX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-J8,534-SS,1,,,,,IP68,,,Cast Aluminum,Black,https://linemaster.com/product/153/explosion-proof-medical-600/
+Explosion Proof Medical 500,606-EX,Active,,Mom,,,Electrical,,,,,,,2,2,2,,DPDT,534-K8,534-SS,2,,,,,IP68,,,Cast Aluminum,Black,https://linemaster.com/product/154/Explosion-Proof-Medical-600/606-EX/
+Gem V,GEM-V2,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,524-P6,1,,,,,IP20,Yes,,Cast Zinc,Chrome,https://linemaster.com/product/161/gem-v/
+Gem V,GEM-V3,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,524-M-21,524-P6,1,,,,Connector,IP20,Yes,,Cast Zinc,Chrome,https://linemaster.com/product/162/Gem-V/GEM-V3/
+Gem V,GEM-V36,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,515-B42,524-P6,1,,,,Flying Leads,IP20,Yes,,Cast Zinc,Chrome,https://linemaster.com/product/163/Gem-V/GEM-V36/
+Gem V,GEM-VCEA,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,515-J14-5,524-P6,1,,,,Flying Leads,IP20,Yes,,Cast Zinc,Chrome,https://linemaster.com/product/164/Gem-V/GEM-VCEA/
+Gem VK,GEM-VK3,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,524-M-16,524-P6,1,,,,Connector,IP21,Yes,,Cast Zinc,Black,https://linemaster.com/product/165/Gem-V/GEM-VK3/
+Gem VK,GEM-VK36,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,515-C24-6,524-P6,1,,,,Flying Leads,IP21,Yes,,Cast Zinc,Black,https://linemaster.com/product/166/Gem-Vk/GEM-VK36/
+Hercules Full,531-SWH,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/167/hercules-full-shield/
+Hercules Full,531-SWHC2,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/168/Hercules-Full-Shield/531-SWHC2/
+Hercules Full,532-SWH,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/170/Hercules-Full-Shield/532-SWH/
+Hercules Full,533-SWH,Active,,Mom,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/171/Hercules-Full-Shield/533-SWH/
+Hercules Full,533-SWHC2,Active,,Mom,,,Electrical,,,,,,,1,3,1,1 Stage,TPDT Each Stage,534-M4,534-SS,3,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/172/Hercules-Full-Shield/533-SWHC2/
+Hercules Full,534-SWH,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/173/Hercules-Full-Shield/534-SWH/
+Hercules Full,535-SWH,Active,,Mom,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/174/Hercules-Full-Shield/535-SWH/
+Hercules Full,536-SWH,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/175/Hercules-Full-Shield/536-SWH/
+Hercules Full,537-SWH,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/176/Hercules-Full-Shield/537-SWH/
+Hercules Full,538-SWH,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/177/Hercules-Full-Shield/538-SWH/
+Hercules Full,571-DWH,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/178/Hercules-Full-Shield/571-DWH/
+Hercules Full,572-DWH,Active,,Main,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/179/Hercules-Full-Shield/572-DWH/
+Hercules Full,573-DWH,Active,,Main,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/180/Hercules-Full-Shield/573-DWH/
+Hercules Full,573-DWHC2,Active,,Main,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/181/Hercules-Full-Shield/573-DWHC2/
+Hercules Full,574-DWHD,Active,,Mom/Main,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/184/Hercules-Full-Shield/574-DWHD/
+Hercules Full,574-DWHA,Active,,Mom/Main,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/183/Hercules-Full-Shield/574-DWHA/
+Hercules Full,575-DWH,Active,,Main,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/185/Hercules-Full-Shield/575-DWH/
+Hercules Full,575-DWHA,Active,,Mom/Main,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/186/Hercules-Full-Shield/575-DWHA/
+Hercules No Shield,531-SWN,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/234/hercules-no-shield/
+Hercules No Shield,532-SWN,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/235/Hercules-No-Shield/532-SWN/
+Hercules No Shield,533-SWN,Active,,Mom,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/236/Hercules-No-Shield/533-SWN/
+Hercules No Shield,534-SWN,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/237/Hercules-No-Shield/534-SWN/
+Hercules No Shield,535-SWN,Active,,Mom,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/238/Hercules-No-Shield/535-SWN/
+Hercules No Shield,536-SWN,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/239/Hercules-No-Shield/536-SWN/
+Hercules No Shield,537-SWN,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/240/Hercules-No-Shield/537-SWN/
+Hercules No Shield,538-SWN,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/241/Hercules-No-Shield/538-SWN/
+Hercules No Shield,571-DWN,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/242/Hercules-No-Shield/571-DWN/
+Hercules No Shield,572-DWN,Active,,Main,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/243/Hercules-No-Shield/572-DWN/
+Hercules No Shield,573-DWN,Active,,Main,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/244/Hercules-No-Shield/573-DWN/
+Hercules No Shield,574-DWN,Active,,Main,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/245/Hercules-No-Shield/574-DWN/
+Hercules No Shield,575-DWN,Active,,Main,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/246/Hercules-No-Shield/575-DWN/
+Hercules O,531-SWHOC2,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/497/hercules-o-shield/
+Hercules O,532-SWHOC2,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/512/Hercules-O-Shield/532-SWHOC2/
+Hercules O,531-SWHO,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/192/Hercules-O-Shield/531-SWHO/
+Hercules O,532-SWHO,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/193/Hercules-Oversized-Shield/532-SWHO/
+Hercules O,533-SWHO,Active,,Mom,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/194/Hercules-Oversized-Shield/533-SWHO/
+Hercules O,534-SWHO,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/195/Hercules-Oversized-Shield/534-SWHO/
+Hercules O,535-SWHO,Active,,Mom,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/196/Hercules-Oversized-Shield/535-SWHO/
+Hercules O,536-SWHO,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/197/Hercules-Oversized-Shield/536-SWHO/
+Hercules O,537-SWHO,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/198/Hercules-Oversized-Shield/537-SWHO/
+Hercules O,538-SWHO,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/199/Hercules-Oversized-Shield/538-SWHO/
+Hercules O,571-DWHO,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/200/Hercules-Oversized-Shield/571-DWHO/
+Hercules O,572-DWHO,Active,,Main,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/201/Hercules-Oversized-Shield/572-DWHO/
+Hercules O,573-DWHO,Active,,Main,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/202/Hercules-Oversized-Shield/573-DWHO/
+Hercules O,574-DWHO,Active,,Main,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/203/Hercules-Oversized-Shield/574-DWHO/
+Hercules O,575-DWHO,Active,,Main,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/206/Hercules-Oversized-Shield/575-DWHO/
+Hercules O,575-DWHOA,Active,,Mom/Main,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/207/Hercules-Oversized-Shield/575-DWHOA/
+Hercules OX,531-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/213/hercules-ox-shield/
+Hercules OX,532-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/214/Hercules-Ox-Shield/532-SWHOX/
+Hercules OX,533-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/215/Hercules-Ox-Shield/533-SWHOX/
+Hercules OX,534-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/216/Hercules-Ox-Shield/534-SWHOX/
+Hercules OX,535-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/217/Hercules-Ox-Shield/535-SWHOX/
+Hercules OX,536-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT DB,534-E8,534-U6,1,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/218/Hercules-Ox-Shield/536-SWHOX/
+Hercules OX,537-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT DB,534-F8,534-U6,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/219/Hercules-Ox-Shield/537-SWHOX/
+Hercules OX,538-SWHOX,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT DB Each Stage,534-F8,534-U6,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/220/Hercules-Ox-Shield/538-SWHOX/
+Hercules OX,571-DWHOX,Active,,Main,,,Electrical,,,,,,,1,1,1,,SPDT,534-Y5,534-SS,1,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/221/Hercules-Ox-Shield/571-DWHOX/
+Hercules OX,572-DWHOX,Active,,Main,,,Electrical,,,,,,,1,2,1,,DPDT,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/222/Hercules-Ox-Shield/572-DWHOX/
+Hercules OX,573-DWHOX,Active,,Main,,,Electrical,,,,,,,1,3,1,,TPDT,534-M4,534-SS,3,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/223/Hercules-Ox-Shield/573-DWHOX/
+Hercules OX,574-DWHOX,Active,,Main,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/224/Hercules-Ox-Shield/574-DWHOX/
+Hercules OX,574-DWHOXA,Active,,Mom/Main,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/225/Hercules-Ox-Shield/574-DWHOXA/
+Hercules OX,574-DWHOXD,Active,,Mom/Main,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,534-L4,534-SS,2,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/226/Hercules-Ox-Shield/574-DWHOXD/
+Hercules OX,575-DWHOX,Active,,Main,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/227/Hercules-Ox-Shield/575-DWHOX/
+Hercules OX,575-DWHOXA,Active,,Mom/Main,,,Electrical,,,,,,,1,3,1,3 Stage,SPDT Each Stage,534-M4,534-SS,3,,,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/228/Hercules-Ox-Shield/575-DWHOXA/
+Hercules Full Potentiometer,500-AH-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,1K,LSC-805-22,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/250/hercules-potentiometer-full-shield/
+Hercules Full Potentiometer,500-AH-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,10K,LSC-805-2,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/252/Hercules-Potentiometer-Full-Shield/500-AH-10K/
+Hercules Full Potentiometer,500-AH-100,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,100,LSC-578-2,Full,,IP56,,,Cast Iron,Orange,
+Hercules Full Potentiometer,500-AH-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,5K,LSC-805-4,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/261/Hercules-Potentiometer-Full-Shield/500-AH-5K/
+Hercules Full Potentiometer,500-AH-5KW,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,5K,LSC-805-23,Full,,IP56,,,Cast Iron,Orange,
+Hercules Full Potentiometer,500-AH-500K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,500K,LSC-578-27,Full,,IP56,,,Cast Iron,Orange,
+Hercules Full Potentiometer,500-A2H-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,1K,LSC-805-22,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/265/hercules-potentiometer-full-shield/
+Hercules Full Potentiometer,500-A2H-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,10K,LSC-805-2,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/266/Hercules-Potentiometer-Full-Shield/500-A2H-10K/
+Hercules Full Potentiometer,500-A2H-35K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,35K,LSC-578-19,Full,,IP56,,,Cast Iron,Orange,
+Hercules Full Potentiometer,500-A2H-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,5K,LSC-805-4,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/270/Hercules-Potentiometer-Full-Shield/500-A2H-5K/
+Hercules Full Potentiometer,500-A3H-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,4,2,,Variable TPDT,534-F19,533-F3,3,10K,LSC-805-2,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/274/Hercules-Potentiometer-Full-Shield/500-A3H-10K/
+Hercules Full Potentiometer,500-A3H-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,4,2,,Variable TPDT,534-F19,533-F3,3,5K,LSC-805-4,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/276/Hercules-Potentiometer-Full-Shield/500-A3H-5K/
+Hercules Full Potentiometer,500-A3H-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,4,2,,Variable TPDT,534-F19,533-F3,3,1K,LSC-805-22,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/273/hercules-potentiometer-full-shield/
+Hercules Full Potentiometer,500-H-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,10K,LSC-805-2,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/282/Hercules-Potentiometer-Full-Shield/500-H-10K/
+Hercules Full Potentiometer,500-H-250,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,250,LSC-578-4,Full,,IP56,,,Cast Iron,Orange,
+Hercules Full Potentiometer,500-H-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,5K,LSC-805-4,Full,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/289/Hercules-Potentiometer-Full-Shield/500-H-5K/
+Hercules No Shield Potentiometer,500-AN-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,1K,LSC-805-22,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/327/hercules-potentiometer-no-shield/
+Hercules No Shield Potentiometer,500-AN-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,10K,LSC-805-2,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/329/Hercules-Potentiometer-No-Shield/500-AN-10K/
+Hercules No Shield Potentiometer,500-AN-100,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,100,LSC-578-2,,,IP56,,,Cast Iron,Orange,
+Hercules No Shield Potentiometer,500-AN-250,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,250,LSC-578-4,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/336/Hercules-Potentiometer-No-Shield/500-AN-250/
+Hercules No Shield Potentiometer,500-AN-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,5K,LSC-805-4,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/338/Hercules-Potentiometer-No-Shield/500-AN-5K/
+Hercules No Shield Potentiometer,500-AN-500K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,500K,LSC-578-27,,,IP56,,,Cast Iron,Orange,
+Hercules No Shield Potentiometer,500-A2N-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,10K,LSC-805-2,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/344/hercules-potentiometer-no-shield/
+Hercules No Shield Potentiometer,500-A2N-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,5K,LSC-805-4,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/346/Hercules-Potentiometer-No-Shield/500-A2N-5K/
+,500-A2N-100,Obsolete,Not in Syteline? Was this supposed to be 100½? We have never had a 1k?,Mom,,,,,,,,,,,,2,,DPDT,534-E19,533-F3,2,,LSC-578-2,,,IP56,,,Cast Iron,Orange,
+Hercules No Shield Potentiometer,500-N-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,10K,LSC-805-2,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/349/Hercules-Potentiometer-No-Shield/500-N-10K/
+Hercules No Shield Potentiometer,500-N-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,1K,LSC-805-22,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/348/Hercules-Potentiometer-No-Shield/500-N-1K/
+Hercules No Shield Potentiometer,500-N-250,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,250,LSC-578-4,,,IP56,,,Cast Iron,Orange,
+Hercules No Shield Potentiometer,500-N-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,5K,LSC-805-4,,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/355/Hercules-Potentiometer-No-Shield/500-N-5K/
+Hercules O Shield Potentiometer,500-A3HO-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,4,2,,Variable TPDT,534-F19,533-F3,3,5K,LSC-805-4,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/279/hercules-potentiometer-o-shield/
+Hercules O Shield Potentiometer,500-AHO-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,1K,LSC-805-22,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/293/hercules-potentiometer-o-shield/
+Hercules O Shield Potentiometer,500-AHO-25K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,25K,LSC-578-18,O,,IP56,,,Cast Iron,Orange,ra
+Hercules O Shield Potentiometer,500-AHO-250,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,250,LSC-578-4,O,,IP56,,,Cast Iron,Orange,
+Hercules O Shield Potentiometer,500-AHO-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,5K,LSC-805-4,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/304/Hercules-Potentiometer-O-Shield/500-AHO-5K/
+Hercules O Shield Potentiometer,500-A2HO-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,1K,LSC-805-22,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/308/hercules-potentiometer-o-shield/
+Hercules O Shield Potentiometer,500-A2HO-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,10K,LSC-805-2,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/309/Hercules-Potentiometer-O-Shield/500-A2HO-10K/
+Hercules O Shield Potentiometer,500-A2HO-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,5K,LSC-805-4,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/310/Hercules-Potentiometer-O-Shield/500-A2HO-5K/
+Hercules O Shield Potentiometer,500-HO-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,1K,LSC-805-22,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/313/hercules-potentiometer-o-shield/
+Hercules O Shield Potentiometer,500-HO-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,10K,LSC-805-2,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/314/Hercules-Potentiometer-O-Shield/500-HO-10K/
+Hercules O Shield Potentiometer,500-HO-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,5K,LSC-805-4,O,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/316/Hercules-Potentiometer-O-Shield/500-HO-5K/
+Hercules Potentiometer OX,500-A2HOX-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,3,2,,Variable DPDT,534-E19,533-F3,2,10K,LSC-805-2,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/311/hercules-potentiometer-ox-shield/
+Hercules Potentiometer OX,500-AHOX-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,1K,LSC-805-22,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/318/hercules-potentiometer-ox-shield/
+Hercules Potentiometer OX,500-AHOX-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,10K,LSC-805-2,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/319/Hercules-Potentiometer-Ox-Shield/500-AHOX-10K/
+Hercules Potentiometer OX,500-AHOX-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,534-D19,533-F3,1,5K,LSC-805-4,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/320/Hercules-Potentiometer-Ox-Shield/500-AHOX-5K/
+Hercules Potentiometer OX,500-A3HOX-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,4,2,,Variable TPDT,534-F19,533-F3,3,10K,LSC-805-2,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/322/hercules-potentiometer-ox-shield/
+Hercules Potentiometer OX,500-HOX-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,1K,LSC-805-22,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/323/hercules-potentiometer-ox-shield/
+Hercules Potentiometer OX,500-HOX-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,10K,LSC-805-2,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/324/Hercules-Potentiometer-Ox-Shield/500-HOX-10K/
+Hercules Potentiometer OX,500-HOX-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,5K,LSC-805-4,OX,,IP56,,,Cast Iron,Orange,https://linemaster.com/product/326/Hercules-Potentiometer-Ox-Shield/500-HOX-5K/
+Junior,121-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,534-SS,1,,,,,IP20,,,Cast Aluminum,Black,https://linemaster.com/product/361/junior/
+Junior,124-S,Active,,Mom,,,Electrical,,,,,,,1,2,1,,DPDT,57-475-T,514-N3,2,,,,,IP20,,,Cast Aluminum,Black,https://linemaster.com/product/362/Junior/124-S/
+Lektro-Lok,L-2-S,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT,,22-475-P3,2,,,,,IP20,,Yes,Formed Steel,Black,https://linemaster.com/product/363/lektro-lok/
+Nautilus,WP-541-SC,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,18-526-H,1,,,,,IP68,,,Cast Aluminum,Medium Gray,https://linemaster.com/product/364/nautilus/
+Premier,P31-SC3,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,524-M-13,22-475-P3,1,,,,Connector,IP20,,,Stainless Steel,Chrome,https://linemaster.com/product/366/premier/
+Premier,P31-SC36,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,515-M22-17,22-475-P3,1,,,,Flying Leads,IP20,,,Stainless Steel,Chrome,https://linemaster.com/product/367/Premier/P31-SC36/
+Premier,P32-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,536-Q,1,,,,,IP20,,,Stainless Steel,Chrome,https://linemaster.com/product/368/Premier/P32-S/
+RF Wireless Hercules,SP-831-111000XA,Active,,Mom,Yes,,Electrical,,,,,,,1,1,1,,SPDT,907-S3-1,805-F10,1,,,OX,,IP68,,,Cast Iron,Orange,https://linemaster.com/product/475/radio-frequency-wireless-hercules/
+RF Wireless Hercules,SP-831-111101XA,Active,,Mom,Yes,,Electrical,,,,,,,1,2,1,,DPDT,907-S3-16,805-F10,2,,,OX,,IP68,,,Cast Iron,Orange,https://linemaster.com/product/476/Radio-Frequency-Wireless-Hercules/SP-831-111101XA/
+RF Wireless Hercules,SP-831-111202XA,Active,,Mom,Yes,,Electrical,,,,,,,1,3,1,,TPDT,907-S3-31,805-F10,3,,,OX,,IP68,,,Cast Iron,Orange,https://linemaster.com/product/477/Radio-Frequency-Wireless-Hercules/SP-831-111202XA/
+RF Wireless Hercules with Handle,SP-831-111100XA,Active,,Mom,Yes,,Electrical,,,,,,,1,1,1,,SPDT,907-S3-46,805-F10,1,,,OX,,IP68,,,Cast Iron,Orange,https://linemaster.com/product/506/rf-wireless-hercules-with-handle/
+RF Wireless Hercules with Handle,SP-831-111201XA,Active,,Mom,Yes,,Electrical,,,,,,,1,2,1,,DPDT,907-S3-61,805-F10,2,,,OX,,IP68,,,Cast Iron,Orange,https://linemaster.com/product/507/Rf-Wireless-Hercules-With-Handle/SP-831-111201XA/
+RF Wireless Hercules with Handle,SP-831-111302XA,Active,,Mom,Yes,,Electrical,,,,,,,1,3,1,,TPDT,907-S3-76,805-F10,3,,,OX,,IP68,,,Cast Iron,Orange,https://linemaster.com/product/508/Rf-Wireless-Hercules-With-Handle/SP-831-111302XA/
+Slim-Line,SL1-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,605-B3,1,,,,,IP20,,,Polymeric,Light Gray,https://linemaster.com/product/369/slim-line/
+Slim-Line,SL1-SWBNO210,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,605-J3,605-H3,1,,,,Flying Leads,IP68,,,Polymeric,Light Gray,https://linemaster.com/product/370/Slim-Line/SL1-SWBNO210/
+Slim-Line,SL2-S,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,,605-B3,2,,,,,IP20,,,Polymeric,Light Gray,https://linemaster.com/product/371/Slim-Line/SL2-S/
+Slim-Line,SL2-SWBNO410,Active,,Mom,,,Electrical,,,,,,,1,2,1,2 Stage,SPDT Each Stage,605-L3,605-H3,2,,,,Flying Leads,IP68,,,Polymeric,Light Gray,https://linemaster.com/product/372/Slim-Line/SL2-SWBNO410/
+Treadlite II,T-91-PS,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Connector,IP20,,,Formed Steel,Black,https://linemaster.com/product/377/treadlite-ii/
+Treadlite II,T-91-S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,522-D40,1,,,,,IP20,,,Formed Steel,Black,https://linemaster.com/product/378/Treadlite-Ii/T-91-S/
+Treadlite II,T-91-SCE,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,524-Y5,1,,,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/379/Treadlite-Ii/T-91-SCE/
+Treadlite II,T-91-SCEA,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,524-Y5,1,,,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/380/Treadlite-Ii/T-91-SCEA/
+Treadlite II,T-91-SC3,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Connector,IP20,,,Formed Steel,Black,https://linemaster.com/product/381/Treadlite-Ii/T-91-SC3/
+Treadlite II,T-91-SC3A,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Connector,IP20,,,Formed Steel,Black,https://linemaster.com/product/382/Treadlite-Ii/T-91-SC3A/
+Treadlite II,T-91-SC36,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/383/Treadlite-Ii/T-91-SC36/
+Treadlite II,T-91-SC36A,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/384/Treadlite-Ii/T-91-SC36A/
+Treadlite II,T-91-SE,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,524-Y5,1,,,,,IP20,,,Formed Steel,Black,https://linemaster.com/product/385/Treadlite-Ii/T-91-SE/
+Treadlite II,T-91-PSNC,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,,514-N3,1,,,,Connector,IP20,,,Formed Steel,Black,https://linemaster.com/product/501/Treadlite-Ii/T-91-PSNC/
+Treadlite II Twin,Twin T-91-S,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT Each Side,,514-N3,2,,,,,IP20,,,Formed Steel,Black,https://linemaster.com/product/386/Treadlite-Ii/TWIN%20T-91-S/
+Treadlite II Twin,Twin T-91-SC48,Active,,Mom,,,Electrical,,,,,,,2,2,2,,SPDT Each Side,,514-N3,2,,,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/387/Treadlite-Ii/TWIN%20T-91-SC48/
+Treadlite II - Stainless Steel,T-91-SWANOS,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,522-F24-5,522-A24,1,,,,,IP68,,,Stainless Steel,Black,https://linemaster.com/product/388/treadlite-ii-stainless-steel/
+Treadlite II - Stainless Steel,T-91-SWANO3S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,515-S44,522-L37,1,,,,Connector,IP68,,,Stainless Steel,Black,https://linemaster.com/product/389/Treadlite-Ii-Stainless-Steel/T-91-SWANO3S/
+Treadlite II - Stainless Steel,T-91-SWANO38S,Active,,Mom,,,Electrical,,,,,,,1,1,1,,SPDT,515-T44,522-L37,1,,,,Flying Leads,IP68,,,Stainless Steel,Black,https://linemaster.com/product/390/Treadlite-Ii-Stainless-Steel/T-91-SWANO38S/
+Vanguard Maintained,81DH12,Active,,Main,,,Electrical Pneumatic,Electrical Pneumatic,,Electrical Pneumatic,Yes,,,1,1,1,,SPDT,,981-ZZ,1,,,,,IPXX,,,Vinyl Bulb,Black,https://linemaster.com/product/392/vanguard-maintained/
+Vanguard Maintained,81SH12,Active,,Mom,,,Electrical Pneumatic,Electrical Pneumatic,,Electrical Pneumatic,Yes,,,1,1,1,,SPDT,,981-ZZ-1,1,,,,,IPXX,,,Vinyl Bulb,Black,https://linemaster.com/product/391/Vanguard-Momentary/81SH12/
+Vanguard Momentary,PBSH12,Active,,Mom,,,Electrical Pneumatic,Electrical Pneumatic,,Electrical Pneumatic,Yes,,,1,1,1,,SPDT,,981-ZZ-1,1,,,,,IPXX,,,Vinyl Bulb,Black,https://linemaster.com/product/393/Vanguard-Momentary/PBSH12/
+Varior Potentiometer,09ASAC-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,1K,LSC-805-22,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/407/varior-potentiometer/
+Varior Potentiometer,09ASAC-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,10K,LSC-805-2,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/409/Varior-Potentiometer/09ASAC-10K/
+Varior Potentiometer,09ASAC-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,5K,LSC-805-4,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/421/Varior-Potentiometer/09ASAC-5K/
+Varior Potentiometer,09ASXP-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,1K,LSC-805-22,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/427/varior-potentiometer/
+Varior Potentiometer,09ASXP-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,10K,LSC-805-2,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/429/Varior-Potentiometer/09ASXP-10K/
+Varior Potentiometer,09ASXP-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,1,1,,Variable ,,,,5K,LSC-805-4,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/439/Varior-Potentiometer/09ASXP-5K/
+,OHASAA-1K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,1K,LSC-805-22,,Connector,IP20,,,Formed Steel,Black,
+,OHASAA-5KW,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,5K,LSC-805-23,,Connector,IP20,,,Formed Steel,Black,
+Varior Potentiometer,OHASAB-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,10K,LSC-805-6,,Connector,IP20,,,Formed Steel,Black,https://linemaster.com/product/448/varior-potentiometer/
+Varior Potentiometer,OHASAC-10K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,10K,LSC-805-2,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/451/varior-potentiometer/
+Varior Potentiometer,OHASAC-5K,Active,,Mom,,Yes,Electrical,,,,,,,1,2,2,,Variable SPDT,,975-X11,1,5K,LSC-805-4,,Flying Leads,IP20,,,Formed Steel,Black,https://linemaster.com/product/452/Varior-Potentiometer/OHASAC-5K/
+Cordsets,SF-515-D16,Obsolete,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Varior Potentiometer,SF-515-A10,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Varior Potentiometer,SF-965-JJ,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Varior Potentiometer,SF-524-M,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Varior Potentiometer,SF-515-P34,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Varior Potentiometer,SF-536-P,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Varior Potentiometer,SF-522-Q17,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Protective Vinyl Boot,522-N30,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Medical Guard,997-Z26,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Full Shield with Gate,534-C25,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement O Shield with Gate,534-U25,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Guard Single Stainless Steel,522-K26,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Guard- Twin OX,522-D28,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Guard Single OX,522-F28,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Guard Twin,522-B12,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Guard Single,522-B14,Active,Part Number Incorrect - Should be 522-B14?,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Guard Twin Classic,977-B8,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Awareness Cover Orange,522-U37,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Awareness Cover Gray,522-U37-1,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+OX Replacment Shield,534-B25,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+O Replacment Shield,534-A25,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Full Replacment Shield,534-Z24,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,2-30A2-SI,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,2-20V2-SI,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,3-30A2-SI,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,3-20V2-SI,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,3-25H2-SI,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,4-30F2-SI,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,4-30H2-SI,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,981-ZZ,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,981-ZZ-1,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,534-SS,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,534-U6,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,965-D4,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,514-N3,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,997-G13,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,524-P6,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,994-HH,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,994-JJ,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,994-KK,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,994-M,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,536-Q,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,522-E32,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,533-M-6,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,533-F3,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,522-A18,Active,, ,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,522-L41,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,22-475-P3,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,534-L,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,526-CC,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,18-526-H,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+,LSC-805-4,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,LSC-805-2,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,605-B3,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,524-Y5,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+,LSC-805-23,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+,LSC-805-22,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+,LSC-805-6,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+,998-XX,Obsolete,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Replacement Parts,998-XX-1,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,998-XX-3,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,776-N8,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
+Replacement Parts,975-X11,Active,,,,,,,,,,,,,0,,,,,,,,,,,,,,,,
