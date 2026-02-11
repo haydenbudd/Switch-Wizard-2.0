@@ -20,7 +20,8 @@ import {
   FolderTree,
   PieChart,
   TrendingUp,
-  Download
+  Download,
+  Filter
 } from 'lucide-react';
 import { ProductList } from './ProductList';
 import { ProductForm } from './ProductForm';
@@ -31,6 +32,7 @@ import { DataAudit } from './DataAudit';
 import { SeriesManager } from './SeriesManager';
 import { FieldCoverage } from './FieldCoverage';
 import { WizardAnalytics } from './WizardAnalytics';
+import { FunnelAnalysis } from './FunnelAnalysis';
 import { Button } from '@/app/components/ui/button';
 import { Product, fetchProducts, createOrUpdateProduct, deleteProduct } from '@/app/lib/api';
 import { toast } from 'sonner';
@@ -39,7 +41,7 @@ interface AdminDashboardProps {
   onSignOut: () => void;
 }
 
-type View = 'products' | 'import' | 'settings' | 'bulk-update' | 'debug' | 'audit' | 'series' | 'coverage' | 'analytics';
+type View = 'products' | 'import' | 'settings' | 'bulk-update' | 'debug' | 'audit' | 'series' | 'coverage' | 'analytics' | 'funnel';
 
 export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
   const [currentView, setCurrentView] = useState<View>('products');
@@ -213,6 +215,14 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
           >
             <TrendingUp className="w-4 h-4 mr-2" />
             Wizard Analytics
+          </Button>
+          <Button
+            variant={currentView === 'funnel' ? 'secondary' : 'ghost'}
+            className="w-full justify-start"
+            onClick={() => setCurrentView('funnel')}
+          >
+            <Filter className="w-4 h-4 mr-2" />
+            Funnel Analysis
           </Button>
 
           <div className="pt-3 pb-1 px-2">
@@ -494,7 +504,13 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
               <p className="text-gray-500 dark:text-gray-400">
                 View products grouped by series. Highlights inconsistencies within each series.
               </p>
-              <SeriesManager products={products} />
+              <SeriesManager
+                products={products}
+                onProductUpdate={async (id, data) => {
+                  await createOrUpdateProduct({ ...data, id });
+                  loadProducts();
+                }}
+              />
             </div>
           )}
 
@@ -515,6 +531,16 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
                 Track how users interact with the product finder wizard.
               </p>
               <WizardAnalytics />
+            </div>
+          )}
+
+          {currentView === 'funnel' && (
+            <div className="max-w-5xl mx-auto space-y-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Funnel Analysis</h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Visualize step-by-step user progression through the wizard. Identify where users drop off.
+              </p>
+              <FunnelAnalysis />
             </div>
           )}
 
