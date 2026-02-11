@@ -8,8 +8,10 @@ export default {
         if (selector === ':root') return prefix;
         if (selector === 'body') return prefix;
         if (selector === 'html') return prefix;
-        if (selector.startsWith('.dark body')) return `${prefix}.lm-dark`;
-        if (selector.startsWith('.dark')) return selector.replace('.dark', `${prefix}.lm-dark`);
+        // .dark theme class (not dark: utility class names which have a backslash)
+        if (selector === '.dark') return `${prefix}.lm-dark`;
+        if (selector === '.dark body' || selector === '.dark html') return `${prefix}.lm-dark`;
+        if (selector.startsWith('.dark ')) return selector.replace('.dark ', `${prefix}.lm-dark `);
         return prefixedSelector;
       },
     }),
