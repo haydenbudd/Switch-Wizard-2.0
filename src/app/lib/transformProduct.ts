@@ -64,7 +64,10 @@ function deriveConnectorType(row: StockSwitchRow): string | undefined {
 
   // Map unambiguous Connection values
   switch (row.Connection) {
-    case 'NPT Conduit Entry':
+    case 'Screw Terminals':
+    case 'Solder Terminals':
+    case 'Solder Terminals + Quick-connect':
+    case 'Wire-nuts':
       return 'screw-terminal';
     case 'Connector':
       return 'quick-connect';
