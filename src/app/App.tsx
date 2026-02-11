@@ -314,8 +314,8 @@ function WizardApp() {
     wizardState.selectedFeatures,
   ]);
 
-  const handleGeneratePDF = () => {
-    generatePDF({
+  const handleGeneratePDF = async () => {
+    await generatePDF({
       wizardState,
       matchedProducts: filterProducts(),
       applications, technologies, actions, environments, features, duties,

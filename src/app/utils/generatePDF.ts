@@ -2,7 +2,7 @@ import jsPDF from 'jspdf';
 import { Product, Option } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { trackPDFDownload } from '@/app/utils/analytics';
-import { LINEMASTER_LOGO_BASE64 } from '@/app/utils/logoBase64';
+import { getLogoBase64 } from '@/app/utils/logoBase64';
 
 export interface GeneratePDFOptions {
   wizardState: WizardState;
@@ -19,7 +19,7 @@ export interface GeneratePDFOptions {
   accessories: Option[];
 }
 
-export function generatePDF(opts: GeneratePDFOptions) {
+export async function generatePDF(opts: GeneratePDFOptions) {
   const { wizardState, matchedProducts, applications, technologies, actions, environments, features, duties, consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories } = opts;
 
   trackPDFDownload(wizardState.flow, {
@@ -40,7 +40,8 @@ export function generatePDF(opts: GeneratePDFOptions) {
   // Logo — original is 1323x496, render at ~50x19mm in the header
   const logoW = 50;
   const logoH = logoW * (496 / 1323);
-  doc.addImage(LINEMASTER_LOGO_BASE64, 'PNG', 15, 3, logoW, logoH);
+  const logoBase64 = await getLogoBase64();
+  doc.addImage(logoBase64, 'PNG', 15, 3, logoW, logoH);
 
   // Subtitle below logo
   doc.setFontSize(11);
