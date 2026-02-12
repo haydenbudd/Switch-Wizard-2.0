@@ -3,7 +3,9 @@ import { ProductCard } from '@/app/components/ProductCard';
 import { Button } from '@/app/components/ui/button';
 import { Product, Option } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
-import { RefreshCw, Download, ArrowLeft, SlidersHorizontal, ArrowUp, Check, Search } from 'lucide-react';
+import { RefreshCw, Download, ArrowLeft, SlidersHorizontal, ArrowUp, Check, Search, Link } from 'lucide-react';
+import { buildShareUrl } from '@/app/utils/shareUrl';
+import { toast } from 'sonner';
 import { EnhancedSearch } from '@/app/components/EnhancedSearch';
 import { FilterChip } from '@/app/components/FilterChip';
 import { 
@@ -205,6 +207,17 @@ export function ResultsPage({
             </p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" onClick={() => {
+              const url = buildShareUrl(wizardState);
+              navigator.clipboard.writeText(url).then(() => {
+                toast.success('Link copied to clipboard');
+              }).catch(() => {
+                toast.error('Failed to copy link');
+              });
+            }} className="gap-2">
+              <Link className="w-4 h-4" />
+              Copy Link
+            </Button>
             <Button variant="outline" onClick={onGeneratePDF} className="gap-2">
               <Download className="w-4 h-4" />
               Download PDF

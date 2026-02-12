@@ -5,6 +5,8 @@ import { OrbBackground } from '@/app/components/OrbBackground';
 import { useProductData } from '@/app/hooks/useProductData';
 import { useWizardState } from '@/app/hooks/useWizardState';
 import { trackWizardStep, trackNoResults } from '@/app/utils/analytics';
+import { parseShareParams, updateUrlWithState, clearShareParams } from '@/app/utils/shareUrl';
+import { Toaster } from 'sonner';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage } from '@/app/components/wizard/ResultsPage';
@@ -36,6 +38,41 @@ function WizardApp() {
     connections,
     duties,
   } = useProductData();
+
+  // Restore wizard state from URL share params on mount
+  const [shareRestored, setShareRestored] = useState(false);
+  useEffect(() => {
+    const shared = parseShareParams(window.location.search);
+    if (!shared) return;
+
+    if (shared.selectedApplication) wizardState.setSelectedApplication(shared.selectedApplication);
+    if (shared.selectedTechnology) wizardState.setSelectedTechnology(shared.selectedTechnology);
+    if (shared.selectedAction) wizardState.setSelectedAction(shared.selectedAction);
+    if (shared.selectedEnvironment) wizardState.setSelectedEnvironment(shared.selectedEnvironment);
+    if (shared.selectedDuty) wizardState.setSelectedDuty(shared.selectedDuty);
+    if (shared.selectedMaterial) wizardState.setSelectedMaterial(shared.selectedMaterial);
+    if (shared.selectedConnection) wizardState.setSelectedConnection(shared.selectedConnection);
+    if (shared.selectedGuard) wizardState.setSelectedGuard(shared.selectedGuard);
+    if (shared.selectedFeatures) wizardState.setSelectedFeatures(shared.selectedFeatures);
+    if (shared.flow) wizardState.setFlow(shared.flow as 'standard' | 'medical');
+
+    // Jump straight to results
+    wizardState.setStep(8);
+    setShareRestored(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update URL bar when viewing results; clear when navigating away
+  useEffect(() => {
+    if (wizardState.step === 8) {
+      updateUrlWithState(wizardState);
+    } else if (shareRestored) {
+      clearShareParams();
+    }
+  }, [wizardState.step, wizardState.selectedApplication, wizardState.selectedTechnology,
+      wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty,
+      wizardState.selectedConnection, wizardState.selectedGuard, wizardState.selectedFeatures,
+      wizardState.selectedMaterial, wizardState.flow, shareRestored]);
 
   // Enhanced search state for results page
   const [searchTerm, setSearchTerm] = useState('');
@@ -416,6 +453,7 @@ function WizardApp() {
       )}
       </main>
     </div>
+    <Toaster position="top-right" />
     </>
   );
 }
