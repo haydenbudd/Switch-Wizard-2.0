@@ -94,13 +94,13 @@
   --accent-warm: #f59e0b;
   --accent-warm-foreground: #0f172a;
 
-  /* Glass — dark: deeper, more contrast */
-  --glass-bg: rgba(15, 23, 42, 0.75);
-  --glass-border: rgba(226, 232, 240, 0.12);
-  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.2);
-  --glass-shadow-inset: rgba(226, 232, 240, 0.08) 0px 1px 0px 0px inset, rgba(226, 232, 240, 0.04) 0px 0px 0px 0.5px inset;
-  --glass-blur: 24px;
-  --glass-bg-hover: rgba(30, 41, 59, 0.85);
+  /* Glass — dark: solid dark surface for clear contrast */
+  --glass-bg: rgba(15, 23, 42, 0.95);
+  --glass-border: rgba(226, 232, 240, 0.15);
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --glass-shadow-inset: rgba(226, 232, 240, 0.10) 0px 1px 0px 0px inset, rgba(226, 232, 240, 0.05) 0px 0px 0px 0.5px inset;
+  --glass-blur: 16px;
+  --glass-bg-hover: rgba(30, 41, 59, 0.97);
 
   --selection-bg: rgba(59, 130, 246, 0.08);
   --selection-border: rgba(59, 130, 246, 0.30);
@@ -219,6 +219,11 @@
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+}
+
+.dark .glass-card {
+  background: var(--glass-bg, rgba(15, 23, 42, 0.95));
+  border-color: var(--glass-border, rgba(226, 232, 240, 0.15));
 }
 
 .glass-card-hover:hover {
