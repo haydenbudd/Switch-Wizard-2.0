@@ -59,7 +59,7 @@ export function EnhancedSearch({
       
       <div className={cn(
         "relative flex items-center bg-white/80 dark:bg-black/40 backdrop-blur-md border rounded-lg overflow-hidden transition-all duration-300",
-        isFocused ? "border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/20" : "border-white/20 shadow-sm hover:border-white/40"
+        isFocused ? "border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/20" : "border-white/20 dark:border-white/10 shadow-sm hover:border-white/40 dark:hover:border-white/20"
       )}>
         <Search className={cn(
           "w-5 h-5 ml-3 transition-colors",
