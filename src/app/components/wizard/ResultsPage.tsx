@@ -201,10 +201,12 @@ export function ResultsPage({
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">Recommended Products</h2>
-            <p className="text-muted-foreground mt-1" aria-live="polite" aria-atomic="true">
-              {finalResults.length} {finalResults.length === 1 ? 'match' : 'matches'} found based on your criteria
-            </p>
+            <h2 className="text-3xl font-bold text-foreground" aria-live="polite" aria-atomic="true">
+              Recommended Products
+              <span className="text-lg font-normal text-muted-foreground ml-3">
+                ({finalResults.length})
+              </span>
+            </h2>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => {
@@ -260,15 +262,15 @@ export function ResultsPage({
           
           {/* Add chips for result-page specific filters */}
           {searchTerm && (
-            <FilterChip label={`Search: "${searchTerm}"`} onRemove={() => setSearchTerm('')} className="bg-blue-100 text-blue-800" />
+            <FilterChip label={`Search: "${searchTerm}"`} onRemove={() => setSearchTerm('')} className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" />
           )}
           
           {dutyFilter.length > 0 && (
-            <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 text-orange-800" />
+            <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" />
           )}
 
           {materialFilter.length > 0 && (
-            <FilterChip label={`Material: ${materialFilter.join(', ')}`} onRemove={() => setMaterialFilter([])} className="bg-emerald-100 text-emerald-800" />
+            <FilterChip label={`Material: ${materialFilter.join(', ')}`} onRemove={() => setMaterialFilter([])} className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" />
           )}
         </div>
 
