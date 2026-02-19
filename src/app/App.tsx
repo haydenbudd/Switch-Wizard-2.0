@@ -460,11 +460,9 @@ function WizardApp() {
 
 export default function App() {
   return (
-    <div id="lm-product-finder" className="lm-product-finder-root bg-background text-foreground">
-      <Router>
-        {(path, navigate) => <AppShell path={path} navigate={navigate} />}
-      </Router>
-    </div>
+    <Router>
+      {(path, navigate) => <AppShell path={path} navigate={navigate} />}
+    </Router>
   );
 }
 
@@ -486,7 +484,7 @@ function AppShell({ path, navigate }: { path: string; navigate: (to: string) => 
 
   if (path.startsWith('/admin')) {
     return (
-      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>}>
+      <Suspense fallback={<div>Loading...</div>}>
         <AdminContainer />
       </Suspense>
     );
