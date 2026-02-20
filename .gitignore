@@ -1,5 +1,7 @@
 node_modules
 dist
+dist-wordpress
+dist-wordpress-plugin
 .env
 .env.local
 .env.*.local

@@ -1,5 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
+// Use hash-based routing so the app works when embedded inside WordPress pages
+// (where window.location.pathname belongs to WordPress, not this app).
+function getHashPath() {
+  const hash = window.location.hash;
+  return hash ? hash.slice(1) : '/'; // '#/admin' → '/admin'
+}
+
 const RouterContext = createContext<{
   path: string;
   navigate: (path: string) => void;
@@ -10,18 +17,16 @@ export function useRouter() {
 }
 
 export function Router({ children }: { children: (path: string, navigate: (path: string) => void) => React.ReactNode }) {
-  const [path, setPath] = useState('/');
+  const [path, setPath] = useState(getHashPath);
 
   useEffect(() => {
-    const onPopState = () => setPath(window.location.pathname);
-    window.addEventListener('popstate', onPopState);
-    setPath(window.location.pathname);
-    return () => window.removeEventListener('popstate', onPopState);
+    const onHashChange = () => setPath(getHashPath());
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
   const navigate = (to: string) => {
-    window.history.pushState(null, '', to);
-    setPath(to);
+    window.location.hash = to; // triggers hashchange → updates state
   };
 
   return (

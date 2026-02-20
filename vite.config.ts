@@ -3,8 +3,10 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
+const isWordPress = process.env.BUILD_TARGET === 'wordpress';
+
 export default defineConfig({
-  base: '/Switch-Wizard-2.0/',
+  base: isWordPress ? './' : '/Switch-Wizard-2.0/',
   plugins: [
     // The React and Tailwind plugins are both required for Make, even if
     // Tailwind is not being actively used – do not remove them
@@ -18,6 +20,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: isWordPress ? 'dist-wordpress' : 'dist',
     rollupOptions: {
       output: {
         entryFileNames: 'assets/app.js',

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "build:wordpress": "BUILD_TARGET=wordpress vite build",
     "dev": "vite"
   },
   "dependencies": {
