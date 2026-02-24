@@ -119,21 +119,6 @@ export function ResultsPage({
       result = result.filter(p => materialFilter.includes(p.material));
     }
 
-    // Deduplicate by series — keep one representative card per series
-    // Prefer flagship products, then most features, then first match
-    const seriesMap = new Map<string, typeof result[number]>();
-    for (const p of result) {
-      const existing = seriesMap.get(p.series);
-      if (!existing) {
-        seriesMap.set(p.series, p);
-      } else {
-        const dominated = p.flagship && !existing.flagship
-          || (!existing.flagship && (p.features?.length ?? 0) > (existing.features?.length ?? 0));
-        if (dominated) seriesMap.set(p.series, p);
-      }
-    }
-    result = Array.from(seriesMap.values());
-
     // Sort
     result.sort((a, b) => {
       if (sortBy === 'duty') {
@@ -338,7 +323,7 @@ export function ResultsPage({
                 
                 <DropdownMenuLabel>Duty Rating</DropdownMenuLabel>
                 {/* Simplified Multi-select via standard items for now */}
-                {['heavy', 'medium', 'light'].map(duty => (
+                {['light', 'medium', 'heavy'].map(duty => (
                   <div key={duty} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
                     role="checkbox"
                     aria-checked={dutyFilter.includes(duty)}
