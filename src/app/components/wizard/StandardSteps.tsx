@@ -140,57 +140,7 @@ export function StandardSteps({
     );
   }
 
-  // Step 0 Phase 2: Application Selection
-  if (wizardState.step === 0) {
-    return (
-      <div className="container mx-auto px-4 pt-24 pb-20">
-        {/* Progress Bar */}
-        <div className="max-w-4xl mx-auto mb-14">
-          <div className="flex justify-between text-xs font-medium text-muted-foreground mb-2.5 tracking-wide">
-            <span className="uppercase">Step {getDisplayStep(0)} of {totalSteps}</span>
-            <span className="tabular-nums">{progressPercent}%</span>
-          </div>
-          <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`Wizard progress: step ${getDisplayStep(0)} of ${totalSteps}`}>
-            <motion.div
-              className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full progress-glow"
-              initial={{ width: 0 }}
-              animate={{ width: `${(getProgressStep(0) / totalSteps) * 100}%` }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            />
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
-              <ChevronLeft className="w-4 h-4 mr-1" /> Back
-            </Button>
-          </div>
-
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold tracking-tight mb-2">Select Your Application</h2>
-            <p className="text-muted-foreground">Choose the specific use case for your foot switch</p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {filteredApplications.map((app, i) => (
-              <OptionCard
-                key={app.id}
-                label={app.label}
-                description={app.description}
-                icon={app.icon}
-                selected={wizardState.selectedApplication === app.id}
-                onClick={() => onApplicationSelect(app.id)}
-                index={i}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Common wrapper for steps 1-8
+  // Common wrapper for all steps after category selection
   return (
     <div className="container mx-auto px-4 pt-24 pb-20">
       {/* Progress Bar */}
@@ -214,7 +164,7 @@ export function StandardSteps({
           <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> Back
           </Button>
-          {[7].includes(wizardState.step) && (
+          {wizardState.step === 7 && (
             <Button variant="ghost" onClick={onContinue} className="text-muted-foreground hover:text-foreground">
               Skip <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
@@ -229,6 +179,29 @@ export function StandardSteps({
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
+            {/* Step 0 Phase 2: Application Selection */}
+            {wizardState.step === 0 && (
+              <div className="space-y-6">
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Select Your Application</h2>
+                  <p className="text-muted-foreground">Choose the specific use case for your foot switch</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                  {filteredApplications.map((app, i) => (
+                    <OptionCard
+                      key={app.id}
+                      label={app.label}
+                      description={app.description}
+                      icon={app.icon}
+                      selected={wizardState.selectedApplication === app.id}
+                      onClick={() => onApplicationSelect(app.id)}
+                      index={i}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Step 1: Technology */}
             {wizardState.step === 1 && (
               <div className="space-y-6">
@@ -292,7 +265,6 @@ export function StandardSteps({
                   {(environments || []).map((env, i) => (
                     <OptionCard
                       key={env.id}
-                      id={env.id}
                       label={env.label}
                       icon={env.icon}
                       description={env.description}
@@ -341,7 +313,6 @@ export function StandardSteps({
                   {(connections || []).map((conn, i) => (
                     <OptionCard
                       key={conn.id}
-                      id={conn.id}
                       label={conn.label}
                       description={conn.description}
                       icon={conn.icon}
@@ -364,7 +335,6 @@ export function StandardSteps({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
                   <OptionCard
-                    id="yes"
                     label="Yes, Add Guard"
                     description="Safety guard prevents accidental activation."
                     icon={ShieldCheck}
@@ -374,7 +344,6 @@ export function StandardSteps({
                     index={0}
                   />
                   <OptionCard
-                    id="no"
                     label="No Guard Needed"
                     description="No safety guard required."
                     icon={ShieldOff}
