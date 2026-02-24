@@ -91,13 +91,10 @@ export function StandardSteps({
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-16"
         >
-          <p className="text-sm font-semibold tracking-widest uppercase text-primary/70 mb-3">
-            Linemaster Product Finder
-          </p>
-          <h1 className="text-4xl md:text-6xl font-bold mb-5 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Select your industry to begin. We'll guide you to the right foot switch.
           </p>
         </motion.div>
