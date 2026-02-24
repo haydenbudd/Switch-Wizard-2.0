@@ -3,18 +3,39 @@ import { GlassCard } from './GlassCard';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { Product } from '@/app/lib/api';
-import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package } from 'lucide-react';
+import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package, Droplets, Anvil, Sparkles, Hexagon, Feather, Gem, Component } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 
 // Icon mapping for features - defined outside component to avoid re-creation on every render
 function FeatureIcon({ feature }: { feature: string }) {
+  const cls = "w-3 h-3 mr-1";
   switch (feature) {
-    case 'shield': return <Shield className="w-3 h-3 mr-1" />;
-    case 'wireless': return <Zap className="w-3 h-3 mr-1" />;
-    case 'pneumatic': return <Wind className="w-3 h-3 mr-1" />;
-    default: return <CheckCircle2 className="w-3 h-3 mr-1" />;
+    case 'shield': return <Shield className={cls} />;
+    case 'wireless': return <Zap className={cls} />;
+    case 'pneumatic': return <Wind className={cls} />;
+    default: return <CheckCircle2 className={cls} />;
   }
+}
+
+// Icon for IP rating badges
+function IpIcon() {
+  return <Droplets className="w-3 h-3 mr-1 opacity-70" />;
+}
+
+// Icon mapping for material badges
+function MaterialIcon({ material }: { material: string }) {
+  const cls = "w-3 h-3 mr-1 opacity-70";
+  const m = material.toLowerCase();
+  if (m.includes('cast iron'))     return <Anvil className={cls} />;
+  if (m.includes('stainless'))     return <Sparkles className={cls} />;
+  if (m.includes('thermoplastic') || m.includes('plastic') || m.includes('rubber'))
+                                   return <Hexagon className={cls} />;
+  if (m.includes('aluminum') || m.includes('aluminium'))
+                                   return <Feather className={cls} />;
+  if (m.includes('zinc') || m.includes('die'))
+                                   return <Gem className={cls} />;
+  return <Component className={cls} />;
 }
 
 interface ProductCardProps {
@@ -93,17 +114,19 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
 
         {/* Specs & Features */}
         <div className="flex flex-wrap gap-1.5 mb-6">
-          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal">
+          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal flex items-center">
+            <IpIcon />
             {product.ip}
           </Badge>
-          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize">
+          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize flex items-center">
+            <MaterialIcon material={product.material} />
             {product.material}
           </Badge>
           {product.features?.map((feature) => (
             <Badge
               key={feature}
               variant="secondary"
-              className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize"
+              className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize flex items-center"
             >
               <FeatureIcon feature={feature} />
               {feature.replace('_', ' ')}
