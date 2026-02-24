@@ -355,7 +355,7 @@ function WizardApp() {
   // Calculate total visible steps dynamically
   const totalSteps = useMemo(() => {
     if (wizardState.flow === 'medical') return 6;
-    let steps = 7;
+    let steps = 8;
     if (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') steps--;
     return steps;
   }, [wizardState.flow, wizardState.selectedTechnology]);
@@ -364,7 +364,7 @@ function WizardApp() {
 
   const getProgressStep = useCallback((rawStep: number) => {
     if (rawStep <= 0) return 0;
-    let step = rawStep - 1;
+    let step = rawStep;
     if (skipsConnectionStep && rawStep > 5) step--;
     return step;
   }, [skipsConnectionStep]);
