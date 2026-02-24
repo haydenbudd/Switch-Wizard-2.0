@@ -4,9 +4,15 @@ import { projectId, publicAnonKey } from '/utils/supabase/info';
 
 const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/make-server-a6e7a38d`;
 
+async function getAuthToken(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token || publicAnonKey;
+}
+
 async function fetchAPI(endpoint: string, options: RequestInit = {}) {
 
   try {
+    const token = await getAuthToken();
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000);
 
@@ -14,7 +20,7 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
       ...options,
       cache: 'no-store',
       headers: {
-        'Authorization': `Bearer ${publicAnonKey}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
         'Pragma': 'no-cache',
