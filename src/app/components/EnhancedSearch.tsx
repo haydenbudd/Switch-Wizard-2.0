@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/app/components/ui/input';
 import { Button } from '@/app/components/ui/button';
-import { Badge } from '@/app/components/ui/badge';
 import { cn } from '@/app/components/ui/utils';
 
 interface EnhancedSearchProps {
@@ -88,13 +87,6 @@ export function EnhancedSearch({
             <X className="w-4 h-4" aria-hidden="true" />
           </Button>
         )}
-        
-        {/* Keyboard shortcut hint */}
-        <div className="hidden md:flex pr-3 pointer-events-none">
-          <Badge variant="outline" className="text-[10px] h-5 bg-background/50 text-muted-foreground border-border/50">
-            /
-          </Badge>
-        </div>
       </div>
     </div>
   );

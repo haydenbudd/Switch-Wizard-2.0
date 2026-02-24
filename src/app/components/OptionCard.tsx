@@ -5,7 +5,6 @@ import { cn } from '@/app/components/ui/utils';
 import { Check } from 'lucide-react';
 
 interface OptionCardProps {
-  id?: string;
   label: string;
   icon?: ElementType;
   description?: string;
@@ -18,7 +17,6 @@ interface OptionCardProps {
 }
 
 export const OptionCard = memo(function OptionCard({
-  id,
   label,
   icon: Icon,
   description,

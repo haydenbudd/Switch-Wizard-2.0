@@ -83,6 +83,8 @@
   --destructive-foreground: #ffffff;
   --border: rgba(226, 232, 240, 0.08);
   --input: rgba(226, 232, 240, 0.04);
+  --input-background: rgba(226, 232, 240, 0.06);
+  --switch-background: #334155;
   --ring: rgba(59, 130, 246, 0.25);
   --font-weight-medium: 600;
   --font-weight-normal: 400;

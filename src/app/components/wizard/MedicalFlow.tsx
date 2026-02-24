@@ -3,7 +3,6 @@ import { Button } from '@/app/components/ui/button';
 import { ArrowLeft, ArrowRight, Check, Heart, Package, Settings, Info, Phone, Mail, MessageSquare, CircleDot, ToggleLeft, Sun, Droplets } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
-import { Option } from '@/app/data/options';
 import type { Product } from '@/app/lib/api';
 import { ProgressDots } from '@/app/components/ProgressDots';
 import { cn } from '@/app/components/ui/utils';
@@ -26,10 +25,6 @@ const MEDICAL_ENVIRONMENTS = [
 interface MedicalFlowProps {
   wizardState: WizardState;
   products: Product[];
-  consoleStyles: Option[];
-  pedalCounts: Option[];
-  medicalTechnicalFeatures: Option[];
-  accessories: Option[];
   totalSteps: number;
   onBack: () => void;
   onContinue: () => void;
@@ -47,10 +42,6 @@ const CUSTOM_DISPLAY_TOTAL = 2;
 export function MedicalFlow({
   wizardState,
   products,
-  consoleStyles,
-  pedalCounts,
-  medicalTechnicalFeatures,
-  accessories,
   totalSteps,
   onBack,
   onContinue,

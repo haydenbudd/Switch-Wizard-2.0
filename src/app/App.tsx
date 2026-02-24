@@ -19,6 +19,14 @@ const AdminContainer = lazy(() =>
     .catch(() => ({ default: () => null }))
 );
 
+function matchesEnvironment(env: string, ip: string): boolean {
+  if (env === 'open') return ip === 'IPXX';
+  if (env === 'dry') return ['IPXX', 'IP20'].includes(ip);
+  if (env === 'damp') return ['IP56', 'IP68'].includes(ip);
+  if (env === 'wet') return ip === 'IP68';
+  return true;
+}
+
 function WizardApp() {
   const wizardState = useWizardState();
 
@@ -188,11 +196,7 @@ function WizardApp() {
       if (state.selectedApplication && !product.applications.includes(state.selectedApplication)) return false;
       if (state.selectedTechnology && product.technology !== state.selectedTechnology) return false;
       if (state.selectedAction && !product.actions.includes(state.selectedAction)) return false;
-      if (state.selectedEnvironment === 'open' && product.ip !== 'IPXX') return false;
-      if (state.selectedEnvironment === 'dry' && !['IPXX', 'IP20'].includes(product.ip)) return false;
-      if (state.selectedEnvironment === 'damp' && !['IP56', 'IP68'].includes(product.ip)) return false;
-      if (state.selectedEnvironment === 'wet' && product.ip !== 'IP68') return false;
-      // 'any' = no preference, skip IP filter
+      if (!matchesEnvironment(state.selectedEnvironment, product.ip)) return false;
       if (state.selectedDuty && product.duty !== state.selectedDuty) return false;
       if (state.selectedTechnology !== 'pneumatic' && state.selectedConnection && product.connector_type !== state.selectedConnection) return false;
       if (state.selectedGuard === 'yes' && !(product.features || []).includes('shield')) return false;
@@ -231,10 +235,7 @@ function WizardApp() {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
-        if (optionId === 'open' && p.ip !== 'IPXX') return false;
-        if (optionId === 'dry' && !['IPXX', 'IP20'].includes(p.ip)) return false;
-        if (optionId === 'damp' && !['IP56', 'IP68'].includes(p.ip)) return false;
-        if (optionId === 'wet' && p.ip !== 'IP68') return false;
+        if (!matchesEnvironment(optionId || '', p.ip)) return false;
         return true;
       }).length;
     } else if (step === 4) {
@@ -242,10 +243,7 @@ function WizardApp() {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
-        if (wizardState.selectedEnvironment === 'open' && p.ip !== 'IPXX') return false;
-        if (wizardState.selectedEnvironment === 'dry' && !['IPXX', 'IP20'].includes(p.ip)) return false;
-        if (wizardState.selectedEnvironment === 'damp' && !['IP56', 'IP68'].includes(p.ip)) return false;
-        if (wizardState.selectedEnvironment === 'wet' && p.ip !== 'IP68') return false;
+        if (!matchesEnvironment(wizardState.selectedEnvironment, p.ip)) return false;
         return p.duty === optionId;
       }).length;
     } else if (step === 5) {
@@ -253,10 +251,7 @@ function WizardApp() {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
-        if (wizardState.selectedEnvironment === 'open' && p.ip !== 'IPXX') return false;
-        if (wizardState.selectedEnvironment === 'dry' && !['IPXX', 'IP20'].includes(p.ip)) return false;
-        if (wizardState.selectedEnvironment === 'damp' && !['IP56', 'IP68'].includes(p.ip)) return false;
-        if (wizardState.selectedEnvironment === 'wet' && p.ip !== 'IP68') return false;
+        if (!matchesEnvironment(wizardState.selectedEnvironment, p.ip)) return false;
         if (wizardState.selectedDuty && p.duty !== wizardState.selectedDuty) return false;
         return p.connector_type === optionId;
       }).length;
@@ -265,10 +260,7 @@ function WizardApp() {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
         if (!p.actions.includes(wizardState.selectedAction)) return false;
-        if (wizardState.selectedEnvironment === 'open' && p.ip !== 'IPXX') return false;
-        if (wizardState.selectedEnvironment === 'dry' && !['IPXX', 'IP20'].includes(p.ip)) return false;
-        if (wizardState.selectedEnvironment === 'damp' && !['IP56', 'IP68'].includes(p.ip)) return false;
-        if (wizardState.selectedEnvironment === 'wet' && p.ip !== 'IP68') return false;
+        if (!matchesEnvironment(wizardState.selectedEnvironment, p.ip)) return false;
         if (wizardState.selectedDuty && p.duty !== wizardState.selectedDuty) return false;
         if (wizardState.selectedTechnology !== 'pneumatic' && wizardState.selectedConnection && p.connector_type !== wizardState.selectedConnection) return false;
         const hasShield = (p.features || []).includes('shield');
@@ -377,10 +369,6 @@ function WizardApp() {
       <MedicalFlow
         wizardState={wizardState}
         products={products}
-        consoleStyles={consoleStyles}
-        pedalCounts={pedalCounts}
-        medicalTechnicalFeatures={medicalTechnicalFeatures}
-        accessories={accessories}
         totalSteps={totalSteps}
         onBack={handleBack}
         onContinue={handleContinue}

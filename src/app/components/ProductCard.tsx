@@ -19,18 +19,15 @@ function FeatureIcon({ feature }: { feature: string }) {
 
 interface ProductCardProps {
   product: Product;
-  highlight?: boolean; // If true, applies a featured style
 }
 
-export const ProductCard = memo(function ProductCard({ product, highlight = false }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
   if (!product) return null;
   const isFlagship = product.flagship;
 
   return (
-    <GlassCard 
-      className={`h-full flex flex-col group relative overflow-hidden transition-all duration-500 ${
-        highlight ? 'border-primary/30 shadow-xl shadow-primary/10' : ''
-      }`}
+    <GlassCard
+      className="h-full flex flex-col group relative overflow-hidden transition-all duration-500"
       hoverEffect={true}
     >
       {/* Featured/Flagship Badge */}
