@@ -63,7 +63,8 @@
   --sidebar-ring: rgba(30, 64, 175, 0.25);
 }
 
-.dark {
+.dark,
+.lm-dark {
   --background: #020617;
   --foreground: #e2e8f0;
   --card: rgba(15, 23, 42, 0.72);
@@ -221,7 +222,8 @@
   box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
 }
 
-.dark .glass-card {
+.dark .glass-card,
+.lm-dark .glass-card {
   background: var(--glass-bg, rgba(15, 23, 42, 0.95));
   border-color: var(--glass-border, rgba(226, 232, 240, 0.15));
 }
@@ -231,11 +233,17 @@
 }
 
 /* Base page background */
-body {
-  background-color: #f0f1f5;
+body,
+#lm-product-finder {
+  background-color: var(--background, #f0f1f5);
+  color: var(--foreground, #0f172a);
 }
-.dark body {
-  background-color: #020617;
+.dark body,
+#lm-product-finder.lm-dark,
+.lm-dark #lm-product-finder,
+.dark #lm-product-finder {
+  background-color: var(--background, #020617);
+  color: var(--foreground, #e2e8f0);
 }
 
 /* Refined mesh gradients — subtle depth behind glass */
@@ -246,7 +254,8 @@ body {
     radial-gradient(ellipse at 50% 85%, rgba(5, 150, 105, 0.03) 0%, transparent 50%);
 }
 
-.dark .mesh-gradient-light {
+.dark .mesh-gradient-light,
+.lm-dark .mesh-gradient-light {
   background:
     radial-gradient(ellipse at 15% 45%, rgba(30, 64, 175, 0.08) 0%, transparent 55%),
     radial-gradient(ellipse at 85% 25%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
@@ -261,7 +270,8 @@ body {
     radial-gradient(ellipse at 40% 80%, rgba(217, 119, 6, 0.03) 0%, transparent 50%);
 }
 
-.dark .mesh-gradient-medical {
+.dark .mesh-gradient-medical,
+.lm-dark .mesh-gradient-medical {
   background:
     radial-gradient(ellipse at 20% 50%, rgba(239, 68, 68, 0.06) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 20%, rgba(167, 139, 250, 0.04) 0%, transparent 50%),
@@ -322,10 +332,6 @@ body {
   }
 }
 
-.animate-pulse-ring {
-  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
 .animate-glass-appear {
   animation: glass-appear 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -344,6 +350,10 @@ body {
   animation: card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Subtle grain texture overlay for depth */
 .grain-overlay::after {
   content: '';
@@ -356,7 +366,8 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
-.dark .grain-overlay::after {
+.dark .grain-overlay::after,
+.lm-dark .grain-overlay::after {
   opacity: 0.04;
   mix-blend-mode: screen;
 }
@@ -365,6 +376,65 @@ body {
 .progress-glow {
   box-shadow: 0 0 8px rgba(30, 64, 175, 0.3), 0 0 2px rgba(30, 64, 175, 0.5);
 }
-.dark .progress-glow {
+.dark .progress-glow,
+.lm-dark .progress-glow {
   box-shadow: 0 0 8px rgba(59, 130, 246, 0.3), 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* Fallback: if the inline script is stripped (e.g. Figma Make sandbox),
+   CSS variables still respond to system dark mode preference */
+@media (prefers-color-scheme: dark) {
+  :root,
+  #lm-product-finder {
+    --background: #020617;
+    --foreground: #e2e8f0;
+    --card: rgba(15, 23, 42, 0.72);
+    --card-foreground: #e2e8f0;
+    --popover: rgba(15, 23, 42, 0.90);
+    --popover-foreground: #e2e8f0;
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    --secondary: rgba(226, 232, 240, 0.06);
+    --secondary-foreground: #e2e8f0;
+    --muted: rgba(226, 232, 240, 0.06);
+    --muted-foreground: #94a3b8;
+    --accent: rgba(226, 232, 240, 0.04);
+    --accent-foreground: #e2e8f0;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: rgba(226, 232, 240, 0.08);
+    --input: rgba(226, 232, 240, 0.04);
+    --ring: rgba(59, 130, 246, 0.25);
+    --font-weight-medium: 600;
+    --font-weight-normal: 400;
+    --chart-1: #3b82f6;
+    --chart-2: #34d399;
+    --chart-3: #fbbf24;
+    --chart-4: #a78bfa;
+    --chart-5: #f87171;
+
+    --accent-warm: #f59e0b;
+    --accent-warm-foreground: #0f172a;
+
+    --glass-bg: rgba(15, 23, 42, 0.95);
+    --glass-border: rgba(226, 232, 240, 0.15);
+    --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+    --glass-shadow-inset: rgba(226, 232, 240, 0.10) 0px 1px 0px 0px inset, rgba(226, 232, 240, 0.05) 0px 0px 0px 0.5px inset;
+    --glass-blur: 16px;
+    --glass-bg-hover: rgba(30, 41, 59, 0.97);
+
+    --selection-bg: rgba(59, 130, 246, 0.08);
+    --selection-border: rgba(59, 130, 246, 0.30);
+    --selection-ring: rgba(59, 130, 246, 0.15);
+    --selection-glow: 0 0 0 1px rgba(59, 130, 246, 0.18), 0 4px 16px rgba(59, 130, 246, 0.12);
+
+    --sidebar: rgba(15, 23, 42, 0.72);
+    --sidebar-foreground: #e2e8f0;
+    --sidebar-primary: #3b82f6;
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: rgba(226, 232, 240, 0.06);
+    --sidebar-accent-foreground: #e2e8f0;
+    --sidebar-border: rgba(226, 232, 240, 0.08);
+    --sidebar-ring: rgba(59, 130, 246, 0.25);
+  }
 }
