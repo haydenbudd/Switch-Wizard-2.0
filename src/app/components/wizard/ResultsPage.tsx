@@ -93,8 +93,8 @@ export function ResultsPage({
     // Search
     if (searchTerm) {
       const lower = searchTerm.toLowerCase();
-      result = result.filter(p => 
-        p.series.toLowerCase().includes(lower) || 
+      result = result.filter(p =>
+        p.series.toLowerCase().includes(lower) ||
         p.description.toLowerCase().includes(lower) ||
         p.part_number?.toLowerCase().includes(lower)
       );
@@ -118,6 +118,21 @@ export function ResultsPage({
     if (materialFilter.length > 0) {
       result = result.filter(p => materialFilter.includes(p.material));
     }
+
+    // Deduplicate by series — keep one representative card per series
+    // Prefer flagship products, then most features, then first match
+    const seriesMap = new Map<string, typeof result[number]>();
+    for (const p of result) {
+      const existing = seriesMap.get(p.series);
+      if (!existing) {
+        seriesMap.set(p.series, p);
+      } else {
+        const dominated = p.flagship && !existing.flagship
+          || (!existing.flagship && (p.features?.length ?? 0) > (existing.features?.length ?? 0));
+        if (dominated) seriesMap.set(p.series, p);
+      }
+    }
+    result = Array.from(seriesMap.values());
 
     // Sort
     result.sort((a, b) => {
@@ -381,10 +396,9 @@ export function ResultsPage({
       {finalResults.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
           {finalResults.map((product) => (
-            <ProductCard 
-              key={product.id} 
-              product={product} 
-              highlight={product.flagship} 
+            <ProductCard
+              key={product.id}
+              product={product}
             />
           ))}
         </div>
