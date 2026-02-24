@@ -119,21 +119,6 @@ export function ResultsPage({
       result = result.filter(p => materialFilter.includes(p.material));
     }
 
-    // Deduplicate by series — keep one representative card per series
-    // Prefer flagship products, then most features, then first match
-    const seriesMap = new Map<string, typeof result[number]>();
-    for (const p of result) {
-      const existing = seriesMap.get(p.series);
-      if (!existing) {
-        seriesMap.set(p.series, p);
-      } else {
-        const dominated = p.flagship && !existing.flagship
-          || (!existing.flagship && (p.features?.length ?? 0) > (existing.features?.length ?? 0));
-        if (dominated) seriesMap.set(p.series, p);
-      }
-    }
-    result = Array.from(seriesMap.values());
-
     // Sort
     result.sort((a, b) => {
       if (sortBy === 'duty') {
