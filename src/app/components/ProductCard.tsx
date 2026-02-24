@@ -92,7 +92,9 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
         </div>
 
         <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
-          {product.description}
+          {product.description.startsWith(product.series)
+            ? product.description.slice(product.series.length).replace(/^\s*[–\-—:]\s*/, '').trim() || product.description
+            : product.description}
         </p>
 
         {/* Feature Tags */}
