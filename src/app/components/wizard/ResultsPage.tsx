@@ -338,7 +338,7 @@ export function ResultsPage({
                 
                 <DropdownMenuLabel>Duty Rating</DropdownMenuLabel>
                 {/* Simplified Multi-select via standard items for now */}
-                {['heavy', 'medium', 'light'].map(duty => (
+                {['light', 'medium', 'heavy'].map(duty => (
                   <div key={duty} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
                     role="checkbox"
                     aria-checked={dutyFilter.includes(duty)}

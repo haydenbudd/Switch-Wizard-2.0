@@ -327,24 +327,24 @@ export const guards: Option[] = [
 
 export const duties: Option[] = [
   {
-    id: 'heavy',
-    label: 'Heavy Duty',
-    icon: Anvil,
-    description: 'Maximum stability. Cast metal construction stays firmly in place. Best for machinery and high-force applications.',
+    id: 'light',
+    label: 'Light Duty',
+    icon: Feather,
+    description: 'Compact and portable. Polymer construction for lighter tasks and general use.',
     sortOrder: 0
   },
   {
     id: 'medium',
-    label: 'Standard Duty',
+    label: 'Medium Duty',
     icon: Scale,
-    description: 'Balanced durability and weight. Reliable cast metal for everyday industrial use.',
+    description: 'Balanced durability and weight. Polymer or stamped metal for everyday industrial use.',
     sortOrder: 1
   },
   {
-    id: 'light',
-    label: 'Lightweight',
-    icon: Feather,
-    description: 'Compact and portable. Polymer or formed steel for lighter tasks and general use.',
+    id: 'heavy',
+    label: 'Heavy Duty',
+    icon: Anvil,
+    description: 'Maximum stability. Cast metal construction stays firmly in place. Best for machinery and high-force applications.',
     sortOrder: 2
   },
 ];
