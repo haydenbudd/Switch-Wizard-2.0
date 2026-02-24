@@ -91,6 +91,9 @@ export function StandardSteps({
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-16"
         >
+          <p className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase">
+            Linemaster Switch Wizard
+          </p>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>

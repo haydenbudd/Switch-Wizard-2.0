@@ -36,11 +36,6 @@ export function Header({ onReset }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 pt-3 pb-1">
       <div className="mx-auto px-4">
-        {/* Centered title */}
-        <h1 className="text-center text-2xl sm:text-3xl font-semibold tracking-tight text-foreground" style={{ fontFamily: 'var(--font-display)' }}>
-          Product Finder
-        </h1>
-
         {/* Pill toolbar — top right */}
         <div className="absolute top-3 right-4 flex items-center gap-0.5 rounded-full glass-card px-1 py-1">
           <button
