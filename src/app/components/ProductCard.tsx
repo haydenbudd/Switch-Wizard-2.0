@@ -61,12 +61,6 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
           </div>
         )}
         
-        {/* Quick specs overlay on hover */}
-        <div className="absolute inset-x-0 bottom-0 p-3 bg-[var(--glass-bg)] backdrop-blur-[var(--glass-blur)] translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex justify-between text-xs font-medium z-20 border-t border-border/30" aria-hidden="true">
-          <span>{product.ip}</span>
-          <span className="capitalize">{product.material}</span>
-          <span className="capitalize">{product.duty} Duty</span>
-        </div>
       </div>
 
       {/* Content */}
@@ -92,26 +86,29 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
         </div>
 
         <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
-          {product.description}
+          {product.description.startsWith(product.series)
+            ? product.description.slice(product.series.length).replace(/^\s*[–\-—:]\s*/, '').trim() || product.description
+            : product.description}
         </p>
 
-        {/* Feature Tags */}
+        {/* Specs & Features */}
         <div className="flex flex-wrap gap-1.5 mb-6">
-          {product.features?.slice(0, 3).map((feature) => (
-            <Badge 
-              key={feature} 
-              variant="secondary" 
-              className="text-[10px] bg-secondary/50 hover:bg-secondary transition-colors px-2 py-0.5 h-5 font-normal capitalize"
+          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal">
+            {product.ip}
+          </Badge>
+          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize">
+            {product.material}
+          </Badge>
+          {product.features?.map((feature) => (
+            <Badge
+              key={feature}
+              variant="secondary"
+              className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize"
             >
               <FeatureIcon feature={feature} />
               {feature.replace('_', ' ')}
             </Badge>
           ))}
-          {(product.features?.length || 0) > 3 && (
-            <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-normal">
-              +{(product.features?.length || 0) - 3}
-            </Badge>
-          )}
         </div>
 
         {/* Footer Actions */}
