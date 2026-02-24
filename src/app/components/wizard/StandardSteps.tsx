@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff } from 'lucide-react';
+import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, ShieldCheck as ShieldCert } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
@@ -136,6 +136,27 @@ export function StandardSteps({
             </motion.div>
           ))}
         </div>
+
+        {/* Trust Badges */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="flex flex-wrap items-center justify-center gap-8 max-w-3xl mx-auto mt-20 pt-10 border-t border-border/50"
+        >
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <ShieldCert className="w-5 h-5 text-primary/60" />
+            <span className="text-sm font-medium">ISO Certified</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Flag className="w-5 h-5 text-primary/60" />
+            <span className="text-sm font-medium">Made in USA</span>
+          </div>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Award className="w-5 h-5 text-primary/60" />
+            <span className="text-sm font-medium">70+ Years of Excellence</span>
+          </div>
+        </motion.div>
       </div>
     );
   }
