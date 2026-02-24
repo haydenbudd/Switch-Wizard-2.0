@@ -1,10 +1,83 @@
+import { useState } from 'react';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, ShieldCheck as ShieldCert } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { Button } from '@/app/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/app/components/ui/dialog';
 import { motion, AnimatePresence } from 'motion/react';
+
+const WIZARD_ASCII = `\
+                                            ####
+                                          #######
+                                        ##########
+                                       ############
+                                      ####### ######
+                                     ######    ######
+                                    ######      ######
+                                   ######        ######
+                                  ######          ######
+                                 ######            ######
+                                ######              ######
+                               ######                ######
+                              #######                  #######
+                             #######                    #######
+                        #############################################
+                   ####################################################### ######
+                 ########################################################### ############
+            ##################                                               ###############
+          ##############           ####################################           ##############
+        ###########               ######################################               ###########
+      ########                   ######################################                   ########
+      ######                    ######   #######        #######   ######                    ######
+       #######                ######### ###########    ########### #########                #######
+         #########            ########## ############   ###########  #########            #########
+           ###########       ##########   ###   #### ## ####   ###   ##########       ###########
+              ##########################   ######### #### #########   ##########################
+                 ################### #   ############################   # ###################
+                    ##############   ################################   #################
+                      ###############      ########      ###############    ###########
+                        ###########        ########        ###########     #############
+                          #########        ##########        #########     ####### #######
+                       ###########        ##############        ##################   ######
+                      ##########        ########  ########        #########################
+           ###               ######################      ######################   #############
+           #####                ##################          ##################       #########
+            ######                    ##########                ##########           ###########
+            ######                     ######                       #####            ###########
+             ######                    #######                     ######            ###########
+             ######                   ########                     #######              #####
+              ######                  ##########                  ########              #####
+              ######                  ############               #########              #####
+               ######                ###############            ###########             #####
+               ######              ########  #########          #############           #####
+                ######           ##########     #######      ####### ##########         #####
+                ######    #  #############        #####     ######    #############  #  #####
+               ######## ##################        #####  ########     ########################
+              #################### ######        #############       ###### ##################
+             ###############      #####         ###########          #####      ##############
+             ##############     ######        ##########            ######     ##############
+             ##############    #######        #########             #######    #############
+                 #####################              ####              #####################
+                    # ################              ####              #####################
+                      ################              ####              #####################
+                       #######  ######              ####              ######  ####### #####
+                               ######               ####               ######         #####
+                               ######               ####               ######         #####
+                               ######               ####               ######         #####
+                              ######                ####                ######        #####
+                              ######                ####                ######        #####
+                              ######                 ##                 ######        #####
+                             ######                  ##                  ######       #####
+                             ######                 ####                 ######       #####
+                             ######                 ####                 ######       #####
+                             #####                  ####                  #####       #####
+                            ######                  ####                  ######      #####
+                            ######                  ####                  ######      #####
+                            ####################################################      #####
+                           ######################################################     #####
+                           ######################################################     #####`;
 
 interface StandardStepsProps {
   wizardState: WizardState;
@@ -47,6 +120,8 @@ export function StandardSteps({
   onBack,
   onContinue,
 }: StandardStepsProps) {
+  const [showWizard, setShowWizard] = useState(false);
+
   // Guard against undefined props in environments like Figma Make
   if (!wizardState || !categories) return null;
 
@@ -91,9 +166,25 @@ export function StandardSteps({
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-16"
         >
-          <p className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase">
+          <p
+            className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase cursor-pointer hover:text-primary transition-colors duration-300"
+            onClick={() => setShowWizard(true)}
+            title="Click me..."
+          >
             Linemaster Switch Wizard
           </p>
+
+          <Dialog open={showWizard} onOpenChange={setShowWizard}>
+            <DialogContent className="max-w-fit p-8 overflow-auto max-h-[90vh]">
+              <DialogTitle className="sr-only">The Switch Wizard</DialogTitle>
+              <pre className="text-[3.5px] sm:text-[5px] md:text-[7px] leading-[1.15] font-mono text-primary select-none whitespace-pre">
+{WIZARD_ASCII}
+              </pre>
+              <p className="text-center text-xs text-muted-foreground mt-2 italic">
+                You found the Switch Wizard!
+              </p>
+            </DialogContent>
+          </Dialog>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>
