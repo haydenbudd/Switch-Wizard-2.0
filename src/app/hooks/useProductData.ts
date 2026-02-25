@@ -138,7 +138,7 @@ export function useProductData(): ProductData {
           label: p.material,
           description: meta?.description || '',
           icon: meta?.icon,
-          sortOrder: meta?.sortOrder || 99,
+          sortOrder: meta?.sortOrder ?? 99,
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
@@ -164,7 +164,7 @@ export function useProductData(): ProductData {
           label: meta?.label || p.connector_type!.replace(/-/g, ' '),
           description: meta?.description || '',
           icon: meta?.icon,
-          sortOrder: meta?.sortOrder || 99,
+          sortOrder: meta?.sortOrder ?? 99,
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
@@ -189,7 +189,7 @@ export function useProductData(): ProductData {
           label: meta?.label || p.duty.charAt(0).toUpperCase() + p.duty.slice(1),
           description: meta?.description || '',
           icon: meta?.icon,
-          sortOrder: meta?.sortOrder || 99,
+          sortOrder: meta?.sortOrder ?? 99,
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
