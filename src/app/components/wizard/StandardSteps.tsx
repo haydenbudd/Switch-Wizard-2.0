@@ -11,24 +11,24 @@ import { motion, AnimatePresence } from 'motion/react';
 // Magic wand cursor as inline SVG data URI
 const WAND_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='4' y1='28' x2='18' y2='14' stroke='%23a78bfa' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18,14 L20,10 L24,12 L22,16 Z' fill='%23fbbf24'/%3E%3Ccircle cx='26' cy='4' r='1.5' fill='%23fbbf24'/%3E%3Ccircle cx='29' cy='9' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='24' cy='2' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='30' cy='5' r='0.8' fill='%23fff'/%3E%3Ccircle cx='27' cy='1' r='0.8' fill='%23fff'/%3E%3C/svg%3E") 4 28, auto`;
 
-// Wizard hat SVG for the "L" in Linemaster — pops in when wizard is active
+// Wizard hat SVG for the "L" in Linemaster — hangs crooked off the top of the L
 const WizardHat = ({ visible }: { visible: boolean }) => (
   <AnimatePresence>
     {visible && (
       <motion.svg
         key="wizard-hat"
-        initial={{ scale: 0, opacity: 0, y: 6 }}
-        animate={{ scale: 1, opacity: 1, y: 0 }}
-        exit={{ scale: 0, opacity: 0, y: 6 }}
-        transition={{ type: 'spring', damping: 12, stiffness: 300 }}
-        width="18"
-        height="16"
+        initial={{ scale: 0, opacity: 0, rotate: 15 }}
+        animate={{ scale: 1, opacity: 1, rotate: -12 }}
+        exit={{ scale: 0, opacity: 0, rotate: 15 }}
+        transition={{ type: 'spring', damping: 10, stiffness: 250 }}
+        width="22"
+        height="18"
         viewBox="0 0 24 20"
         style={{
           position: 'absolute',
-          top: '-14px',
-          left: '50%',
-          transformOrigin: 'center bottom',
+          top: '-8px',
+          left: '-2px',
+          transformOrigin: '70% 100%',
           pointerEvents: 'none',
         }}
       >
