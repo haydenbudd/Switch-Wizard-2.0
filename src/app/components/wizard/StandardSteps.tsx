@@ -5,7 +5,6 @@ import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { Button } from '@/app/components/ui/button';
-import { Dialog, DialogContent, DialogTitle } from '@/app/components/ui/dialog';
 import { motion, AnimatePresence } from 'motion/react';
 
 const WIZARD_ASCII = `\
@@ -169,22 +168,9 @@ export function StandardSteps({
           <p
             className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase cursor-pointer hover:text-primary transition-colors duration-300"
             onClick={() => setShowWizard(true)}
-            title="Click me..."
           >
             Linemaster Switch Wizard
           </p>
-
-          <Dialog open={showWizard} onOpenChange={setShowWizard}>
-            <DialogContent className="max-w-fit p-8 overflow-auto max-h-[90vh]">
-              <DialogTitle className="sr-only">The Switch Wizard</DialogTitle>
-              <pre className="text-[3.5px] sm:text-[5px] md:text-[7px] leading-[1.15] font-mono text-primary select-none whitespace-pre">
-{WIZARD_ASCII}
-              </pre>
-              <p className="text-center text-xs text-muted-foreground mt-2 italic">
-                You found the Switch Wizard!
-              </p>
-            </DialogContent>
-          </Dialog>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>
@@ -248,6 +234,35 @@ export function StandardSteps({
             <span className="text-sm font-medium">70+ Years of Excellence</span>
           </div>
         </motion.div>
+
+        <AnimatePresence>
+          {showWizard && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+              onClick={() => setShowWizard(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="bg-background border rounded-lg p-6 shadow-2xl overflow-auto max-h-[90vh] max-w-[95vw]"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <pre className="text-[4px] sm:text-[6px] md:text-[8px] leading-[1.2] font-mono text-primary select-none whitespace-pre">
+{WIZARD_ASCII}
+                </pre>
+                <p className="text-center text-xs text-muted-foreground mt-4 italic">
+                  You found the Switch Wizard! (click anywhere to close)
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     );
   }
