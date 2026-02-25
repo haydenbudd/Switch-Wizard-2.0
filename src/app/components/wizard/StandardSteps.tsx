@@ -14,14 +14,14 @@ const WAND_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/200
 // Wizard hat SVG for the "L" in Linemaster
 const WizardHat = () => (
   <svg
-    width="16"
-    height="14"
+    width="18"
+    height="16"
     viewBox="0 0 24 20"
     style={{
       position: 'absolute',
-      top: '-12px',
+      top: '-14px',
       left: '50%',
-      transform: 'translateX(-50%) rotate(-8deg)',
+      transform: 'translateX(-50%) rotate(-6deg)',
       pointerEvents: 'none',
     }}
   >
@@ -147,11 +147,15 @@ export function StandardSteps({
 }: StandardStepsProps) {
   const [showWizard, setShowWizard] = useState(false);
 
-  // Global wand cursor — inject a <style> tag when wizard is active
+  // Global wand cursor + wizard color — inject a <style> tag when wizard is active
   useEffect(() => {
     if (!showWizard) return;
     const style = document.createElement('style');
-    style.textContent = `*, *::before, *::after { cursor: ${WAND_CURSOR} !important; }`;
+    style.textContent = [
+      `*, *::before, *::after { cursor: ${WAND_CURSOR} !important; }`,
+      `:root { --wizard-color: #0c2461; }`,
+      `.dark, .lm-dark { --wizard-color: #3b82f6; }`,
+    ].join('\n');
     document.head.appendChild(style);
     return () => { document.head.removeChild(style); };
   }, [showWizard]);
@@ -213,29 +217,56 @@ export function StandardSteps({
               userSelect: 'none' as const,
             }}
           >
+            {/* Speech bubble above wizard's head */}
+            <div style={{
+              position: 'relative',
+              background: 'var(--card, rgba(255,255,255,0.72))',
+              border: '1px solid var(--border, rgba(15,23,42,0.08))',
+              borderRadius: '12px',
+              padding: '6px 12px',
+              marginBottom: '6px',
+              maxWidth: '140px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            }}>
+              <p style={{
+                textAlign: 'center',
+                fontSize: '9px',
+                color: 'var(--foreground, #0f172a)',
+                fontStyle: 'italic',
+                letterSpacing: '0.03em',
+                margin: 0,
+                lineHeight: 1.4,
+              }}>
+                The Switch Wizard is with you
+              </p>
+              {/* Speech bubble tail */}
+              <div style={{
+                position: 'absolute',
+                bottom: '-6px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 0,
+                height: 0,
+                borderLeft: '6px solid transparent',
+                borderRight: '6px solid transparent',
+                borderTop: '6px solid var(--card, rgba(255,255,255,0.72))',
+              }} />
+            </div>
             <pre
               style={{
-                fontSize: '2.5px',
+                fontSize: '2.875px',
                 lineHeight: 1.15,
                 fontFamily: 'monospace',
-                color: 'var(--primary, #3b82f6)',
+                color: 'var(--wizard-color, #0c2461)',
                 whiteSpace: 'pre',
                 margin: 0,
-                filter: 'drop-shadow(0 2px 8px rgba(59,130,246,0.3))',
+                filter: 'drop-shadow(0 2px 8px rgba(59,130,246,0.25))',
               }}
             >
 {WIZARD_ASCII}
             </pre>
-            <p style={{
-              textAlign: 'center',
-              fontSize: '9px',
-              color: 'var(--muted-foreground, #94a3b8)',
-              marginTop: '6px',
-              fontStyle: 'italic',
-              letterSpacing: '0.05em',
-            }}>
-              The Switch Wizard is with you
-            </p>
           </div>
         </motion.div>
       )}
@@ -256,7 +287,7 @@ export function StandardSteps({
         >
           <p
             className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase cursor-pointer hover:text-primary transition-colors duration-300"
-            onClick={() => setShowWizard(true)}
+            onClick={() => setShowWizard(prev => !prev)}
           >
             <span style={{ position: 'relative', display: 'inline-block' }}>
               <WizardHat />
