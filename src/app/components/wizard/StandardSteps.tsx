@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, ShieldCheck as ShieldCert } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
@@ -235,34 +236,55 @@ export function StandardSteps({
           </div>
         </motion.div>
 
-        <AnimatePresence>
-          {showWizard && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-              onClick={() => setShowWizard(false)}
+        {showWizard && createPortal(
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 99999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(0,0,0,0.85)',
+              backdropFilter: 'blur(4px)',
+              cursor: 'pointer',
+            }}
+            onClick={() => setShowWizard(false)}
+          >
+            <div
+              style={{
+                background: 'var(--background, #0f172a)',
+                border: '1px solid var(--border, rgba(226,232,240,0.08))',
+                borderRadius: '12px',
+                padding: '24px',
+                maxHeight: '90vh',
+                maxWidth: '95vw',
+                overflow: 'auto',
+                cursor: 'default',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+              }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="bg-background border rounded-lg p-6 shadow-2xl overflow-auto max-h-[90vh] max-w-[95vw]"
-                onClick={(e) => e.stopPropagation()}
+              <pre
+                style={{
+                  fontSize: 'clamp(4px, 1.2vw, 8px)',
+                  lineHeight: 1.2,
+                  fontFamily: 'monospace',
+                  color: 'var(--primary, #3b82f6)',
+                  whiteSpace: 'pre',
+                  userSelect: 'none',
+                  margin: 0,
+                }}
               >
-                <pre className="text-[4px] sm:text-[6px] md:text-[8px] leading-[1.2] font-mono text-primary select-none whitespace-pre">
 {WIZARD_ASCII}
-                </pre>
-                <p className="text-center text-xs text-muted-foreground mt-4 italic">
-                  You found the Switch Wizard! (click anywhere to close)
-                </p>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </pre>
+              <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--muted-foreground, #94a3b8)', marginTop: '16px', fontStyle: 'italic' }}>
+                You found the Switch Wizard! (click anywhere to close)
+              </p>
+            </div>
+          </div>,
+          document.body
+        )}
       </div>
     );
   }
