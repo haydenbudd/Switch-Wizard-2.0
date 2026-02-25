@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, ShieldCheck as ShieldCert } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
@@ -7,6 +7,9 @@ import { Option } from '@/app/data/options';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { Button } from '@/app/components/ui/button';
 import { motion, AnimatePresence } from 'motion/react';
+
+// Magic wand cursor as inline SVG data URI
+const WAND_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='4' y1='28' x2='18' y2='14' stroke='%23a78bfa' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18,14 L20,10 L24,12 L22,16 Z' fill='%23fbbf24'/%3E%3Ccircle cx='26' cy='4' r='1.5' fill='%23fbbf24'/%3E%3Ccircle cx='29' cy='9' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='24' cy='2' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='30' cy='5' r='0.8' fill='%23fff'/%3E%3Ccircle cx='27' cy='1' r='0.8' fill='%23fff'/%3E%3C/svg%3E") 4 28, auto`;
 
 const WIZARD_ASCII = `\
                                             ####
@@ -156,9 +159,70 @@ export function StandardSteps({
 
   const progressPercent = Math.round((getProgressStep(wizardState.step) / totalSteps) * 100);
 
+  // Wizard companion — slides in from right, persists across all steps
+  const wizardCompanion = createPortal(
+    <AnimatePresence>
+      {showWizard && (
+        <motion.div
+          initial={{ x: '100%', opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: '100%', opacity: 0 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            zIndex: 99999,
+            cursor: WAND_CURSOR,
+          }}
+          onClick={() => setShowWizard(false)}
+        >
+          <div
+            style={{
+              background: 'var(--background, #0f172a)',
+              border: '1px solid var(--border, rgba(226,232,240,0.08))',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4), 0 0 40px rgba(59,130,246,0.15)',
+              cursor: WAND_CURSOR,
+              userSelect: 'none' as const,
+            }}
+          >
+            <pre
+              style={{
+                fontSize: '2.5px',
+                lineHeight: 1.15,
+                fontFamily: 'monospace',
+                color: 'var(--primary, #3b82f6)',
+                whiteSpace: 'pre',
+                margin: 0,
+                cursor: WAND_CURSOR,
+              }}
+            >
+{WIZARD_ASCII}
+            </pre>
+            <p style={{
+              textAlign: 'center',
+              fontSize: '9px',
+              color: 'var(--muted-foreground, #94a3b8)',
+              marginTop: '8px',
+              fontStyle: 'italic',
+              letterSpacing: '0.05em',
+              cursor: WAND_CURSOR,
+            }}>
+              The Switch Wizard is with you
+            </p>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body
+  );
+
   // Step 0: Category Selection
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
+      <Fragment>
       <div className="container mx-auto px-4 pt-28 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -236,61 +300,15 @@ export function StandardSteps({
           </div>
         </motion.div>
 
-        {showWizard && createPortal(
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 99999,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'rgba(0,0,0,0.85)',
-              backdropFilter: 'blur(4px)',
-              cursor: 'pointer',
-            }}
-            onClick={() => setShowWizard(false)}
-          >
-            <div
-              style={{
-                background: 'var(--background, #0f172a)',
-                border: '1px solid var(--border, rgba(226,232,240,0.08))',
-                borderRadius: '12px',
-                padding: '24px',
-                maxHeight: '90vh',
-                maxWidth: '95vw',
-                overflow: 'auto',
-                cursor: 'default',
-                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <pre
-                style={{
-                  fontSize: 'clamp(4px, 1.2vw, 8px)',
-                  lineHeight: 1.2,
-                  fontFamily: 'monospace',
-                  color: 'var(--primary, #3b82f6)',
-                  whiteSpace: 'pre',
-                  userSelect: 'none',
-                  margin: 0,
-                }}
-              >
-{WIZARD_ASCII}
-              </pre>
-              <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--muted-foreground, #94a3b8)', marginTop: '16px', fontStyle: 'italic' }}>
-                You found the Switch Wizard! (click anywhere to close)
-              </p>
-            </div>
-          </div>,
-          document.body
-        )}
       </div>
+      {wizardCompanion}
+      </Fragment>
     );
   }
 
   // Common wrapper for all steps after category selection
   return (
+    <Fragment>
     <div className="container mx-auto px-4 pt-24 pb-20">
       {/* Progress Bar */}
       <div className="max-w-4xl mx-auto mb-14">
@@ -567,5 +585,7 @@ export function StandardSteps({
         </AnimatePresence>
       </div>
     </div>
+    {wizardCompanion}
+    </Fragment>
   );
 }
