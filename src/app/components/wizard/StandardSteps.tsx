@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, ShieldCheck as ShieldCert } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
@@ -10,6 +10,28 @@ import { motion, AnimatePresence } from 'motion/react';
 
 // Magic wand cursor as inline SVG data URI
 const WAND_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='4' y1='28' x2='18' y2='14' stroke='%23a78bfa' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18,14 L20,10 L24,12 L22,16 Z' fill='%23fbbf24'/%3E%3Ccircle cx='26' cy='4' r='1.5' fill='%23fbbf24'/%3E%3Ccircle cx='29' cy='9' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='24' cy='2' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='30' cy='5' r='0.8' fill='%23fff'/%3E%3Ccircle cx='27' cy='1' r='0.8' fill='%23fff'/%3E%3C/svg%3E") 4 28, auto`;
+
+// Wizard hat SVG for the "L" in Linemaster
+const WizardHat = () => (
+  <svg
+    width="16"
+    height="14"
+    viewBox="0 0 24 20"
+    style={{
+      position: 'absolute',
+      top: '-12px',
+      left: '50%',
+      transform: 'translateX(-50%) rotate(-8deg)',
+      pointerEvents: 'none',
+    }}
+  >
+    <path d="M12 0 L6 16 L18 16 Z" fill="var(--primary, #3b82f6)" />
+    <ellipse cx="12" cy="17" rx="12" ry="3" fill="var(--primary, #3b82f6)" />
+    <circle cx="12" cy="1.5" r="2" fill="#fbbf24" />
+    <circle cx="9" cy="8" r="1" fill="#fbbf24" opacity="0.7" />
+    <circle cx="14" cy="5" r="0.8" fill="#fbbf24" opacity="0.5" />
+  </svg>
+);
 
 const WIZARD_ASCII = `\
                                             ####
@@ -125,6 +147,15 @@ export function StandardSteps({
 }: StandardStepsProps) {
   const [showWizard, setShowWizard] = useState(false);
 
+  // Global wand cursor — inject a <style> tag when wizard is active
+  useEffect(() => {
+    if (!showWizard) return;
+    const style = document.createElement('style');
+    style.textContent = `*, *::before, *::after { cursor: ${WAND_CURSOR} !important; }`;
+    document.head.appendChild(style);
+    return () => { document.head.removeChild(style); };
+  }, [showWizard]);
+
   // Guard against undefined props in environments like Figma Make
   if (!wizardState || !categories) return null;
 
@@ -173,18 +204,12 @@ export function StandardSteps({
             bottom: '24px',
             right: '24px',
             zIndex: 99999,
-            cursor: WAND_CURSOR,
           }}
           onClick={() => setShowWizard(false)}
         >
           <div
             style={{
-              background: 'var(--background, #0f172a)',
-              border: '1px solid var(--border, rgba(226,232,240,0.08))',
-              borderRadius: '16px',
-              padding: '16px 20px',
-              boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4), 0 0 40px rgba(59,130,246,0.15)',
-              cursor: WAND_CURSOR,
+              padding: '8px',
               userSelect: 'none' as const,
             }}
           >
@@ -196,7 +221,7 @@ export function StandardSteps({
                 color: 'var(--primary, #3b82f6)',
                 whiteSpace: 'pre',
                 margin: 0,
-                cursor: WAND_CURSOR,
+                filter: 'drop-shadow(0 2px 8px rgba(59,130,246,0.3))',
               }}
             >
 {WIZARD_ASCII}
@@ -205,10 +230,9 @@ export function StandardSteps({
               textAlign: 'center',
               fontSize: '9px',
               color: 'var(--muted-foreground, #94a3b8)',
-              marginTop: '8px',
+              marginTop: '6px',
               fontStyle: 'italic',
               letterSpacing: '0.05em',
-              cursor: WAND_CURSOR,
             }}>
               The Switch Wizard is with you
             </p>
@@ -234,7 +258,10 @@ export function StandardSteps({
             className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase cursor-pointer hover:text-primary transition-colors duration-300"
             onClick={() => setShowWizard(true)}
           >
-            Linemaster Switch Wizard
+            <span style={{ position: 'relative', display: 'inline-block' }}>
+              <WizardHat />
+              L
+            </span>inemaster Switch Wizard
           </p>
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
