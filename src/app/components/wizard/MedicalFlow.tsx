@@ -221,19 +221,19 @@ export function MedicalFlow({
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-950/20">
-                      <Phone className="w-6 h-6 text-red-600 mx-auto mb-2" />
-                      <p className="text-sm font-medium">Call Us</p>
+                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
+                      <Phone className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-foreground">Call Us</p>
                       <p className="text-xs text-muted-foreground mt-1">(203) 484-3400</p>
                     </div>
-                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-950/20">
-                      <Mail className="w-6 h-6 text-red-600 mx-auto mb-2" />
-                      <p className="text-sm font-medium">Email</p>
+                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
+                      <Mail className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-foreground">Email</p>
                       <p className="text-xs text-muted-foreground mt-1">sales@linemaster.com</p>
                     </div>
-                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-950/20">
-                      <MessageSquare className="w-6 h-6 text-red-600 mx-auto mb-2" />
-                      <p className="text-sm font-medium">Request Quote</p>
+                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
+                      <MessageSquare className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-foreground">Request Quote</p>
                       <p className="text-xs text-muted-foreground mt-1">Online form</p>
                     </div>
                   </div>
