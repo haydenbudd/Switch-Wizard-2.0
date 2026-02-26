@@ -197,14 +197,19 @@ export function ResultsPage({
 
   return (
     <div className="container mx-auto px-4 py-8 pb-32">
+      {/* Screen reader announcement for result count changes */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
+        {finalResults.length} {finalResults.length === 1 ? 'product' : 'products'} found
+      </div>
+
       {/* Header & Controls */}
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex">
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5" aria-hidden="true" />
             </Button>
-            <h2 className="text-3xl font-bold text-foreground" aria-live="polite" aria-atomic="true">
+            <h2 className="text-3xl font-bold text-foreground">
               Recommended Products
               <span className="text-lg font-normal text-muted-foreground ml-3">
                 ({finalResults.length})
@@ -220,15 +225,15 @@ export function ResultsPage({
                 toast.error('Failed to copy link');
               });
             }} className="gap-2">
-              <Link className="w-4 h-4" />
+              <Link className="w-4 h-4" aria-hidden="true" />
               Copy Link
             </Button>
             <Button variant="outline" onClick={onGeneratePDF} className="gap-2">
-              <Download className="w-4 h-4" />
+              <Download className="w-4 h-4" aria-hidden="true" />
               Download PDF
             </Button>
             <Button variant="ghost" onClick={onReset} className="gap-2">
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-4 h-4" aria-hidden="true" />
               Reset
             </Button>
           </div>
@@ -290,7 +295,7 @@ export function ResultsPage({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap">
-                  <ArrowUp className="w-4 h-4" />
+                  <ArrowUp className="w-4 h-4" aria-hidden="true" />
                   Sort: <span className="font-semibold capitalize">{sortBy}</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -307,7 +312,7 @@ export function ResultsPage({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-2 whitespace-nowrap">
-                  <SlidersHorizontal className="w-4 h-4" />
+                  <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
                   More Filters
                   {(dutyFilter.length > 0 || cordedFilter !== 'all' || materialFilter.length > 0) && (
                     <span className="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true" />
@@ -330,6 +335,7 @@ export function ResultsPage({
                   <div key={duty} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
                     role="checkbox"
                     aria-checked={dutyFilter.includes(duty)}
+                    aria-label={`${duty} duty`}
                     tabIndex={0}
                     onClick={(e) => {
                       e.preventDefault();
@@ -356,6 +362,7 @@ export function ResultsPage({
                   <div key={mat} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
                     role="checkbox"
                     aria-checked={materialFilter.includes(mat)}
+                    aria-label={mat}
                     tabIndex={0}
                     onClick={(e) => {
                       e.preventDefault();
@@ -392,9 +399,9 @@ export function ResultsPage({
         </div>
       ) : (
         /* Empty State */
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700" role="status">
           <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full">
-            <Search className="w-8 h-8 text-gray-400" />
+            <Search className="w-8 h-8 text-muted-foreground" aria-hidden="true" />
           </div>
           <div className="max-w-md">
             <h3 className="text-xl font-semibold mb-2">No exact matches found</h3>

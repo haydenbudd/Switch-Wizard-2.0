@@ -129,7 +129,7 @@ export function MedicalFlow({
                       ? "bg-blue-500 text-white"
                       : "bg-gray-100 dark:bg-gray-800 text-gray-500"
                   )}>
-                    <Package className="w-6 h-6" />
+                    <Package className="w-6 h-6" aria-hidden="true" />
                   </div>
                   <h3 className={cn(
                     "font-semibold text-lg mb-1 transition-colors",
@@ -141,7 +141,7 @@ export function MedicalFlow({
                     Explore our existing catalog of medical-grade foot switches
                   </p>
                   {wizardState.selectedMedicalPath === 'stock' && (
-                    <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white">
+                    <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
                       <Check className="w-3 h-3" />
                     </div>
                   )}
@@ -167,7 +167,7 @@ export function MedicalFlow({
                       ? "bg-blue-500 text-white"
                       : "bg-gray-100 dark:bg-gray-800 text-gray-500"
                   )}>
-                    <Settings className="w-6 h-6" />
+                    <Settings className="w-6 h-6" aria-hidden="true" />
                   </div>
                   <h3 className={cn(
                     "font-semibold text-lg mb-1 transition-colors",
@@ -179,7 +179,7 @@ export function MedicalFlow({
                     Design a custom medical-grade footswitch to your specifications
                   </p>
                   {wizardState.selectedMedicalPath === 'custom' && (
-                    <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white">
+                    <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
                       <Check className="w-3 h-3" />
                     </div>
                   )}
@@ -188,7 +188,7 @@ export function MedicalFlow({
 
               <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
                 <Button variant="ghost" onClick={onBack} className="text-muted-foreground">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
                   Back
                 </Button>
                 <span className="text-sm text-muted-foreground">
@@ -208,7 +208,7 @@ export function MedicalFlow({
                 <MedicalGlassCard className="p-8 md:p-10">
                   <div className="text-center space-y-4 mb-8">
                     <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                      <Heart className="w-8 h-8 text-red-600" />
+                      <Heart className="w-8 h-8 text-red-600" aria-hidden="true" />
                     </div>
                     <h2 className="text-2xl md:text-3xl font-bold text-foreground">
                       Custom Medical Solution
@@ -221,17 +221,17 @@ export function MedicalFlow({
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                     <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-                      <Phone className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                      <Phone className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
                       <p className="text-sm font-medium text-foreground">Call Us</p>
                       <p className="text-xs text-muted-foreground mt-1">(203) 484-3400</p>
                     </div>
                     <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-                      <Mail className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                      <Mail className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
                       <p className="text-sm font-medium text-foreground">Email</p>
                       <p className="text-xs text-muted-foreground mt-1">sales@linemaster.com</p>
                     </div>
                     <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-                      <MessageSquare className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" />
+                      <MessageSquare className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
                       <p className="text-sm font-medium text-foreground">Request Quote</p>
                       <p className="text-xs text-muted-foreground mt-1">Online form</p>
                     </div>
@@ -258,7 +258,7 @@ export function MedicalFlow({
 
                 <div className="flex justify-center">
                   <Button variant="ghost" onClick={onBack} className="text-muted-foreground">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
                     Back to options
                   </Button>
                 </div>
@@ -401,7 +401,7 @@ export function MedicalFlow({
                 disabled={!wizardState.selectedAction}
               >
                 Continue
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
               </Button>
             )}
 
@@ -415,7 +415,7 @@ export function MedicalFlow({
                 disabled={!wizardState.selectedEnvironment}
               >
                 View Results
-                <ArrowRight className="w-4 h-4 ml-2" />
+                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
               </Button>
             )}
           </div>

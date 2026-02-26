@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, ShieldCheck as ShieldCert } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
@@ -157,6 +157,31 @@ export function StandardSteps({
   onContinue,
 }: StandardStepsProps) {
   const [showWizard, setShowWizard] = useState(false);
+  const [stepAnnouncement, setStepAnnouncement] = useState('');
+  const stepContentRef = useRef<HTMLDivElement>(null);
+
+  // Step titles for screen reader announcements
+  const stepTitles: Record<number, string> = {
+    0: 'Select Your Application',
+    1: 'Select Technology',
+    2: 'Select Action Type',
+    3: 'Operating Environment',
+    4: 'Duty Rating',
+    5: 'Connection Type',
+    6: 'Circuits Controlled',
+    7: 'Safety Guard',
+    8: 'Additional Features',
+  };
+
+  // Announce step changes to screen readers and move focus
+  useEffect(() => {
+    const title = stepTitles[wizardState.step];
+    if (title && wizardState.step > 0) {
+      setStepAnnouncement(`Step ${getDisplayStep(wizardState.step)} of ${totalSteps}: ${title}`);
+      // Move focus to the step content area after transition
+      setTimeout(() => stepContentRef.current?.focus(), 350);
+    }
+  }, [wizardState.step]);
 
   // Global wand cursor + wizard color — inject a <style> tag when wizard is active
   useEffect(() => {
@@ -221,8 +246,13 @@ export function StandardSteps({
             zIndex: 99999,
           }}
           onClick={() => setShowWizard(false)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setShowWizard(false); } }}
+          role="button"
+          tabIndex={0}
+          aria-label="Dismiss Switch Wizard companion"
         >
           <div
+            aria-hidden="true"
             style={{
               padding: '8px',
               userSelect: 'none' as const,
@@ -297,8 +327,13 @@ export function StandardSteps({
           className="text-center mb-16"
         >
           <p
-            className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase cursor-pointer hover:text-primary transition-colors duration-300"
+            className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase cursor-pointer hover:text-primary focus-visible:text-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-md px-2 -mx-2"
             onClick={() => setShowWizard(prev => !prev)}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowWizard(prev => !prev); } }}
+            role="button"
+            tabIndex={0}
+            aria-pressed={showWizard}
+            aria-label={showWizard ? 'Hide Switch Wizard companion' : 'Show Switch Wizard companion'}
           >
             <span style={{ position: 'relative', display: 'inline-block' }}>
               <WizardHat visible={showWizard} />
@@ -336,9 +371,9 @@ export function StandardSteps({
               >
                 <div className="flex flex-col items-center text-center h-full">
                   <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5">
-                    {category.icon && <category.icon className="w-8 h-8" />}
+                    {category.icon && <category.icon className="w-8 h-8" aria-hidden="true" />}
                   </div>
-                  <h3 className="text-xl font-semibold tracking-tight mb-3">{category.label}</h3>
+                  <h2 className="text-xl font-semibold tracking-tight mb-3">{category.label}</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed mt-auto">
                     {category.description}
                   </p>
@@ -356,15 +391,15 @@ export function StandardSteps({
           className="flex flex-wrap items-center justify-center gap-8 max-w-3xl mx-auto mt-20 pt-10 border-t border-border/50"
         >
           <div className="flex items-center gap-2 text-muted-foreground">
-            <ShieldCert className="w-5 h-5 text-primary/60" />
+            <ShieldCert className="w-5 h-5 text-primary/60" aria-hidden="true" />
             <span className="text-sm font-medium">ISO Certified</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Flag className="w-5 h-5 text-primary/60" />
+            <Flag className="w-5 h-5 text-primary/60" aria-hidden="true" />
             <span className="text-sm font-medium">Made in USA</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Award className="w-5 h-5 text-primary/60" />
+            <Award className="w-5 h-5 text-primary/60" aria-hidden="true" />
             <span className="text-sm font-medium">70+ Years of Excellence</span>
           </div>
         </motion.div>
@@ -395,14 +430,19 @@ export function StandardSteps({
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto">
+      {/* Screen reader announcements for step changes */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
+        {stepAnnouncement}
+      </div>
+
+      <div className="max-w-4xl mx-auto" ref={stepContentRef} tabIndex={-1} style={{ outline: 'none' }}>
         <div className="flex items-center justify-between mb-8">
           <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
-            <ChevronLeft className="w-4 h-4 mr-1" /> Back
+            <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
           </Button>
           {wizardState.step === 8 && (
             <Button variant="ghost" onClick={onContinue} className="text-muted-foreground hover:text-foreground">
-              Skip <ArrowRight className="w-4 h-4 ml-1" />
+              Skip <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
             </Button>
           )}
         </div>
