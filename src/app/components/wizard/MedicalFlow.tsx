@@ -1,10 +1,9 @@
 import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, Heart, Package, Settings, Info, Phone, Mail, MessageSquare, CircleDot, ToggleLeft, Sun, Droplets } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Heart, Package, Settings, Info, Phone, Mail, MessageSquare, CircleDot, ToggleLeft, Sun, Droplets, ChevronLeft } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
-import { ProgressDots } from '@/app/components/ProgressDots';
 import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -81,10 +80,6 @@ export function MedicalFlow({
     wizardState.setSelectedTechnology('electrical');
     setTimeout(onViewStandardProducts, 150);
   };
-
-  // Stock path progress: steps 2-3 map to dots 0-1 (2 dots)
-  const stockProgressStep = wizardState.step - 2;
-  const stockProgressTotal = 2;
 
   const renderStep = () => {
     switch (wizardState.step) {
@@ -349,76 +344,49 @@ export function MedicalFlow({
     );
   }
 
-  // Steps 2-3 (stock path): Simplified medical wizard layout
+  // Steps 2-3 (stock path): Layout matching standard wizard flow
+  const progressPercent = Math.round((displayStep / STOCK_DISPLAY_TOTAL) * 100);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50/30 to-white dark:from-gray-900 dark:to-black relative">
-      <div className="container mx-auto px-4 py-8 relative z-10">
+      <div className="container mx-auto px-4 pt-24 pb-20 relative z-10">
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back">
-            <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-          </Button>
-          <div className="flex flex-col items-center">
-            <span className="text-xs font-bold tracking-widest text-red-500 uppercase">Medical Division</span>
-            <span className="text-xs text-muted-foreground mt-1">
-              Step {displayStep} of {STOCK_DISPLAY_TOTAL}
-            </span>
-            <ProgressDots currentStep={stockProgressStep} totalSteps={stockProgressTotal} />
+        {/* Progress Bar - matching standard flow */}
+        <div className="max-w-4xl mx-auto mb-14">
+          <div className="flex justify-between text-xs font-medium text-muted-foreground mb-2.5 tracking-wide">
+            <span className="uppercase">Step {displayStep} of {STOCK_DISPLAY_TOTAL}</span>
+            <span className="text-xs text-red-500 font-semibold tracking-widest uppercase">Medical</span>
           </div>
-          <div className="w-10" />
+          <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`Medical wizard progress: step ${displayStep} of ${STOCK_DISPLAY_TOTAL}`}>
+            <MotionDiv
+              className="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full"
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </div>
         </div>
 
-        {/* Content Area with Animation */}
-        <div className="min-h-[400px]">
+        <div className="max-w-4xl mx-auto">
+          {/* Inline navigation - matching standard flow */}
+          <div className="flex items-center justify-between mb-8">
+            <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
+              <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
+            </Button>
+          </div>
+
+          {/* Content Area with Animation */}
           <AnimatePresence mode="wait">
             <MotionDiv
               key={wizardState.step}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
               {renderStep()}
             </MotionDiv>
           </AnimatePresence>
-        </div>
-
-        {/* Footer Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t z-50">
-          <div className="container mx-auto max-w-4xl flex justify-between items-center">
-            <Button
-              variant="ghost"
-              onClick={onBack}
-            >
-              Back
-            </Button>
-
-            {wizardState.step === 2 && (
-              <Button
-                onClick={onContinue}
-                className="bg-red-600 hover:bg-red-700 text-white px-8"
-                disabled={!wizardState.selectedAction}
-              >
-                Continue
-                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
-              </Button>
-            )}
-
-            {wizardState.step === 3 && (
-              <Button
-                onClick={() => {
-                  wizardState.setSelectedTechnology('electrical');
-                  onViewStandardProducts();
-                }}
-                className="bg-red-600 hover:bg-red-700 text-white px-8"
-                disabled={!wizardState.selectedEnvironment}
-              >
-                View Results
-                <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     </div>
