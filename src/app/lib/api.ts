@@ -2,7 +2,7 @@ import { supabase } from './supabase';
 import { transformRow, type StockSwitchRow } from './transformProduct';
 import { projectId, publicAnonKey } from '/utils/supabase/info';
 
-const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/make-server-a6e7a38d`;
+const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/make-server-963c7b83`;
 
 async function getAuthToken(): Promise<string> {
   const { data: { session } } = await supabase.auth.getSession();
