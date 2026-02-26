@@ -29,6 +29,7 @@ import {
   CloudRain,
   Droplets,
   Minus,
+  Ban,
   Cable,
   Plug,
   Unplug,
@@ -245,7 +246,7 @@ export const environments: Option[] = [
   {
     id: 'any',
     label: 'No Preference',
-    icon: Minus,
+    icon: Ban,
     description: 'Show all IP ratings.',
   },
 ];
@@ -463,7 +464,7 @@ export const circuitCounts: Option[] = [
   {
     id: 'no_preference',
     label: 'No Preference',
-    icon: Minus,
+    icon: Ban,
     description: 'Show all options.',
     sortOrder: 99,
   },
