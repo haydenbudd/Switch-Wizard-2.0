@@ -464,7 +464,7 @@ export const circuitCounts: Option[] = [
   {
     id: 'no_preference',
     label: 'No Preference',
-    icon: Minus,
+    icon: Ban,
     description: 'Show all options.',
     sortOrder: 99,
   },
