@@ -200,7 +200,10 @@ export function ResultsPage({
       {/* Header & Controls */}
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex">
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
             <h2 className="text-3xl font-bold text-foreground" aria-live="polite" aria-atomic="true">
               Recommended Products
               <span className="text-lg font-normal text-muted-foreground ml-3">
@@ -389,7 +392,7 @@ export function ResultsPage({
         </div>
       ) : (
         /* Empty State */
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-gray-50 dark:bg-gray-900/30 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700">
           <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full">
             <Search className="w-8 h-8 text-gray-400" />
           </div>
