@@ -44,6 +44,7 @@ function WizardApp() {
     accessories,
     materials,
     connections,
+    circuitCounts,
     duties,
   } = useProductData();
 
@@ -60,27 +61,28 @@ function WizardApp() {
     if (shared.selectedDuty) wizardState.setSelectedDuty(shared.selectedDuty);
     if (shared.selectedMaterial) wizardState.setSelectedMaterial(shared.selectedMaterial);
     if (shared.selectedConnection) wizardState.setSelectedConnection(shared.selectedConnection);
+    if (shared.selectedCircuitCount) wizardState.setSelectedCircuitCount(shared.selectedCircuitCount);
     if (shared.selectedGuard) wizardState.setSelectedGuard(shared.selectedGuard);
     if (shared.selectedFeatures) wizardState.setSelectedFeatures(shared.selectedFeatures);
     if (shared.flow) wizardState.setFlow(shared.flow as 'standard' | 'medical');
 
     // Jump straight to results
-    wizardState.setStep(8);
+    wizardState.setStep(9);
     setShareRestored(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update URL bar when viewing results; clear when navigating away
   useEffect(() => {
-    if (wizardState.step === 8) {
+    if (wizardState.step === 9) {
       updateUrlWithState(wizardState);
     } else if (shareRestored) {
       clearShareParams();
     }
   }, [wizardState.step, wizardState.selectedApplication, wizardState.selectedTechnology,
       wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty,
-      wizardState.selectedConnection, wizardState.selectedGuard, wizardState.selectedFeatures,
-      wizardState.selectedMaterial, wizardState.flow, shareRestored]);
+      wizardState.selectedConnection, wizardState.selectedCircuitCount, wizardState.selectedGuard,
+      wizardState.selectedFeatures, wizardState.selectedMaterial, wizardState.flow, shareRestored]);
 
   // Enhanced search state for results page
   const [searchTerm, setSearchTerm] = useState('');
@@ -104,9 +106,10 @@ function WizardApp() {
     if (fromStep <= 2) { wizardState.setSelectedEnvironment(''); }
     if (fromStep <= 3) { wizardState.setSelectedDuty(''); }
     if (fromStep <= 4) { wizardState.setSelectedConnection(''); }
-    if (fromStep <= 5) { wizardState.setSelectedGuard(''); }
-    if (fromStep <= 6) { wizardState.setSelectedFeatures([]); }
-  }, [wizardState.setSelectedAction, wizardState.setSelectedEnvironment, wizardState.setSelectedDuty, wizardState.setSelectedConnection, wizardState.setSelectedGuard, wizardState.setSelectedFeatures]);
+    if (fromStep <= 5) { wizardState.setSelectedCircuitCount(''); }
+    if (fromStep <= 6) { wizardState.setSelectedGuard(''); }
+    if (fromStep <= 7) { wizardState.setSelectedFeatures([]); }
+  }, [wizardState.setSelectedAction, wizardState.setSelectedEnvironment, wizardState.setSelectedDuty, wizardState.setSelectedConnection, wizardState.setSelectedCircuitCount, wizardState.setSelectedGuard, wizardState.setSelectedFeatures]);
 
   const handleCategorySelect = useCallback((categoryId: string) => {
     const cat = (categories || []).find((c) => c.id === categoryId);
@@ -146,12 +149,16 @@ function WizardApp() {
       wizardState.setStep(0);
       wizardState.setSelectedCategory('');
       wizardState.setSelectedApplication('');
-    } else if (wizardState.step === 8 && wizardState.selectedApplication === 'medical') {
+    } else if (wizardState.step === 9 && wizardState.selectedApplication === 'medical') {
       // Back from results to medical flow environment step
       wizardState.setFlow('medical');
       wizardState.setStep(3);
     } else {
       let prevStep = wizardState.step - 1;
+      // Skip Circuit Count step (index 6) for pneumatic/wireless technology
+      if (prevStep === 6 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
+        prevStep--;
+      }
       // Skip Connection Type step (index 5) for pneumatic/wireless technology
       if (prevStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
         prevStep--;
@@ -164,6 +171,10 @@ function WizardApp() {
     let newStep = wizardState.step + 1;
     // Skip Connection Type step (index 5) for pneumatic/wireless technology
     if (newStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
+      newStep++;
+    }
+    // Skip Circuit Count step (index 6) for pneumatic/wireless technology
+    if (newStep === 6 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
       newStep++;
     }
     wizardState.setStep(newStep);
@@ -179,8 +190,8 @@ function WizardApp() {
   const handleViewMedicalProducts = useCallback(() => {
     wizardState.setSelectedTechnology('electrical');
     wizardState.setFlow('standard');
-    wizardState.setStep(8);
-    trackWizardStep(8, 'standard', {
+    wizardState.setStep(9);
+    trackWizardStep(9, 'standard', {
       application: wizardState.selectedApplication,
       technology: 'electrical',
       action: wizardState.selectedAction,
@@ -199,6 +210,7 @@ function WizardApp() {
       if (!matchesEnvironment(state.selectedEnvironment, product.ip)) return false;
       if (state.selectedDuty && product.duty !== state.selectedDuty) return false;
       if (state.selectedTechnology !== 'pneumatic' && state.selectedConnection && product.connector_type !== state.selectedConnection) return false;
+      if (state.selectedCircuitCount && state.selectedCircuitCount !== 'no_preference' && product.circuitry !== state.selectedCircuitCount) return false;
       if (state.selectedGuard === 'yes' && !(product.features || []).includes('shield')) return false;
       // "no" = no preference, don't exclude shielded products
 
@@ -256,6 +268,7 @@ function WizardApp() {
         return p.connector_type === optionId;
       }).length;
     } else if (step === 6) {
+      // Circuit Count
       return safeProducts.filter(p => {
         if (!p.applications.includes(wizardState.selectedApplication)) return false;
         if (p.technology !== wizardState.selectedTechnology) return false;
@@ -263,6 +276,19 @@ function WizardApp() {
         if (!matchesEnvironment(wizardState.selectedEnvironment, p.ip)) return false;
         if (wizardState.selectedDuty && p.duty !== wizardState.selectedDuty) return false;
         if (wizardState.selectedTechnology !== 'pneumatic' && wizardState.selectedConnection && p.connector_type !== wizardState.selectedConnection) return false;
+        if (optionId === 'no_preference') return true;
+        return p.circuitry === optionId;
+      }).length;
+    } else if (step === 7) {
+      // Guard (was step 6)
+      return safeProducts.filter(p => {
+        if (!p.applications.includes(wizardState.selectedApplication)) return false;
+        if (p.technology !== wizardState.selectedTechnology) return false;
+        if (!p.actions.includes(wizardState.selectedAction)) return false;
+        if (!matchesEnvironment(wizardState.selectedEnvironment, p.ip)) return false;
+        if (wizardState.selectedDuty && p.duty !== wizardState.selectedDuty) return false;
+        if (wizardState.selectedTechnology !== 'pneumatic' && wizardState.selectedConnection && p.connector_type !== wizardState.selectedConnection) return false;
+        if (wizardState.selectedCircuitCount && wizardState.selectedCircuitCount !== 'no_preference' && p.circuitry !== wizardState.selectedCircuitCount) return false;
         const hasShield = (p.features || []).includes('shield');
         if (optionId === 'yes') return hasShield;
         // 'no' = no preference, show all products
@@ -270,7 +296,7 @@ function WizardApp() {
       }).length;
     }
     return 0;
-  }, [products, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty, wizardState.selectedConnection]);
+  }, [products, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty, wizardState.selectedConnection, wizardState.selectedCircuitCount]);
 
   const getAlternativeProducts = useCallback(() => {
     if (wizardState.selectedFeatures.length > 0) {
@@ -320,7 +346,7 @@ function WizardApp() {
 
   // Track no-results as a side effect (not inside useMemo)
   useEffect(() => {
-    if (wizardState.step === 8) {
+    if (wizardState.step === 9) {
       const filtered = filterProducts();
       if (filtered.length === 0) {
         trackNoResults({
@@ -347,8 +373,9 @@ function WizardApp() {
   // Calculate total visible steps dynamically
   const totalSteps = useMemo(() => {
     if (wizardState.flow === 'medical') return 6;
-    let steps = 8;
-    if (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') steps--;
+    let steps = 9;
+    // Pneumatic/wireless skip both Connection Type and Circuit Count steps
+    if (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') steps -= 2;
     return steps;
   }, [wizardState.flow, wizardState.selectedTechnology]);
 
@@ -357,7 +384,9 @@ function WizardApp() {
   const getProgressStep = useCallback((rawStep: number) => {
     if (rawStep <= 0) return 0;
     let step = rawStep;
+    // Pneumatic/wireless skip Connection Type (5) and Circuit Count (6)
     if (skipsConnectionStep && rawStep > 5) step--;
+    if (skipsConnectionStep && rawStep > 6) step--;
     return step;
   }, [skipsConnectionStep]);
 
@@ -387,7 +416,7 @@ function WizardApp() {
       <Header onReset={handleReset} />
       <main>
 
-      {wizardState.step >= 0 && wizardState.step <= 7 && (
+      {wizardState.step >= 0 && wizardState.step <= 8 && (
         <StandardSteps
           wizardState={wizardState}
           categories={categories}
@@ -398,6 +427,7 @@ function WizardApp() {
           features={features}
           duties={duties}
           connections={connections}
+          circuitCounts={circuitCounts}
           totalSteps={totalSteps}
           getProgressStep={getProgressStep}
           getDisplayStep={getDisplayStep}
@@ -410,7 +440,7 @@ function WizardApp() {
         />
       )}
 
-      {wizardState.step === 8 && (
+      {wizardState.step === 9 && (
         <ResultsPage
           wizardState={wizardState}
           products={products}

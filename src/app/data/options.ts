@@ -401,6 +401,44 @@ export const materials: Option[] = [
   },
 ];
 
+export const circuitCounts: Option[] = [
+  {
+    id: '1',
+    label: 'Single Circuit',
+    icon: Circle,
+    description: 'Controls one circuit.',
+    sortOrder: 0,
+  },
+  {
+    id: '2',
+    label: 'Two Circuits',
+    icon: Layers,
+    description: 'Controls two independent circuits.',
+    sortOrder: 1,
+  },
+  {
+    id: '3',
+    label: 'Three Circuits',
+    icon: Layers,
+    description: 'Controls three independent circuits.',
+    sortOrder: 2,
+  },
+  {
+    id: '4',
+    label: 'Four Circuits',
+    icon: Layers,
+    description: 'Controls four independent circuits.',
+    sortOrder: 3,
+  },
+  {
+    id: 'no_preference',
+    label: 'No Preference',
+    icon: Minus,
+    description: 'Show all options.',
+    sortOrder: 99,
+  },
+];
+
 export const connections: Option[] = [
   {
     id: 'screw-terminal',

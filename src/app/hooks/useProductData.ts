@@ -17,6 +17,7 @@ import {
   materials as staticMaterials,
   duties as staticDuties,
   connections as staticConnections,
+  circuitCounts as staticCircuitCounts,
 } from '@/app/data/options';
 import { products as staticProducts } from '@/app/data/products';
 
@@ -61,6 +62,7 @@ interface ProductData {
   accessories: OptionWithIcon[];
   materials: OptionWithIcon[];
   connections: OptionWithIcon[];
+  circuitCounts: OptionWithIcon[];
   duties: OptionWithIcon[];
   loading: boolean;
   error: string | null;
@@ -84,6 +86,7 @@ const staticOptionData = {
   materials: staticMaterials.map(processOption),
   duties: staticDuties.map(processOption),
   connections: staticConnections.map(processOption),
+  circuitCounts: staticCircuitCounts.map(processOption),
 };
 
 export function useProductData(): ProductData {
@@ -195,6 +198,47 @@ export function useProductData(): ProductData {
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
   }, [products]);
 
+  // Derive unique circuit counts from product data
+  const circuitCounts: OptionWithIcon[] = useMemo(() => {
+    const metaMap = new Map(staticOptionData.circuitCounts.map(c => [c.id, c]));
+
+    const seen = new Set<string>();
+    const derived = products
+      .filter(p => p.circuitry && p.circuitry !== 'undefined')
+      .filter(p => {
+        if (seen.has(p.circuitry!)) return false;
+        seen.add(p.circuitry!);
+        return true;
+      })
+      .map(p => {
+        const meta = metaMap.get(p.circuitry!);
+        return {
+          id: p.circuitry!,
+          category: 'circuitCount',
+          label: meta?.label || `${p.circuitry!} Circuit${p.circuitry !== '1' ? 's' : ''}`,
+          description: meta?.description || '',
+          icon: meta?.icon,
+          sortOrder: meta?.sortOrder ?? 99,
+        };
+      })
+      .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
+
+    // Always append "No Preference" option
+    const noPreference = metaMap.get('no_preference');
+    if (noPreference) {
+      derived.push({
+        id: 'no_preference',
+        category: 'circuitCount',
+        label: noPreference.label,
+        description: noPreference.description,
+        icon: noPreference.icon,
+        sortOrder: noPreference.sortOrder ?? 99,
+      });
+    }
+
+    return derived;
+  }, [products]);
+
   // Always use static data for wizard options — these define the UX flow and must always be available.
   // API options could supplement in the future but should never be the sole source.
   return {
@@ -212,6 +256,7 @@ export function useProductData(): ProductData {
     accessories: staticOptionData.accessories,
     materials,
     connections,
+    circuitCounts,
     duties,
     loading,
     error,

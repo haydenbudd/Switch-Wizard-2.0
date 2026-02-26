@@ -123,6 +123,7 @@ interface StandardStepsProps {
   features: Option[];
   duties: Option[];
   connections: Option[];
+  circuitCounts: Option[];
   totalSteps: number;
   getProgressStep: (step: number) => number;
   getDisplayStep: (step: number) => number;
@@ -144,6 +145,7 @@ export function StandardSteps({
   features,
   duties,
   connections,
+  circuitCounts,
   totalSteps,
   getProgressStep,
   getDisplayStep,
@@ -398,7 +400,7 @@ export function StandardSteps({
           <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" /> Back
           </Button>
-          {wizardState.step === 7 && (
+          {wizardState.step === 8 && (
             <Button variant="ghost" onClick={onContinue} className="text-muted-foreground hover:text-foreground">
               Skip <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
@@ -560,8 +562,32 @@ export function StandardSteps({
               </div>
             )}
 
-            {/* Step 6: Safety Guard */}
+            {/* Step 6: Circuits Controlled */}
             {wizardState.step === 6 && (
+              <div className="space-y-6">
+                <div className="text-center mb-10">
+                  <h2 className="text-3xl font-bold tracking-tight mb-2">Circuits Controlled</h2>
+                  <p className="text-muted-foreground">How many circuits do you need to control?</p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                  {(circuitCounts || []).map((cc, i) => (
+                    <OptionCard
+                      key={cc.id}
+                      label={cc.label}
+                      description={cc.description}
+                      icon={cc.icon}
+                      selected={wizardState.selectedCircuitCount === cc.id}
+                      count={cc.id === 'no_preference' ? undefined : getProductCount(6, cc.id)}
+                      onClick={() => handleSingleSelect(cc.id, wizardState.setSelectedCircuitCount, 6)}
+                      index={i}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 7: Safety Guard */}
+            {wizardState.step === 7 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Safety Guard</h2>
@@ -573,8 +599,8 @@ export function StandardSteps({
                     description="Safety guard prevents accidental activation."
                     icon={ShieldCheck}
                     selected={wizardState.selectedGuard === 'yes'}
-                    count={getProductCount(6, 'yes')}
-                    onClick={() => handleSingleSelect('yes', wizardState.setSelectedGuard, 6)}
+                    count={getProductCount(7, 'yes')}
+                    onClick={() => handleSingleSelect('yes', wizardState.setSelectedGuard, 7)}
                     index={0}
                   />
                   <OptionCard
@@ -582,16 +608,16 @@ export function StandardSteps({
                     description="No safety guard required."
                     icon={ShieldOff}
                     selected={wizardState.selectedGuard === 'no'}
-                    count={getProductCount(6, 'no')}
-                    onClick={() => handleSingleSelect('no', wizardState.setSelectedGuard, 6)}
+                    count={getProductCount(7, 'no')}
+                    onClick={() => handleSingleSelect('no', wizardState.setSelectedGuard, 7)}
                     index={1}
                   />
                 </div>
               </div>
             )}
 
-            {/* Step 7: Additional Features (Multi-select) */}
-            {wizardState.step === 7 && (
+            {/* Step 8: Additional Features (Multi-select) */}
+            {wizardState.step === 8 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Additional Features</h2>
