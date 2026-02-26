@@ -374,6 +374,18 @@ body,
   mix-blend-mode: screen;
 }
 
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Progress bar glow */
 .progress-glow {
   box-shadow: 0 0 8px rgba(30, 64, 175, 0.3), 0 0 2px rgba(30, 64, 175, 0.5);
