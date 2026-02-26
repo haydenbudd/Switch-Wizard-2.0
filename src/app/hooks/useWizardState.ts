@@ -13,6 +13,7 @@ export interface WizardState {
   selectedDuty: string;
   selectedMaterial: string;
   selectedConnection: string;
+  selectedCircuitCount: string;
   selectedGuard: string;
   selectedPedalConfig: string;
   selectedFeatures: string[];
@@ -33,6 +34,7 @@ export interface WizardState {
   setSelectedDuty: (id: string) => void;
   setSelectedMaterial: (id: string) => void;
   setSelectedConnection: (id: string) => void;
+  setSelectedCircuitCount: (id: string) => void;
   setSelectedGuard: (id: string) => void;
   setSelectedPedalConfig: (id: string) => void;
   setSelectedFeatures: React.Dispatch<React.SetStateAction<string[]>>;
@@ -55,6 +57,7 @@ export function useWizardState(): WizardState {
   const [selectedDuty, setSelectedDuty] = useState('');
   const [selectedMaterial, setSelectedMaterial] = useState('');
   const [selectedConnection, setSelectedConnection] = useState('');
+  const [selectedCircuitCount, setSelectedCircuitCount] = useState('');
   const [selectedGuard, setSelectedGuard] = useState('');
   const [selectedPedalConfig, setSelectedPedalConfig] = useState('');
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
@@ -76,6 +79,7 @@ export function useWizardState(): WizardState {
     setSelectedDuty('');
     setSelectedMaterial('');
     setSelectedConnection('');
+    setSelectedCircuitCount('');
     setSelectedGuard('');
     setSelectedPedalConfig('');
     setSelectedFeatures([]);
@@ -97,6 +101,7 @@ export function useWizardState(): WizardState {
     selectedDuty,
     selectedMaterial,
     selectedConnection,
+    selectedCircuitCount,
     selectedGuard,
     selectedPedalConfig,
     selectedFeatures,
@@ -115,6 +120,7 @@ export function useWizardState(): WizardState {
     setSelectedDuty,
     setSelectedMaterial,
     setSelectedConnection,
+    setSelectedCircuitCount,
     setSelectedGuard,
     setSelectedPedalConfig,
     setSelectedFeatures,

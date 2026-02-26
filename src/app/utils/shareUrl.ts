@@ -11,6 +11,7 @@ const PARAM_MAP = {
   duty: 'selectedDuty',
   mat: 'selectedMaterial',
   conn: 'selectedConnection',
+  cc: 'selectedCircuitCount',
   guard: 'selectedGuard',
   feat: 'selectedFeatures',
   flow: 'flow',
