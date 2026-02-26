@@ -1,4 +1,4 @@
-import type { ElementType } from 'react';
+import { createElement, type ElementType, type SVGProps } from 'react';
 import {
   Factory,
   Heart,
@@ -29,11 +29,42 @@ import {
   CloudRain,
   Droplets,
   Minus,
+  Ban,
   Cable,
   Plug,
   Unplug,
   Sparkles,
 } from 'lucide-react';
+
+// Factory that creates a Lucide-compatible SVG icon component displaying a number
+function NumberIcon(n: number): ElementType {
+  const component = (props: SVGProps<SVGSVGElement>) =>
+    createElement('svg', {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      strokeWidth: 2,
+      strokeLinecap: 'round' as const,
+      strokeLinejoin: 'round' as const,
+      ...props,
+    },
+      createElement('circle', { cx: 12, cy: 12, r: 10, strokeWidth: 1.5 }),
+      createElement('text', {
+        x: 12,
+        y: 12,
+        textAnchor: 'middle',
+        dominantBaseline: 'central',
+        fill: 'currentColor',
+        stroke: 'none',
+        fontSize: '12',
+        fontWeight: '700',
+        fontFamily: 'system-ui, sans-serif',
+      }, String(n)),
+    );
+  component.displayName = `NumberIcon${n}`;
+  return component;
+}
 
 export interface Option {
   id: string;
@@ -215,7 +246,7 @@ export const environments: Option[] = [
   {
     id: 'any',
     label: 'No Preference',
-    icon: Minus,
+    icon: Ban,
     description: 'Show all IP ratings.',
   },
 ];
