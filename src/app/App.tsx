@@ -189,8 +189,10 @@ function WizardApp() {
 
   const handleViewMedicalProducts = useCallback(() => {
     wizardState.setSelectedTechnology('electrical');
-    wizardState.setFlow('standard');
+    // Set step to 9 BEFORE changing flow so the standard flow never
+    // briefly renders StandardSteps (step <= 8) in a single frame.
     wizardState.setStep(9);
+    wizardState.setFlow('standard');
     trackWizardStep(9, 'standard', {
       application: wizardState.selectedApplication,
       technology: 'electrical',
