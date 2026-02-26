@@ -33,10 +33,9 @@ interface MedicalFlowProps {
   onReset: () => void;
 }
 
-// Stock path: fork(1) + action(2) + environment(3) = 3 internal steps
-// Display: category(1) + 3 internal = 4 display steps
-const STOCK_DISPLAY_TOTAL = 4;
-// Custom path: fork(1) + contact(2) = 2 internal
+// Stock path display: fork(1) + action(2) + environment(3) = 3 steps
+const STOCK_DISPLAY_TOTAL = 3;
+// Custom path: fork(1) + contact(2) = 2 steps
 const CUSTOM_DISPLAY_TOTAL = 2;
 
 export function MedicalFlow({
@@ -65,7 +64,7 @@ export function MedicalFlow({
     if (envId === 'wet') return base.filter(p => p.ip === 'IP68').length;
     return base.length; // 'any' = no filter
   };
-  const displayStep = wizardState.step + 1; // category = step 1, so internal step 1 = display step 2
+  const displayStep = wizardState.step; // fork(1)=1, action(2)=2, environment(3)=3
 
   const handleForkSelect = (path: 'stock' | 'custom') => {
     wizardState.setSelectedMedicalPath(path);
@@ -95,7 +94,7 @@ export function MedicalFlow({
             <GlassCard className="max-w-2xl w-full p-8 md:p-10">
               <div className="text-center mb-6">
                 <p className="text-sm font-semibold text-blue-500 tracking-wide mb-2">
-                  STEP 2 OF {STOCK_DISPLAY_TOTAL}
+                  STEP 1 OF {STOCK_DISPLAY_TOTAL}
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground">
                   How would you like to proceed?
