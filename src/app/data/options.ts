@@ -1,4 +1,4 @@
-import type { ElementType } from 'react';
+import { createElement, type ElementType, type SVGProps } from 'react';
 import {
   Factory,
   Heart,
@@ -34,6 +34,36 @@ import {
   Unplug,
   Sparkles,
 } from 'lucide-react';
+
+// Factory that creates a Lucide-compatible SVG icon component displaying a number
+function NumberIcon(n: number): ElementType {
+  const component = (props: SVGProps<SVGSVGElement>) =>
+    createElement('svg', {
+      xmlns: 'http://www.w3.org/2000/svg',
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      strokeWidth: 2,
+      strokeLinecap: 'round' as const,
+      strokeLinejoin: 'round' as const,
+      ...props,
+    },
+      createElement('circle', { cx: 12, cy: 12, r: 10, strokeWidth: 1.5 }),
+      createElement('text', {
+        x: 12,
+        y: 12,
+        textAnchor: 'middle',
+        dominantBaseline: 'central',
+        fill: 'currentColor',
+        stroke: 'none',
+        fontSize: '12',
+        fontWeight: '700',
+        fontFamily: 'system-ui, sans-serif',
+      }, String(n)),
+    );
+  component.displayName = `NumberIcon${n}`;
+  return component;
+}
 
 export interface Option {
   id: string;
@@ -405,28 +435,28 @@ export const circuitCounts: Option[] = [
   {
     id: '1',
     label: 'Single Circuit',
-    icon: Circle,
+    icon: NumberIcon(1),
     description: 'Controls one circuit.',
     sortOrder: 0,
   },
   {
     id: '2',
     label: 'Two Circuits',
-    icon: Layers,
+    icon: NumberIcon(2),
     description: 'Controls two independent circuits.',
     sortOrder: 1,
   },
   {
     id: '3',
     label: 'Three Circuits',
-    icon: Layers,
+    icon: NumberIcon(3),
     description: 'Controls three independent circuits.',
     sortOrder: 2,
   },
   {
     id: '4',
     label: 'Four Circuits',
-    icon: Layers,
+    icon: NumberIcon(4),
     description: 'Controls four independent circuits.',
     sortOrder: 3,
   },
