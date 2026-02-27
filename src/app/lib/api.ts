@@ -140,63 +140,149 @@ export async function fetchProducts(): Promise<Product[]> {
 }
 
 export async function fetchProduct(id: string): Promise<Product> {
-  const data = await fetchAPI(`/products/${id}`);
-  return data.product;
+  const { data, error } = await supabase
+    .from('Stock Switches')
+    .select('*')
+    .eq('id', Number(id))
+    .single();
+
+  if (error) throw new Error(error.message);
+  return transformRow(data as StockSwitchRow);
+}
+
+// Reverse-map Product fields back to Stock Switches table columns
+function productToRow(product: Partial<Product>): Record<string, unknown> {
+  const row: Record<string, unknown> = {};
+
+  if (product.series !== undefined) row.series = product.series;
+  if (product.part_number !== undefined) row.Part = product.part_number;
+  if (product.material !== undefined) row.Material = product.material;
+  if (product.ip !== undefined) row['IP Rating'] = product.ip;
+  if (product.description !== undefined) row.description = product.description;
+  if (product.image !== undefined) row.image_url = product.image;
+  if (product.link !== undefined) row.Link = product.link;
+  if (product.applications !== undefined) row.applications = product.applications;
+  if (product.duty !== undefined) row.duty = product.duty;
+  if (product.color !== undefined) row.Color = product.color;
+  if (product.pedal_count !== undefined) row['Number of Pedals'] = product.pedal_count;
+  if (product.stages !== undefined) row.Stages = product.stages;
+  if (product.configuration !== undefined) row.Configuration = product.configuration;
+  if (product.circuitry !== undefined) row['Circuits Controlled'] = product.circuitry;
+  if (product.pfc_config !== undefined) row['PFC Config'] = product.pfc_config;
+
+  // Map technology back
+  if (product.technology === 'wireless') row.Wireless = 'Yes';
+  if (product.technology === 'pneumatic') row['Pneumatic Flow Control'] = 'Yes';
+
+  // Map actions back to On/Off
+  if (product.actions !== undefined) {
+    const hasMom = product.actions.includes('momentary');
+    const hasMain = product.actions.includes('maintained');
+    const hasVar = product.actions.includes('variable');
+    if (hasVar) row.Linear = 'Yes';
+    if (hasMom && hasMain) row['On/Off'] = 'Mom/Main';
+    else if (hasMom) row['On/Off'] = 'Mom';
+    else if (hasMain) row['On/Off'] = 'Main';
+  }
+
+  // Map features back to Guard
+  if (product.features !== undefined) {
+    if (product.features.includes('shield')) row.Guard = 'Full';
+  }
+
+  // Map connector_type back to Connection
+  if (product.connector_type !== undefined) {
+    const connMap: Record<string, string> = {
+      'screw-terminal': 'Screw Terminals',
+      'quick-connect': 'Connector',
+      'pre-wired': 'Flying Leads',
+    };
+    row.Connection = connMap[product.connector_type] || product.connector_type;
+  }
+
+  return row;
 }
 
 export async function createOrUpdateProduct(product: Partial<Product>): Promise<Product> {
-  const data = await fetchAPI('/products', {
-    method: 'POST',
-    body: JSON.stringify(product),
-  });
-  return data.product;
+  const row = productToRow(product);
+
+  if (product.id) {
+    // Update existing row
+    const { data, error } = await supabase
+      .from('Stock Switches')
+      .update(row)
+      .eq('id', Number(product.id))
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return transformRow(data as StockSwitchRow);
+  } else {
+    // Insert new row
+    const { data, error } = await supabase
+      .from('Stock Switches')
+      .insert(row)
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return transformRow(data as StockSwitchRow);
+  }
 }
 
 export async function createOrUpdateProducts(products: Partial<Product>[]): Promise<void> {
-  // Split into smaller batches to prevent timeouts with large datasets
-  // Reduced batch size to 10 to prevent connection closures on large payloads
   const BATCH_SIZE = 10;
   const totalBatches = Math.ceil(products.length / BATCH_SIZE);
-  
+
   console.log(`Starting bulk upload of ${products.length} products in ${totalBatches} batches...`);
-  
+
   for (let i = 0; i < products.length; i += BATCH_SIZE) {
     const batch = products.slice(i, i + BATCH_SIZE);
     const batchNum = Math.floor(i / BATCH_SIZE) + 1;
-    
+
     console.log(`Uploading batch ${batchNum}/${totalBatches} (${batch.length} items)...`);
-    
-    // Add a small delay between batches to prevent overwhelming the server/database
+
     if (i > 0) {
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     try {
-      // Use the standard /products endpoint which now supports array input
-      await fetchAPI('/products', {
-        method: 'POST',
-        body: JSON.stringify(batch),
+      const rows = batch.map(p => {
+        const row = productToRow(p);
+        if (p.id) row.id = Number(p.id);
+        return row;
       });
+
+      const { error } = await supabase
+        .from('Stock Switches')
+        .upsert(rows);
+
+      if (error) throw new Error(error.message);
     } catch (error) {
       console.error(`Error uploading batch ${batchNum}:`, error);
       throw new Error(`Failed to upload batch ${batchNum}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
-  
-  console.log('✅ Bulk upload completed successfully');
+
+  console.log('Bulk upload completed successfully');
 }
 
 export async function deleteProduct(id: string): Promise<void> {
-  await fetchAPI(`/products/${id}`, {
-    method: 'DELETE',
-  });
+  const { error } = await supabase
+    .from('Stock Switches')
+    .delete()
+    .eq('id', Number(id));
+
+  if (error) throw new Error(error.message);
 }
 
 export async function deleteAllProducts(): Promise<void> {
-  // Use a timestamp to prevent caching
-  await fetchAPI(`/products?t=${Date.now()}`, {
-    method: 'DELETE',
-  });
+  const { error } = await supabase
+    .from('Stock Switches')
+    .delete()
+    .neq('id', 0); // delete all rows
+
+  if (error) throw new Error(error.message);
 }
 
 // Options API calls
