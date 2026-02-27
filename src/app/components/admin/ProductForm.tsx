@@ -13,7 +13,14 @@ import {
   SelectValue,
 } from '@/app/components/ui/select';
 import { useState } from 'react';
-import { Plus, X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
+import {
+  applications as appOptions,
+  features as featureOptions,
+  actions as actionOptions,
+  materials as materialOptions,
+  circuitCounts as circuitOptions,
+} from '@/app/data/options';
 
 interface ProductFormProps {
   initialData?: Product;
@@ -21,8 +28,122 @@ interface ProductFormProps {
   isLoading?: boolean;
 }
 
-export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormProps) {
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<Product>({
+function MultiSelectDropdown({
+  label,
+  options,
+  selected,
+  onChange,
+}: {
+  label: string;
+  options: { id: string; label: string; description: string }[];
+  selected: string[];
+  onChange: (values: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const toggle = (id: string) => {
+    if (selected.includes(id)) {
+      onChange(selected.filter((s) => s !== id));
+    } else {
+      onChange([...selected, id]);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      {/* Selected chips */}
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {selected.map((id) => {
+            const opt = options.find((o) => o.id === id);
+            return (
+              <span
+                key={id}
+                className="bg-primary/10 text-primary px-2 py-1 rounded-md text-xs flex items-center gap-1"
+              >
+                {opt?.label || id}
+                <button type="button" onClick={() => toggle(id)}>
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            );
+          })}
+        </div>
+      )}
+      {/* Dropdown trigger */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        >
+          <span className="text-muted-foreground">
+            {selected.length === 0
+              ? `Select ${label.toLowerCase()}...`
+              : `${selected.length} selected`}
+          </span>
+          <ChevronDown className="h-4 w-4 opacity-50" />
+        </button>
+        {open && (
+          <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover p-1 shadow-md max-h-60 overflow-y-auto">
+            {options.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => toggle(opt.id)}
+                className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+              >
+                <div
+                  className={`h-4 w-4 rounded border flex items-center justify-center ${
+                    selected.includes(opt.id)
+                      ? 'bg-primary border-primary text-primary-foreground'
+                      : 'border-input'
+                  }`}
+                >
+                  {selected.includes(opt.id) && (
+                    <svg
+                      className="h-3 w-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </div>
+                <div className="text-left">
+                  <div>{opt.label}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {opt.description}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ProductForm({
+  initialData,
+  onSubmit,
+  isLoading,
+}: ProductFormProps) {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<Product>({
     defaultValues: initialData || {
       flagship: false,
       applications: [],
@@ -32,41 +153,24 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
     },
   });
 
-  const [newFeature, setNewFeature] = useState('');
   const features = watch('features') || [];
-  
-  const [newApplication, setNewApplication] = useState('');
   const applications = watch('applications') || [];
-
-  const addFeature = () => {
-    if (newFeature && !features.includes(newFeature)) {
-      setValue('features', [...features, newFeature]);
-      setNewFeature('');
-    }
-  };
-
-  const removeFeature = (feat: string) => {
-    setValue('features', features.filter(f => f !== feat));
-  };
-
-  const addApplication = () => {
-    if (newApplication && !applications.includes(newApplication)) {
-      setValue('applications', [...applications, newApplication]);
-      setNewApplication('');
-    }
-  };
-
-  const removeApplication = (app: string) => {
-    setValue('applications', applications.filter(a => a !== app));
-  };
+  const actions = watch('actions') || [];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label>Series Name</Label>
-          <Input {...register('series', { required: 'Series is required' })} placeholder="e.g. Hercules" />
-          {errors.series && <span className="text-red-500 text-xs">{errors.series.message}</span>}
+          <Input
+            {...register('series', { required: 'Series is required' })}
+            placeholder="e.g. Hercules"
+          />
+          {errors.series && (
+            <span className="text-red-500 text-xs">
+              {errors.series.message}
+            </span>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -76,12 +180,18 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
         <div className="col-span-full space-y-2">
           <Label>Description</Label>
-          <Textarea {...register('description')} placeholder="Product description..." />
+          <Textarea
+            {...register('description')}
+            placeholder="Product description..."
+          />
         </div>
 
         <div className="space-y-2">
           <Label>Technology</Label>
-          <Select onValueChange={(val) => setValue('technology', val)} defaultValue={initialData?.technology}>
+          <Select
+            onValueChange={(val) => setValue('technology', val)}
+            defaultValue={initialData?.technology}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select technology" />
             </SelectTrigger>
@@ -95,7 +205,10 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
         <div className="space-y-2">
           <Label>Duty Rating</Label>
-          <Select onValueChange={(val) => setValue('duty', val as Product['duty'])} defaultValue={initialData?.duty}>
+          <Select
+            onValueChange={(val) => setValue('duty', val as Product['duty'])}
+            defaultValue={initialData?.duty}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select duty" />
             </SelectTrigger>
@@ -109,12 +222,29 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
         <div className="space-y-2">
           <Label>Material</Label>
-          <Input {...register('material')} placeholder="e.g. Cast Iron" />
+          <Select
+            onValueChange={(val) => setValue('material', val)}
+            defaultValue={initialData?.material}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select material" />
+            </SelectTrigger>
+            <SelectContent>
+              {materialOptions.map((mat) => (
+                <SelectItem key={mat.id} value={mat.id}>
+                  {mat.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
           <Label>IP Rating</Label>
-          <Select onValueChange={(val) => setValue('ip', val)} defaultValue={initialData?.ip}>
+          <Select
+            onValueChange={(val) => setValue('ip', val)}
+            defaultValue={initialData?.ip}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select IP rating" />
             </SelectTrigger>
@@ -129,7 +259,12 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
         <div className="space-y-2">
           <Label>Connector Type</Label>
-          <Select onValueChange={(val) => setValue('connector_type', val === 'none' ? undefined : val)} defaultValue={initialData?.connector_type || 'none'}>
+          <Select
+            onValueChange={(val) =>
+              setValue('connector_type', val === 'none' ? undefined : val)
+            }
+            defaultValue={initialData?.connector_type || 'none'}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select connector type" />
             </SelectTrigger>
@@ -143,17 +278,41 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
         </div>
 
         <div className="space-y-2">
+          <Label>Circuits Controlled</Label>
+          <Select
+            onValueChange={(val) =>
+              setValue('circuitry', val === 'no_preference' ? undefined : val)
+            }
+            defaultValue={initialData?.circuitry || 'no_preference'}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select circuits" />
+            </SelectTrigger>
+            <SelectContent>
+              {circuitOptions.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
           <Label>Image URL</Label>
           <Input {...register('image')} placeholder="https://..." />
         </div>
 
         <div className="space-y-2">
           <Label>Product Link</Label>
-          <Input {...register('link')} placeholder="https://linemaster.com/..." />
+          <Input
+            {...register('link')}
+            placeholder="https://linemaster.com/..."
+          />
         </div>
 
         <div className="flex items-center space-x-2 pt-8">
-          <Switch 
+          <Switch
             checked={watch('flagship')}
             onCheckedChange={(checked) => setValue('flagship', checked)}
           />
@@ -163,55 +322,39 @@ export function ProductForm({ initialData, onSubmit, isLoading }: ProductFormPro
 
       <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <h3 className="font-semibold">Attributes</h3>
-        
-        {/* Applications */}
-        <div className="space-y-2">
-          <Label>Applications</Label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {applications.map(app => (
-              <span key={app} className="bg-primary/10 text-primary px-2 py-1 rounded-md text-xs flex items-center gap-1">
-                {app}
-                <button type="button" onClick={() => removeApplication(app)}><X className="w-3 h-3" /></button>
-              </span>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <Input 
-              value={newApplication}
-              onChange={(e) => setNewApplication(e.target.value)}
-              placeholder="Add application..."
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addApplication())}
-            />
-            <Button type="button" variant="secondary" onClick={addApplication}><Plus className="w-4 h-4" /></Button>
-          </div>
-        </div>
 
-        {/* Features */}
-        <div className="space-y-2">
-          <Label>Features</Label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {features.map(feat => (
-              <span key={feat} className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs flex items-center gap-1">
-                {feat}
-                <button type="button" onClick={() => removeFeature(feat)}><X className="w-3 h-3" /></button>
-              </span>
-            ))}
-          </div>
-          <div className="flex gap-2">
-            <Input 
-              value={newFeature}
-              onChange={(e) => setNewFeature(e.target.value)}
-              placeholder="Add feature (e.g. shield, twin)..."
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
-            />
-            <Button type="button" variant="secondary" onClick={addFeature}><Plus className="w-4 h-4" /></Button>
-          </div>
-        </div>
+        {/* Actions - multi-select dropdown */}
+        <MultiSelectDropdown
+          label="Actions"
+          options={actionOptions}
+          selected={actions}
+          onChange={(vals) => setValue('actions', vals)}
+        />
+
+        {/* Applications - multi-select dropdown */}
+        <MultiSelectDropdown
+          label="Applications"
+          options={appOptions}
+          selected={applications}
+          onChange={(vals) => setValue('applications', vals)}
+        />
+
+        {/* Features - multi-select dropdown */}
+        <MultiSelectDropdown
+          label="Features"
+          options={featureOptions}
+          selected={features}
+          onChange={(vals) => setValue('features', vals)}
+        />
       </div>
 
       <div className="pt-6">
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Saving...' : (initialData ? 'Update Product' : 'Create Product')}
+          {isLoading
+            ? 'Saving...'
+            : initialData
+              ? 'Update Product'
+              : 'Create Product'}
         </Button>
       </div>
     </form>
