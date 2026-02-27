@@ -155,7 +155,7 @@ export function transformRow(row: StockSwitchRow): Product {
     actions: deriveActions(row),
     duty: (row.duty as 'heavy' | 'medium' | 'light') || 'medium',
     ip: normalizeIp(row['IP Rating']),
-    material: row.Material || 'Unknown',
+    material: row.Material || '',
     connector_type: deriveConnectorType(row),
     description: row.description || `${row.series} - ${row.Part}`,
     applications: expandApplications(row.applications),
