@@ -157,6 +157,14 @@ export function ProductForm({
   const applications = watch('applications') || [];
   const actions = watch('actions') || [];
 
+  // Watch all select fields so dropdowns stay in sync with form state
+  const technology = watch('technology') || '';
+  const duty = watch('duty') || '';
+  const material = watch('material') || '';
+  const ip = watch('ip') || '';
+  const connectorType = watch('connector_type') || 'none';
+  const circuitry = watch('circuitry') || 'no_preference';
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -189,8 +197,8 @@ export function ProductForm({
         <div className="space-y-2">
           <Label>Technology</Label>
           <Select
+            value={technology}
             onValueChange={(val) => setValue('technology', val)}
-            defaultValue={initialData?.technology}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select technology" />
@@ -206,8 +214,8 @@ export function ProductForm({
         <div className="space-y-2">
           <Label>Duty Rating</Label>
           <Select
+            value={duty}
             onValueChange={(val) => setValue('duty', val as Product['duty'])}
-            defaultValue={initialData?.duty}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select duty" />
@@ -223,8 +231,8 @@ export function ProductForm({
         <div className="space-y-2">
           <Label>Material</Label>
           <Select
+            value={material}
             onValueChange={(val) => setValue('material', val)}
-            defaultValue={initialData?.material}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select material" />
@@ -242,8 +250,8 @@ export function ProductForm({
         <div className="space-y-2">
           <Label>IP Rating</Label>
           <Select
+            value={ip}
             onValueChange={(val) => setValue('ip', val)}
-            defaultValue={initialData?.ip}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select IP rating" />
@@ -260,10 +268,10 @@ export function ProductForm({
         <div className="space-y-2">
           <Label>Connector Type</Label>
           <Select
+            value={connectorType}
             onValueChange={(val) =>
               setValue('connector_type', val === 'none' ? undefined : val)
             }
-            defaultValue={initialData?.connector_type || 'none'}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select connector type" />
@@ -280,10 +288,10 @@ export function ProductForm({
         <div className="space-y-2">
           <Label>Circuits Controlled</Label>
           <Select
+            value={circuitry}
             onValueChange={(val) =>
               setValue('circuitry', val === 'no_preference' ? undefined : val)
             }
-            defaultValue={initialData?.circuitry || 'no_preference'}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select circuits" />
