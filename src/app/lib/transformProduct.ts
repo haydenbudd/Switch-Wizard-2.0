@@ -213,7 +213,7 @@ export function transformRow(row: StockSwitchRow): Product {
     link: row.Link || '',
     pedal_count: row['Number of Pedals'] ?? undefined,
     stages: row.Stages ?? undefined,
-    circuitry: row['Circuits Controlled'] ?? undefined,
+    circuitry: row['Circuits Controlled'] != null ? String(row['Circuits Controlled']) : undefined,
     configuration: row.Configuration ?? undefined,
     color: row.Color ?? undefined,
     pfc_config: row['PFC Config'] ?? undefined,
