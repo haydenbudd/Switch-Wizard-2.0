@@ -247,15 +247,11 @@ export async function createOrUpdateProducts(products: Partial<Product>[]): Prom
     }
 
     try {
-      const rows = batch.map(p => {
-        const row = productToRow(p);
-        if (p.id) row.id = Number(p.id);
-        return row;
-      });
+      const rows = batch.map(p => productToRow(p));
 
       const { error } = await supabase
         .from('Stock Switches')
-        .upsert(rows);
+        .insert(rows);
 
       if (error) throw new Error(error.message);
     } catch (error) {
