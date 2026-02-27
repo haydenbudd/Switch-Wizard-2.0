@@ -1,4 +1,5 @@
 import { Product } from '@/app/lib/api';
+import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 import { Button } from '@/app/components/ui/button';
 import { 
   Table, 
@@ -52,9 +53,9 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
           {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell>
-                <img 
-                  src={product.image} 
-                  alt={product.series} 
+                <img
+                  src={getProxiedImageUrl(product.image)}
+                  alt={product.series}
                   className="w-12 h-12 object-contain rounded bg-gray-50"
                 />
               </TableCell>

@@ -123,7 +123,8 @@ export function CSVImport({ onImportComplete }: CSVImportProps) {
       if (!product.id && product.part_number) product.id = product.part_number;
       if (!product.id && product.series) product.id = product.series.toLowerCase().replace(/\s+/g, '-');
       
-      if (!product.image) product.image = 'https://via.placeholder.com/400x300?text=No+Image';
+      // Leave image empty so the series-based fallback in transformProduct kicks in
+      if (!product.image) product.image = '';
       if (!product.link) product.link = '#';
       if (!product.flagship) product.flagship = false;
       

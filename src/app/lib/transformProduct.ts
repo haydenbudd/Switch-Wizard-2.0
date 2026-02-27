@@ -165,7 +165,8 @@ const SERIES_IMAGES: Record<string, string> = {
 };
 
 function deriveImage(row: StockSwitchRow): string {
-  if (row.image_url) return row.image_url;
+  // Use DB image_url only if it's a real product image (not a placeholder)
+  if (row.image_url && !row.image_url.includes('placeholder')) return row.image_url;
 
   const series = (row.series || '').toLowerCase();
 
