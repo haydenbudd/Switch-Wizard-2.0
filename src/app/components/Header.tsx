@@ -7,10 +7,16 @@ interface HeaderProps {
   onReset: () => void;
 }
 
+const IS_EMBEDDED = typeof __LM_EMBED_MODE__ !== 'undefined' && __LM_EMBED_MODE__;
+
 function toggleDarkClass(dark: boolean) {
-  // Apply .dark on both <html> (for next-themes) and the scoping container
-  // (for postcss-prefix-selector which rewrites .dark → #lm-product-finder.lm-dark)
-  document.documentElement.classList.toggle('dark', dark);
+  // In standalone mode, apply .dark on <html> for next-themes.
+  // In WordPress embed mode, skip this to avoid affecting the host page.
+  if (!IS_EMBEDDED) {
+    document.documentElement.classList.toggle('dark', dark);
+  }
+  // Always apply .lm-dark on the scoping container
+  // (postcss-prefix-selector rewrites .dark → #lm-product-finder.lm-dark)
   document.getElementById('lm-product-finder')?.classList.toggle('lm-dark', dark);
 }
 
@@ -20,10 +26,13 @@ export function Header({ onReset }: HeaderProps) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const dark = document.documentElement.classList.contains('dark');
+    const container = document.getElementById('lm-product-finder');
+    const dark = IS_EMBEDDED
+      ? container?.classList.contains('lm-dark') ?? false
+      : document.documentElement.classList.contains('dark');
     setIsDark(dark);
     // Sync the scoping container on mount
-    document.getElementById('lm-product-finder')?.classList.toggle('lm-dark', dark);
+    container?.classList.toggle('lm-dark', dark);
   }, []);
 
   const handleToggleDark = useCallback(() => {

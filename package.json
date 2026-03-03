@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
+    "build:wordpress": "vite build --config vite.config.wordpress.ts && node scripts/package-wordpress.mjs",
     "dev": "vite"
   },
   "dependencies": {
