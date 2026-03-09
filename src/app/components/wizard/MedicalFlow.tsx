@@ -21,7 +21,6 @@ import {
 
 const MotionDiv = motion.div;
 
-const BANNER_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/03/medical-footswitches-trio-banner-1.jpg';
 const CRESCENT_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/neuro-and-ent-1-optimized.png';
 const AERO_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/electro-surgical-cardiac-2-optimized.png';
 
@@ -182,20 +181,13 @@ export function MedicalFlow({
           ];
           return (
             <div className="space-y-6">
-              <div className="max-w-3xl mx-auto mb-6 rounded-2xl overflow-hidden shadow-lg">
-                <img
-                  src={BANNER_IMAGE}
-                  alt="Linemaster medical footswitches"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
               <div className="text-center space-y-2 mb-8">
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
                   Select Channel Type
                 </h2>
                 <p className="text-muted-foreground">Choose the housing style for your custom footswitch.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 {channelCards.map((ch) => (
                   <div
                     key={ch.id}
