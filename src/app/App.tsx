@@ -121,7 +121,7 @@ function WizardApp() {
       wizardState.setSelectedTechnology('');
       clearDownstreamSelections(0);
       wizardState.setFlow('medical');
-      setTimeout(() => wizardState.setStep(1), 150);
+      wizardState.setStep(1);
       trackWizardStep(0, 'medical', { application: 'medical' });
     }
     // Other categories stay on step 0 phase 2 to show sub-applications
