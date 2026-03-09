@@ -35,8 +35,12 @@ DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
+>(({ className, children, ...props }, ref) => {
+  const container = typeof document !== 'undefined'
+    ? document.getElementById('lm-product-finder') ?? document.body
+    : undefined;
+  return (
+  <DrawerPortal container={container}>
     <DrawerOverlay />
     <DrawerPrimitive.Content
       ref={ref}
@@ -50,7 +54,8 @@ const DrawerContent = React.forwardRef<
       {children}
     </DrawerPrimitive.Content>
   </DrawerPortal>
-))
+  );
+})
 DrawerContent.displayName = "DrawerContent"
 
 const DrawerHeader = ({
