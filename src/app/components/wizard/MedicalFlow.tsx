@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { ArrowLeft, Check, Heart, Package, Settings, Info, Phone, Mail, MessageSquare, CircleDot, ToggleLeft, Sun, Droplets, ChevronLeft, Download, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Sun, Droplets, ChevronLeft, Download, ExternalLink } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
@@ -357,26 +357,8 @@ export function MedicalFlow({
             onClick={() => window.open('https://linemaster.com/contact', '_blank')}
           >
             <ExternalLink className="w-4 h-4 mr-2" aria-hidden="true" />
-            Contact Engineering Team
+            Contact Us
           </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-          <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-            <Phone className="w-5 h-5 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
-            <p className="text-sm font-medium text-foreground">Call Us</p>
-            <p className="text-xs text-muted-foreground mt-1">(203) 484-3400</p>
-          </div>
-          <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-            <Mail className="w-5 h-5 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
-            <p className="text-sm font-medium text-foreground">Email</p>
-            <p className="text-xs text-muted-foreground mt-1">sales@linemaster.com</p>
-          </div>
-          <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-            <MessageSquare className="w-5 h-5 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
-            <p className="text-sm font-medium text-foreground">Request Quote</p>
-            <p className="text-xs text-muted-foreground mt-1">Online form</p>
-          </div>
         </div>
       </div>
     );
