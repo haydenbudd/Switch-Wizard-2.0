@@ -1,5 +1,6 @@
 import { GlassCard } from '@/app/components/GlassCard';
 import { ProductCard } from '@/app/components/ProductCard';
+import { ProductDetailModal } from '@/app/components/ProductDetailModal';
 import { CompareProducts } from '@/app/components/wizard/CompareProducts';
 import { Button } from '@/app/components/ui/button';
 import { Product, Option } from '@/app/lib/api';
@@ -92,6 +93,9 @@ export function ResultsPage({
   // Comparison state
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
+
+  // Product detail modal state
+  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
 
   // Mobile action drawer state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -399,6 +403,7 @@ export function ResultsPage({
               product={product}
               isComparing={compareIds.includes(product.id)}
               onCompareToggle={handleCompareToggle}
+              onViewDetails={setDetailProduct}
             />
           ))}
         </div>
@@ -443,6 +448,13 @@ export function ResultsPage({
           </div>
         </div>
       )}
+
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        product={detailProduct}
+        open={detailProduct !== null}
+        onClose={() => setDetailProduct(null)}
+      />
 
       {/* Compare Slide-up Panel */}
       <CompareProducts
