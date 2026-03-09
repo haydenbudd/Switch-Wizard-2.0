@@ -4,8 +4,18 @@ export interface FilterOptions {
   searchTerm: string;
   dutyFilter: string[];
   cordedFilter: 'all' | 'corded' | 'cordless';
+  materialFilter: string[];
   sortBy: 'relevance' | 'duty' | 'ip';
   selectedEnvironment?: string;
+}
+
+/** Check whether a product's IP rating matches the chosen operating environment. */
+export function matchesEnvironment(env: string, ip: string): boolean {
+  if (env === 'open') return ip === 'IPXX';
+  if (env === 'dry') return ['IPXX', 'IP20'].includes(ip);
+  if (env === 'damp') return ['IP56', 'IP68'].includes(ip);
+  if (env === 'wet') return ip === 'IP68';
+  return true;
 }
 
 export const filterProductsBySearch = (products: Product[], searchTerm: string): Product[] => {
@@ -25,6 +35,11 @@ export const filterProductsBySearch = (products: Product[], searchTerm: string):
 export const filterProductsByDuty = (products: Product[], dutyFilter: string[]): Product[] => {
   if (dutyFilter.length === 0) return products;
   return products.filter(p => dutyFilter.includes(p.duty));
+};
+
+export const filterProductsByMaterial = (products: Product[], materialFilter: string[]): Product[] => {
+  if (materialFilter.length === 0) return products;
+  return products.filter(p => materialFilter.includes(p.material));
 };
 
 export const filterProductsByConnection = (products: Product[], cordedFilter: 'all' | 'corded' | 'cordless'): Product[] => {
@@ -117,6 +132,7 @@ export const getProcessedProducts = (products: Product[], options: FilterOptions
   let filtered = products;
   filtered = filterProductsBySearch(filtered, options.searchTerm);
   filtered = filterProductsByDuty(filtered, options.dutyFilter);
+  filtered = filterProductsByMaterial(filtered, options.materialFilter);
   filtered = filterProductsByConnection(filtered, options.cordedFilter);
   filtered = sortProducts(filtered, options.sortBy, options.selectedEnvironment);
   return filtered;

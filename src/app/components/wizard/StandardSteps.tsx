@@ -230,7 +230,7 @@ export function StandardSteps({
 
   const progressPercent = Math.round((getProgressStep(wizardState.step) / totalSteps) * 100);
 
-  // Wizard companion — slides in from right, persists across all steps
+  // Wizard companion — slides in from right, hidden on mobile
   const wizardCompanion = createPortal(
     <AnimatePresence>
       {showWizard && (
@@ -239,6 +239,7 @@ export function StandardSteps({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: '100%', opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="hidden md:block"
           style={{
             position: 'fixed',
             bottom: '24px',
@@ -485,7 +486,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Select Technology</h2>
                   <p className="text-muted-foreground">Choose the switching mechanism for your application</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
                     .filter((t) => t.availableFor?.includes(wizardState.selectedApplication))
                     .map((tech, i) => (
@@ -511,7 +512,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Select Action Type</h2>
                   <p className="text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
                     .map((action, i) => (
@@ -537,7 +538,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Operating Environment</h2>
                   <p className="text-muted-foreground">Where will the switch be used?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto" role="radiogroup" aria-label="Select operating environment">
                   {(environments || []).map((env, i) => (
                     <OptionCard
                       key={env.id}
@@ -561,7 +562,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Duty Rating</h2>
                   <p className="text-muted-foreground">How heavy will the usage be?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
                       key={duty.id}
@@ -585,7 +586,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Connection Type</h2>
                   <p className="text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto" role="radiogroup" aria-label="Select connection type">
                   {(connections || []).map((conn, i) => (
                     <OptionCard
                       key={conn.id}
@@ -609,7 +610,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Circuits Controlled</h2>
                   <p className="text-muted-foreground">How many circuits do you need to control?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-4xl mx-auto" role="radiogroup" aria-label="Select circuit count">
                   {(circuitCounts || []).map((cc, i) => (
                     <OptionCard
                       key={cc.id}
@@ -633,7 +634,7 @@ export function StandardSteps({
                   <h2 className="text-3xl font-bold tracking-tight mb-2">Safety Guard</h2>
                   <p className="text-muted-foreground">Do you need protection against accidental activation?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto" role="radiogroup" aria-label="Select safety guard option">
                   <OptionCard
                     label="Yes, Add Guard"
                     description="Safety guard prevents accidental activation."

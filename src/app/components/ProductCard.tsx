@@ -3,7 +3,7 @@ import { GlassCard } from './GlassCard';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { Product } from '@/app/lib/api';
-import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package, Droplets, Anvil, Sparkles, Hexagon, Feather, Gem, Component } from 'lucide-react';
+import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package, Droplets, Anvil, Sparkles, Hexagon, Feather, Gem, Component, Mail, GitCompareArrows } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 
@@ -40,17 +40,39 @@ function MaterialIcon({ material }: { material: string }) {
 
 interface ProductCardProps {
   product: Product;
+  isComparing?: boolean;
+  onCompareToggle?: (id: string) => void;
 }
 
-export const ProductCard = memo(function ProductCard({ product }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle }: ProductCardProps) {
   if (!product) return null;
   const isFlagship = product.flagship;
+
+  const quoteSubject = encodeURIComponent(`Quote Request: ${product.series}${product.part_number ? ` (#${product.part_number})` : ''}`);
+  const quoteBody = encodeURIComponent(`Hello,\n\nI'd like to request a quote for:\n\nProduct: ${product.series}\nPart Number: ${product.part_number || 'N/A'}\nTechnology: ${product.technology}\nDuty: ${product.duty}\nIP Rating: ${product.ip}\n\nPlease provide pricing and lead time information.\n\nThank you.`);
 
   return (
     <GlassCard
       className="h-full flex flex-col group relative overflow-hidden transition-all duration-500"
       hoverEffect={true}
     >
+      {/* Compare checkbox */}
+      {onCompareToggle && (
+        <button
+          className={`absolute top-4 left-4 z-20 w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all duration-200 ${
+            isComparing
+              ? 'bg-primary border-primary text-white shadow-sm shadow-primary/30'
+              : 'border-border/60 bg-background/80 backdrop-blur-sm hover:border-primary/50 text-transparent'
+          }`}
+          onClick={(e) => { e.stopPropagation(); onCompareToggle(product.id); }}
+          aria-label={`${isComparing ? 'Remove from' : 'Add to'} comparison: ${product.series}`}
+          aria-pressed={isComparing}
+          title={isComparing ? 'Remove from comparison' : 'Add to comparison'}
+        >
+          <GitCompareArrows className="w-3.5 h-3.5" />
+        </button>
+      )}
+
       {/* Featured/Flagship Badge */}
       {isFlagship && (
         <div className="absolute top-4 right-4 z-20">
@@ -65,7 +87,7 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
       <div className="relative aspect-[4/3] -mx-6 -mt-6 mb-4 bg-gradient-to-b from-secondary/80 to-transparent p-6 flex items-center justify-center overflow-hidden">
         {/* Background blobs for depth */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-500" />
-        
+
         {product.image ? (
           <ImageWithFallback
             src={getProxiedImageUrl(product.image)}
@@ -81,7 +103,7 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
             </div>
           </div>
         )}
-        
+
       </div>
 
       {/* Content */}
@@ -135,17 +157,25 @@ export const ProductCard = memo(function ProductCard({ product }: ProductCardPro
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-auto pt-4 flex items-center justify-between border-t border-border/50">
+        <div className="mt-auto pt-4 flex items-center gap-2 border-t border-border/50">
           <a
             href={product.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full"
+            className="flex-1"
             aria-label={`View details for ${product.series}`}
           >
             <Button className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 text-primary-foreground border-0 transition-all duration-300" tabIndex={-1}>
               View Details
               <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
+            </Button>
+          </a>
+          <a
+            href={`mailto:sales@linemaster.com?subject=${quoteSubject}&body=${quoteBody}`}
+            aria-label={`Request quote for ${product.series}`}
+          >
+            <Button variant="outline" size="icon" className="shrink-0" tabIndex={-1} title="Request Quote">
+              <Mail className="w-4 h-4" aria-hidden="true" />
             </Button>
           </a>
         </div>
