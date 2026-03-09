@@ -543,3 +543,32 @@ export const ledOptions: Option[] = [
   { id: 'yes', label: 'Yes', icon: Lightbulb, description: 'Include LED indicators.' },
   { id: 'no', label: 'No', icon: LightbulbOff, description: 'No LEDs.' },
 ];
+
+// ── Shared builder step configuration ──────────────────────────
+// Single source of truth for step metadata, used by MedicalFlow and generatePDF.
+
+export interface BuilderStepConfig {
+  step: number;
+  title: string;
+  subtitle: string;
+  options: Option[];
+  columns: number;
+  stateKey: string;      // key on WizardState to read selected value
+  summaryLabel: string;  // label shown in summary / PDF
+  aeroOnly?: boolean;    // true = skip for crescent channel
+}
+
+export const BUILDER_STEP_CONFIGS: BuilderStepConfig[] = [
+  { step: 3,  title: 'Pedal Design',    subtitle: 'How many pedal units do you need?',                          options: pedalDesigns,          columns: 3, stateKey: 'selectedPedalDesign',    summaryLabel: 'Pedal Design' },
+  { step: 5,  title: 'Output Type',     subtitle: 'What type of output do you need?',                           options: outputTypes,           columns: 2, stateKey: 'selectedOutputType',     summaryLabel: 'Output Type' },
+  { step: 6,  title: 'Connection Type',  subtitle: 'Wired or wireless?',                                        options: wiredWirelessOptions,  columns: 2, stateKey: 'selectedWiredWireless',  summaryLabel: 'Connection' },
+  { step: 7,  title: 'Toe Loop',         subtitle: 'Would you like toe loops for secure foot positioning?',      options: toeLoopOptions,        columns: 2, stateKey: 'selectedToeLoop',        summaryLabel: 'Toe Loop' },
+  { step: 8,  title: 'Treadle Type',     subtitle: 'Choose the treadle style for your Aero footswitch.',         options: treadleTypes,          columns: 2, stateKey: 'selectedTreadleType',    summaryLabel: 'Treadle Type', aeroOnly: true },
+  { step: 9,  title: 'Custom Labeling',  subtitle: 'Would you like custom labels or markings on your footswitch?', options: customLabelingOptions, columns: 2, stateKey: 'selectedCustomLabeling', summaryLabel: 'Custom Labeling' },
+  { step: 10, title: 'LED Indicators',   subtitle: 'Would you like LED indicators on your footswitch?',          options: ledOptions,            columns: 2, stateKey: 'selectedLEDs',           summaryLabel: 'LEDs' },
+];
+
+/** Look up a display label from an option array by id. */
+export function optionLabel(options: Option[], id: string): string {
+  return options.find(o => o.id === id)?.label ?? id;
+}

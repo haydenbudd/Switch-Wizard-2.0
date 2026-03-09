@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
 import { ArrowLeft, Check, Heart, Package, Settings, Info, Phone, Mail, MessageSquare, CircleDot, ToggleLeft, Sun, Droplets, ChevronLeft, Download, ExternalLink } from 'lucide-react';
@@ -8,16 +9,12 @@ import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from '@/app/components/Header';
 import {
-  consoleStyles,
   pedalDesigns,
-  outputTypes,
-  wiredWirelessOptions,
-  toeLoopOptions,
-  treadleTypes,
-  customLabelingOptions,
-  ledOptions,
   NumberIcon,
+  BUILDER_STEP_CONFIGS,
+  optionLabel,
 } from '@/app/data/options';
+import type { Option } from '@/app/data/options';
 
 const MotionDiv = motion.div;
 
@@ -80,34 +77,16 @@ function getMaxButtons(channel: string, pedalDesign: string): number {
   }
 }
 
-// Builder step labels for summary
-const BUILDER_LABELS: Record<string, string> = {
-  selectedChannel: 'Channel',
-  selectedPedalDesign: 'Pedal Design',
-  selectedButtonCount: 'Number of Buttons',
-  selectedOutputType: 'Output Type',
-  selectedWiredWireless: 'Connection',
-  selectedToeLoop: 'Toe Loop',
-  selectedTreadleType: 'Treadle Type',
-  selectedCustomLabeling: 'Custom Labeling',
-  selectedLEDs: 'LEDs',
+// Setter keys on WizardState, keyed by stateKey for dynamic lookup
+const SETTER_MAP: Record<string, string> = {
+  selectedPedalDesign: 'setSelectedPedalDesign',
+  selectedOutputType: 'setSelectedOutputType',
+  selectedWiredWireless: 'setSelectedWiredWireless',
+  selectedToeLoop: 'setSelectedToeLoop',
+  selectedTreadleType: 'setSelectedTreadleType',
+  selectedCustomLabeling: 'setSelectedCustomLabeling',
+  selectedLEDs: 'setSelectedLEDs',
 };
-
-// Friendly display values
-function getDisplayValue(key: string, value: string): string {
-  const map: Record<string, Record<string, string>> = {
-    selectedChannel: { crescent: 'Crescent Channel', aero: 'Aero Channel' },
-    selectedPedalDesign: { single: 'Single Pedal', twin: 'Twin Pedal', triple: 'Triple Pedal' },
-    selectedOutputType: { on_off: 'On / Off', variable: 'Variable Output' },
-    selectedWiredWireless: { wired: 'Wired', wireless: 'Wireless' },
-    selectedToeLoop: { yes: 'Yes', no: 'No' },
-    selectedTreadleType: { flip_up: 'Flip Up', aquiline: 'Aquiline' },
-    selectedCustomLabeling: { yes: 'Yes', no: 'No' },
-    selectedLEDs: { yes: 'Yes', no: 'No' },
-  };
-  if (key === 'selectedButtonCount') return value;
-  return map[key]?.[value] || value;
-}
 
 export function MedicalFlow({
   wizardState,
@@ -160,14 +139,46 @@ export function MedicalFlow({
     setTimeout(onContinue, 150);
   };
 
-  // Generate button count options based on channel + pedal
+  // Generate button count options based on channel + pedal (memoized to stabilize NumberIcon refs)
   const maxButtons = getMaxButtons(wizardState.selectedChannel, wizardState.selectedPedalDesign);
-  const buttonCountOptions = Array.from({ length: maxButtons }, (_, i) => ({
-    id: String(i + 1),
-    label: `${i + 1} Button${i > 0 ? 's' : ''}`,
-    description: `${i + 1} button${i > 0 ? 's' : ''} per pedal.`,
-    icon: NumberIcon(i + 1),
-  }));
+  const buttonCountOptions = useMemo(() =>
+    Array.from({ length: maxButtons }, (_, i) => ({
+      id: String(i + 1),
+      label: `${i + 1} Button${i > 0 ? 's' : ''}`,
+      description: `${i + 1} button${i > 0 ? 's' : ''} per pedal.`,
+      icon: NumberIcon(i + 1),
+    })),
+    [maxButtons],
+  );
+
+  // ── Generic option step renderer ──
+
+  const renderOptionStep = (title: string, subtitle: string, options: Option[], columns: number, selectedValue: string, setter: (id: string) => void) => (
+    <div className="space-y-6">
+      <div className="text-center space-y-2 mb-8">
+        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+          {title}
+        </h2>
+        <p className="text-muted-foreground">{subtitle}</p>
+      </div>
+      <div className={cn(
+        "grid gap-6 max-w-3xl mx-auto",
+        columns <= 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
+      )}>
+        {options.map((opt, i) => (
+          <OptionCard
+            key={opt.id}
+            label={opt.label}
+            description={opt.description}
+            icon={opt.icon}
+            selected={selectedValue === opt.id}
+            onClick={() => handleBuilderSelect(setter, opt.id)}
+            index={i}
+          />
+        ))}
+      </div>
+    </div>
+  );
 
   // ── Render builder step content ──
 
@@ -231,32 +242,7 @@ export function MedicalFlow({
           );
         }
 
-      case 3: // Pedal design
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Pedal Design
-              </h2>
-              <p className="text-muted-foreground">How many pedal units do you need?</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
-              {pedalDesigns.map((design, i) => (
-                <OptionCard
-                  key={design.id}
-                  label={design.label}
-                  description={design.description}
-                  icon={design.icon}
-                  selected={wizardState.selectedPedalDesign === design.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedPedalDesign, design.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case 4: // Number of buttons
+      case 4: // Number of buttons (special — dynamic options)
         return (
           <div className="space-y-6">
             <div className="text-center space-y-2 mb-8">
@@ -274,8 +260,8 @@ export function MedicalFlow({
             </div>
             <div className={cn(
               "grid gap-6 max-w-3xl mx-auto",
-              buttonCountOptions.length === 4 ? "grid-cols-1 md:grid-cols-2" :
-              buttonCountOptions.length <= 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
+              buttonCountOptions.length <= 2 ? "grid-cols-1 md:grid-cols-2" :
+              buttonCountOptions.length === 4 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
             )}>
               {buttonCountOptions.map((opt, i) => (
                 <OptionCard
@@ -292,161 +278,19 @@ export function MedicalFlow({
           </div>
         );
 
-      case 5: // Output type
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Output Type
-              </h2>
-              <p className="text-muted-foreground">What type of output do you need?</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {outputTypes.map((opt, i) => (
-                <OptionCard
-                  key={opt.id}
-                  label={opt.label}
-                  description={opt.description}
-                  icon={opt.icon}
-                  selected={wizardState.selectedOutputType === opt.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedOutputType, opt.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case 6: // Wired / Wireless
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Connection Type
-              </h2>
-              <p className="text-muted-foreground">Wired or wireless?</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {wiredWirelessOptions.map((opt, i) => (
-                <OptionCard
-                  key={opt.id}
-                  label={opt.label}
-                  description={opt.description}
-                  icon={opt.icon}
-                  selected={wizardState.selectedWiredWireless === opt.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedWiredWireless, opt.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case 7: // Toe loop
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Toe Loop
-              </h2>
-              <p className="text-muted-foreground">Would you like toe loops for secure foot positioning?</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {toeLoopOptions.map((opt, i) => (
-                <OptionCard
-                  key={opt.id}
-                  label={opt.label}
-                  description={opt.description}
-                  icon={opt.icon}
-                  selected={wizardState.selectedToeLoop === opt.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedToeLoop, opt.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case 8: // Treadle type (Aero only)
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Treadle Type
-              </h2>
-              <p className="text-muted-foreground">Choose the treadle style for your Aero footswitch.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {treadleTypes.map((opt, i) => (
-                <OptionCard
-                  key={opt.id}
-                  label={opt.label}
-                  description={opt.description}
-                  icon={opt.icon}
-                  selected={wizardState.selectedTreadleType === opt.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedTreadleType, opt.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case 9: // Custom labeling
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Custom Labeling
-              </h2>
-              <p className="text-muted-foreground">Would you like custom labels or markings on your footswitch?</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {customLabelingOptions.map((opt, i) => (
-                <OptionCard
-                  key={opt.id}
-                  label={opt.label}
-                  description={opt.description}
-                  icon={opt.icon}
-                  selected={wizardState.selectedCustomLabeling === opt.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedCustomLabeling, opt.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
-      case 10: // LEDs
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                LED Indicators
-              </h2>
-              <p className="text-muted-foreground">Would you like LED indicators on your footswitch?</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {ledOptions.map((opt, i) => (
-                <OptionCard
-                  key={opt.id}
-                  label={opt.label}
-                  description={opt.description}
-                  icon={opt.icon}
-                  selected={wizardState.selectedLEDs === opt.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedLEDs, opt.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
-
       case 11: // Summary
         return renderSummary();
 
-      default:
-        return null;
+      default: {
+        // Data-driven steps (3, 5-10) — looked up from BUILDER_STEP_CONFIGS
+        const cfg = BUILDER_STEP_CONFIGS.find(c => c.step === wizardState.step);
+        if (!cfg) return null;
+        const selectedValue = wizardState[cfg.stateKey as keyof WizardState] as string;
+        const setterKey = SETTER_MAP[cfg.stateKey];
+        const setter = setterKey ? (wizardState as Record<string, unknown>)[setterKey] as (id: string) => void : undefined;
+        if (!setter) return null;
+        return renderOptionStep(cfg.title, cfg.subtitle, cfg.options, cfg.columns, selectedValue, setter);
+      }
     }
   };
 
@@ -454,26 +298,26 @@ export function MedicalFlow({
 
   const renderSummary = () => {
     const configEntries: { label: string; value: string }[] = [];
-    const fields: { key: keyof typeof BUILDER_LABELS; stateKey: keyof WizardState }[] = [
-      { key: 'selectedChannel', stateKey: 'selectedChannel' },
-      { key: 'selectedPedalDesign', stateKey: 'selectedPedalDesign' },
-      { key: 'selectedButtonCount', stateKey: 'selectedButtonCount' },
-      { key: 'selectedOutputType', stateKey: 'selectedOutputType' },
-      { key: 'selectedWiredWireless', stateKey: 'selectedWiredWireless' },
-      { key: 'selectedToeLoop', stateKey: 'selectedToeLoop' },
-      ...(wizardState.selectedChannel === 'aero' ? [{ key: 'selectedTreadleType' as keyof typeof BUILDER_LABELS, stateKey: 'selectedTreadleType' as keyof WizardState }] : []),
-      { key: 'selectedCustomLabeling', stateKey: 'selectedCustomLabeling' },
-      { key: 'selectedLEDs', stateKey: 'selectedLEDs' },
-    ];
 
-    for (const { key, stateKey } of fields) {
-      const val = wizardState[stateKey] as string;
-      if (val) {
-        configEntries.push({
-          label: BUILDER_LABELS[key],
-          value: getDisplayValue(key, val),
-        });
-      }
+    // Channel + button count are special; the rest come from BUILDER_STEP_CONFIGS
+    const channelVal = wizardState.selectedChannel;
+    if (channelVal) {
+      const channelLabel = channelVal === 'crescent' ? 'Crescent Channel' : 'Aero Channel';
+      configEntries.push({ label: 'Channel', value: channelLabel });
+    }
+
+    for (const cfg of BUILDER_STEP_CONFIGS) {
+      if (cfg.aeroOnly && wizardState.selectedChannel !== 'aero') continue;
+      const val = wizardState[cfg.stateKey as keyof WizardState] as string;
+      if (val) configEntries.push({ label: cfg.summaryLabel, value: optionLabel(cfg.options, val) });
+    }
+
+    // Button count (step 4, not in BUILDER_STEP_CONFIGS since it's dynamic)
+    const btnVal = wizardState.selectedButtonCount;
+    if (btnVal) {
+      // Insert after pedal design (index 1) for logical ordering
+      const insertIdx = configEntries.findIndex(e => e.label === 'Pedal Design');
+      configEntries.splice(insertIdx + 1, 0, { label: 'Number of Buttons', value: btnVal });
     }
 
     return (
