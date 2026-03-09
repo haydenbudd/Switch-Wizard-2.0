@@ -164,15 +164,25 @@ const SERIES_IMAGES: Record<string, string> = {
   'airval hercules': 'https://linemaster.com/wp-content/uploads/2025/03/airval-hercules-duo_optimized.png',
 };
 
+// Check whether a URL is a series-level fallback (shared across all products in a series)
+function isSeriesLevelImage(url: string): boolean {
+  return Object.values(SERIES_IMAGES).some(seriesUrl => url === seriesUrl);
+}
+
 function deriveImage(row: StockSwitchRow): string {
-  // 1. Use DB image_url if it's a real product image (not a placeholder)
-  if (row.image_url && !row.image_url.includes('placeholder')) return row.image_url;
+  const pageId = extractProductPageId(row.Link);
+  const dbUrl = row.image_url && !row.image_url.includes('placeholder') ? row.image_url : null;
+
+  // 1. Use DB image_url if it's a real per-product image (not a series-level fallback)
+  if (dbUrl && !isSeriesLevelImage(dbUrl)) return dbUrl;
 
   // 2. Derive per-product CDN image from the product page link (unique per product)
-  const pageId = extractProductPageId(row.Link);
   if (pageId) return buildCdnImageUrl(pageId);
 
-  // 3. Fall back to series-level image
+  // 3. Use DB image_url even if it's a series-level image (better than nothing)
+  if (dbUrl) return dbUrl;
+
+  // 4. Fall back to series-level image by series name
   const series = (row.series || '').toLowerCase();
   if (SERIES_IMAGES[series]) return SERIES_IMAGES[series];
   for (const [key, url] of Object.entries(SERIES_IMAGES)) {
