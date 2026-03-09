@@ -34,10 +34,22 @@ import {
   Plug,
   Unplug,
   Sparkles,
+  Footprints,
+  SquareStack,
+  Columns3,
+  Power,
+  SlidersHorizontal,
+  Check,
+  X,
+  FlipVertical,
+  Bird,
+  Tag,
+  Lightbulb,
+  LightbulbOff,
 } from 'lucide-react';
 
 // Factory that creates a Lucide-compatible SVG icon component displaying a number
-function NumberIcon(n: number): ElementType {
+export function NumberIcon(n: number): ElementType {
   const component = (props: SVGProps<SVGSVGElement>) =>
     createElement('svg', {
       xmlns: 'http://www.w3.org/2000/svg',
@@ -497,14 +509,14 @@ export const connections: Option[] = [
 // ── Custom Switch Builder Options ──────────────────────────────
 
 export const pedalDesigns: Option[] = [
-  { id: 'single', label: 'Single Pedal', description: 'One pedal unit.' },
-  { id: 'twin', label: 'Twin Pedal', description: 'Two pedal units side by side.' },
-  { id: 'triple', label: 'Triple Pedal', description: 'Three pedal units side by side.' },
+  { id: 'single', label: 'Single Pedal', icon: Footprints, description: 'One pedal unit.' },
+  { id: 'twin', label: 'Twin Pedal', icon: Columns3, description: 'Two pedal units side by side.' },
+  { id: 'triple', label: 'Triple Pedal', icon: SquareStack, description: 'Three pedal units side by side.' },
 ];
 
 export const outputTypes: Option[] = [
-  { id: 'on_off', label: 'On / Off', description: 'Simple on/off switching output.' },
-  { id: 'variable', label: 'Variable Output', description: 'Proportional control — output varies with pressure.' },
+  { id: 'on_off', label: 'On / Off', icon: Power, description: 'Simple on/off switching output.' },
+  { id: 'variable', label: 'Variable Output', icon: SlidersHorizontal, description: 'Proportional control — output varies with pressure.' },
 ];
 
 export const wiredWirelessOptions: Option[] = [
@@ -513,21 +525,21 @@ export const wiredWirelessOptions: Option[] = [
 ];
 
 export const toeLoopOptions: Option[] = [
-  { id: 'yes', label: 'Yes', description: 'Include toe loops for secure foot positioning.' },
-  { id: 'no', label: 'No', description: 'No toe loops.' },
+  { id: 'yes', label: 'Yes', icon: Check, description: 'Include toe loops for secure foot positioning.' },
+  { id: 'no', label: 'No', icon: X, description: 'No toe loops.' },
 ];
 
 export const treadleTypes: Option[] = [
-  { id: 'flip_up', label: 'Flip Up', description: 'Hinged treadle that flips up.' },
-  { id: 'aquiline', label: 'Aquiline', description: 'Curved, ergonomic aquiline treadle design.' },
+  { id: 'flip_up', label: 'Flip Up', icon: FlipVertical, description: 'Hinged treadle that flips up.' },
+  { id: 'aquiline', label: 'Aquiline', icon: Bird, description: 'Curved, ergonomic aquiline treadle design.' },
 ];
 
 export const customLabelingOptions: Option[] = [
-  { id: 'yes', label: 'Yes', description: 'Add custom labels or markings.' },
-  { id: 'no', label: 'No', description: 'Standard labeling.' },
+  { id: 'yes', label: 'Yes', icon: Tag, description: 'Add custom labels or markings.' },
+  { id: 'no', label: 'No', icon: Ban, description: 'Standard labeling.' },
 ];
 
 export const ledOptions: Option[] = [
-  { id: 'yes', label: 'Yes', description: 'Include LED indicators.' },
-  { id: 'no', label: 'No', description: 'No LEDs.' },
+  { id: 'yes', label: 'Yes', icon: Lightbulb, description: 'Include LED indicators.' },
+  { id: 'no', label: 'No', icon: LightbulbOff, description: 'No LEDs.' },
 ];

@@ -15,6 +15,7 @@ import {
   treadleTypes,
   customLabelingOptions,
   ledOptions,
+  NumberIcon,
 } from '@/app/data/options';
 
 const MotionDiv = motion.div;
@@ -165,6 +166,7 @@ export function MedicalFlow({
     id: String(i + 1),
     label: `${i + 1} Button${i > 0 ? 's' : ''}`,
     description: `${i + 1} button${i > 0 ? 's' : ''} per pedal.`,
+    icon: NumberIcon(i + 1),
   }));
 
   // ── Render builder step content ──
@@ -279,6 +281,7 @@ export function MedicalFlow({
             </div>
             <div className={cn(
               "grid gap-6 max-w-3xl mx-auto",
+              buttonCountOptions.length === 4 ? "grid-cols-1 md:grid-cols-2" :
               buttonCountOptions.length <= 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
             )}>
               {buttonCountOptions.map((opt, i) => (
@@ -286,6 +289,7 @@ export function MedicalFlow({
                   key={opt.id}
                   label={opt.label}
                   description={opt.description}
+                  icon={opt.icon}
                   selected={wizardState.selectedButtonCount === opt.id}
                   onClick={() => handleBuilderSelect(wizardState.setSelectedButtonCount, opt.id)}
                   index={i}
