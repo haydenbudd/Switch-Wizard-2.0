@@ -423,7 +423,7 @@ export function ResultsPage({
                 </p>
                 <a href={`mailto:sales@linemaster.com?subject=${contactSubject}&body=${contactBody}`}>
                   <Button size="sm" className="w-full gap-2">
-                    <Mail className="w-4 h-4" /> Contact Engineering
+                    <Mail className="w-4 h-4" /> Contact Us
                   </Button>
                 </a>
               </GlassCard>

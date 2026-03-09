@@ -3,13 +3,12 @@ import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { X, ExternalLink } from 'lucide-react';
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerClose,
-} from '@/app/components/ui/drawer';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/app/components/ui/dialog';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 
@@ -35,21 +34,14 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
   if (products.length === 0) return null;
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]">
-        <DrawerHeader className="flex items-center justify-between">
-          <div>
-            <DrawerTitle>Compare Products ({products.length})</DrawerTitle>
-            <DrawerDescription>Side-by-side comparison of selected products</DrawerDescription>
-          </div>
-          <DrawerClose asChild>
-            <Button variant="ghost" size="icon" aria-label="Close comparison">
-              <X className="w-4 h-4" />
-            </Button>
-          </DrawerClose>
-        </DrawerHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Compare Products ({products.length})</DialogTitle>
+          <DialogDescription>Side-by-side comparison of selected products</DialogDescription>
+        </DialogHeader>
 
-        <div className="overflow-x-auto px-4 pb-6">
+        <div className="overflow-x-auto">
           <table className="w-full min-w-[500px] border-collapse">
             <thead>
               <tr>
@@ -112,7 +104,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
             </tbody>
           </table>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </DialogContent>
+    </Dialog>
   );
 }
