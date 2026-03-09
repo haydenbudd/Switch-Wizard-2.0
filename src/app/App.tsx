@@ -153,6 +153,14 @@ function WizardApp() {
       // Back from results to medical flow environment step
       wizardState.setFlow('medical');
       wizardState.setStep(3);
+    } else if (wizardState.flow === 'medical' && wizardState.selectedMedicalPath === 'custom') {
+      // Custom builder back navigation
+      let prevStep = wizardState.step - 1;
+      // Skip treadle step (8) for Crescent channel
+      if (prevStep === 8 && wizardState.selectedChannel === 'crescent') {
+        prevStep--;
+      }
+      wizardState.setStep(prevStep);
     } else {
       let prevStep = wizardState.step - 1;
       // Skip Circuit Count step (index 6) for pneumatic/wireless technology
@@ -165,18 +173,27 @@ function WizardApp() {
       }
       wizardState.setStep(prevStep);
     }
-  }, [wizardState.step, wizardState.flow, wizardState.selectedCategory, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
+  }, [wizardState.step, wizardState.flow, wizardState.selectedCategory, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
 
   const handleContinue = useCallback(() => {
     let newStep = wizardState.step + 1;
-    // Skip Connection Type step (index 5) for pneumatic/wireless technology
-    if (newStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
-      newStep++;
+
+    if (wizardState.flow === 'medical' && wizardState.selectedMedicalPath === 'custom') {
+      // Custom builder: skip treadle step (8) for Crescent channel
+      if (newStep === 8 && wizardState.selectedChannel === 'crescent') {
+        newStep++;
+      }
+    } else {
+      // Skip Connection Type step (index 5) for pneumatic/wireless technology
+      if (newStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
+        newStep++;
+      }
+      // Skip Circuit Count step (index 6) for pneumatic/wireless technology
+      if (newStep === 6 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
+        newStep++;
+      }
     }
-    // Skip Circuit Count step (index 6) for pneumatic/wireless technology
-    if (newStep === 6 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
-      newStep++;
-    }
+
     wizardState.setStep(newStep);
     trackWizardStep(newStep, wizardState.flow, {
       application: wizardState.selectedApplication,
@@ -185,7 +202,7 @@ function WizardApp() {
       environment: wizardState.selectedEnvironment,
       features: wizardState.selectedFeatures,
     });
-  }, [wizardState.step, wizardState.flow, wizardState.selectedTechnology, wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedFeatures, wizardState.setStep]);
+  }, [wizardState.step, wizardState.flow, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedFeatures, wizardState.setStep]);
 
   const handleViewMedicalProducts = useCallback(() => {
     wizardState.setSelectedTechnology('electrical');
@@ -374,12 +391,18 @@ function WizardApp() {
 
   // Calculate total visible steps dynamically
   const totalSteps = useMemo(() => {
-    if (wizardState.flow === 'medical') return 6;
+    if (wizardState.flow === 'medical') {
+      if (wizardState.selectedMedicalPath === 'custom') {
+        // fork(1) + 9 builder steps (10 for Aero, 9 for Crescent)
+        return wizardState.selectedChannel === 'crescent' ? 10 : 11;
+      }
+      return 6;
+    }
     let steps = 9;
     // Pneumatic/wireless skip both Connection Type and Circuit Count steps
     if (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') steps -= 2;
     return steps;
-  }, [wizardState.flow, wizardState.selectedTechnology]);
+  }, [wizardState.flow, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel]);
 
   const skipsConnectionStep = wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless';
 
