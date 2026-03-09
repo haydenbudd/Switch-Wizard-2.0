@@ -444,21 +444,7 @@ export function ResultsPage({
         </div>
       )}
 
-      {/* Floating Compare Button */}
-      {compareIds.length >= 2 && (
-        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom-4 duration-300">
-          <Button
-            size="lg"
-            className="gap-2 shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90 rounded-full px-6"
-            onClick={() => setCompareOpen(true)}
-          >
-            <GitCompareArrows className="w-4 h-4" />
-            Compare ({compareIds.length})
-          </Button>
-        </div>
-      )}
-
-      {/* Compare Drawer */}
+      {/* Compare Slide-up Panel */}
       <CompareProducts
         products={compareProducts}
         open={compareOpen}

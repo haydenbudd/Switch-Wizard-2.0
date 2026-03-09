@@ -387,7 +387,7 @@ export function MedicalFlow({
               <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-8 flex gap-3">
                 <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  Medical customers can browse our standard catalog of medical-grade products or configure a fully custom solution tailored to your exact specifications.
+                  Medical customers can browse our standard catalog of medical-grade products or configure a semi custom solution tailored to your specifications.
                 </p>
               </div>
 
@@ -430,7 +430,7 @@ export function MedicalFlow({
                   )}
                 </div>
 
-                {/* Configure Custom Solution */}
+                {/* Configure Semi Custom Solution */}
                 <div
                   onClick={() => handleForkSelect('custom')}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleForkSelect('custom'); } }}
@@ -456,10 +456,10 @@ export function MedicalFlow({
                     "font-semibold text-lg mb-1 transition-colors",
                     wizardState.selectedMedicalPath === 'custom' ? "text-blue-700 dark:text-blue-300" : ""
                   )}>
-                    Configure Custom Solution
+                    Configure Semi Custom Solution
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Design a custom medical-grade footswitch to your specifications
+                    Design a semi custom medical-grade footswitch to your specifications
                   </p>
                   {wizardState.selectedMedicalPath === 'custom' && (
                     <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
@@ -467,6 +467,23 @@ export function MedicalFlow({
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Full Custom CTA */}
+              <div className="mt-4">
+                <a
+                  href="https://linemaster.com/custom-footswitches/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 p-5 text-center hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-all duration-200 group"
+                >
+                  <div className="flex items-center justify-center gap-2 text-muted-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                    <span className="font-medium text-sm">
+                      We also offer full custom control solutions
+                    </span>
+                  </div>
+                </a>
               </div>
 
               <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
