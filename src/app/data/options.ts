@@ -34,9 +34,6 @@ import {
   Plug,
   Unplug,
   Sparkles,
-  Footprints,
-  SquareStack,
-  Columns3,
   Power,
   SlidersHorizontal,
   Check,
@@ -523,9 +520,9 @@ export const connections: Option[] = [
 // ── Custom Switch Builder Options ──────────────────────────────
 
 export const pedalDesigns: Option[] = [
-  { id: 'single', label: 'Single Pedal', icon: Footprints, description: 'One pedal unit.' },
-  { id: 'twin', label: 'Twin Pedal', icon: Columns3, description: 'Two pedal units side by side.' },
-  { id: 'triple', label: 'Triple Pedal', icon: SquareStack, description: 'Three pedal units side by side.' },
+  { id: 'single', label: '1 Treadle', icon: NumberIcon(1), description: 'One treadle unit.' },
+  { id: 'twin', label: '2 Treadles', icon: NumberIcon(2), description: 'Two treadle units side by side.' },
+  { id: 'triple', label: '3 Treadles', icon: NumberIcon(3), description: 'Three treadle units side by side.' },
 ];
 
 export const outputTypes: Option[] = [
@@ -573,7 +570,7 @@ export interface BuilderStepConfig {
 }
 
 export const BUILDER_STEP_CONFIGS: BuilderStepConfig[] = [
-  { step: 3,  title: 'Pedal Design',    subtitle: 'How many pedal units do you need?',                          options: pedalDesigns,          columns: 3, stateKey: 'selectedPedalDesign',    summaryLabel: 'Pedal Design' },
+  { step: 3,  title: 'Treadle Count',    subtitle: 'How many treadles do you need?',                             options: pedalDesigns,          columns: 3, stateKey: 'selectedPedalDesign',    summaryLabel: 'Treadle Count' },
   { step: 5,  title: 'Output Type',     subtitle: 'What type of output do you need?',                           options: outputTypes,           columns: 2, stateKey: 'selectedOutputType',     summaryLabel: 'Output Type' },
   { step: 6,  title: 'Connection Type',  subtitle: 'Wired or wireless?',                                        options: wiredWirelessOptions,  columns: 2, stateKey: 'selectedWiredWireless',  summaryLabel: 'Connection' },
   { step: 7,  title: 'Toe Loop',         subtitle: 'Would you like toe loops for secure foot positioning?',      options: toeLoopOptions,        columns: 2, stateKey: 'selectedToeLoop',        summaryLabel: 'Toe Loop' },
