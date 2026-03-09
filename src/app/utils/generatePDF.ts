@@ -3,6 +3,7 @@ import { Product, Option } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { trackPDFDownload } from '@/app/utils/analytics';
 import { getLogoBase64 } from '@/app/utils/logoBase64';
+import { BUILDER_STEP_CONFIGS, optionLabel } from '@/app/data/options';
 
 export interface GeneratePDFOptions {
   wizardState: WizardState;
@@ -129,22 +130,22 @@ export async function generatePDF(opts: GeneratePDFOptions) {
   yPos += 6;
 
   if (isCustomBuilder) {
-    // Custom switch builder — clean table rows
+    // Custom switch builder — rows derived from shared config
     const builderRows: [string, string][] = [
       ['Channel', wizardState.selectedChannel === 'crescent' ? 'Crescent Channel' : 'Aero Channel'],
-      ['Pedal Design', wizardState.selectedPedalDesign === 'single' ? 'Single Pedal' : wizardState.selectedPedalDesign === 'twin' ? 'Twin Pedal' : 'Triple Pedal'],
-      ['Buttons', wizardState.selectedButtonCount],
-      ['Output Type', wizardState.selectedOutputType === 'on_off' ? 'On / Off' : 'Variable Output'],
-      ['Connection', wizardState.selectedWiredWireless === 'wired' ? 'Wired' : 'Wireless'],
-      ['Toe Loop', wizardState.selectedToeLoop === 'yes' ? 'Yes' : 'No'],
     ];
-    if (wizardState.selectedChannel === 'aero' && wizardState.selectedTreadleType) {
-      builderRows.push(['Treadle Type', wizardState.selectedTreadleType === 'flip_up' ? 'Flip Up' : 'Aquiline']);
+    // Add pedal design from config (step 3)
+    const pedalCfg = BUILDER_STEP_CONFIGS.find(c => c.stateKey === 'selectedPedalDesign');
+    if (pedalCfg) builderRows.push([pedalCfg.summaryLabel, optionLabel(pedalCfg.options, wizardState.selectedPedalDesign)]);
+    // Button count (dynamic, not in config)
+    builderRows.push(['Buttons', wizardState.selectedButtonCount]);
+    // Remaining config-driven steps
+    for (const cfg of BUILDER_STEP_CONFIGS) {
+      if (cfg.stateKey === 'selectedPedalDesign') continue; // already added
+      if (cfg.aeroOnly && wizardState.selectedChannel !== 'aero') continue;
+      const val = wizardState[cfg.stateKey as keyof WizardState] as string;
+      if (val) builderRows.push([cfg.summaryLabel, optionLabel(cfg.options, val)]);
     }
-    builderRows.push(
-      ['Custom Labeling', wizardState.selectedCustomLabeling === 'yes' ? 'Yes' : 'No'],
-      ['LEDs', wizardState.selectedLEDs === 'yes' ? 'Yes' : 'No'],
-    );
 
     // Draw alternating row backgrounds for readability
     builderRows.forEach(([label, value], idx) => {
