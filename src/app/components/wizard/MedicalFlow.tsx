@@ -1,13 +1,25 @@
 import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { ArrowLeft, ArrowRight, Check, Heart, Package, Settings, Info, Phone, Mail, MessageSquare, CircleDot, ToggleLeft, Sun, Droplets, ChevronLeft } from 'lucide-react';
+import { ArrowLeft, Check, Heart, Package, Settings, Info, Phone, Mail, MessageSquare, CircleDot, ToggleLeft, Sun, Droplets, ChevronLeft, Download, ExternalLink } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
 import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import {
+  consoleStyles,
+  pedalDesigns,
+  outputTypes,
+  wiredWirelessOptions,
+  toeLoopOptions,
+  treadleTypes,
+  customLabelingOptions,
+  ledOptions,
+} from '@/app/data/options';
 
 const MotionDiv = motion.div;
+
+const BANNER_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/03/medical-footswitches-trio-banner-1.jpg';
 
 // Medical-specific action options (all medical products are electrical)
 const MEDICAL_ACTIONS = [
@@ -34,8 +46,65 @@ interface MedicalFlowProps {
 
 // Stock path display: fork(1) + action(2) + environment(3) = 3 steps
 const STOCK_DISPLAY_TOTAL = 3;
-// Custom path: fork(1) + contact(2) = 2 steps
-const CUSTOM_DISPLAY_TOTAL = 2;
+
+// Custom builder steps (after fork):
+// channel(2) + pedal(3) + buttons(4) + output(5) + wired(6) + toe(7) + treadle(8, aero only) + labeling(9) + LEDs(10) + summary(11)
+const CUSTOM_BUILDER_STEPS = 10; // 10 steps for Aero, 9 for Crescent (skip treadle)
+
+// Map from raw wizard step to builder display step, accounting for treadle skip
+function getCustomDisplayStep(rawStep: number, channel: string): number {
+  // Steps 2-11 map to builder display steps 1-10
+  const builderStep = rawStep - 1; // step 2 → display 1, step 3 → display 2, etc.
+  if (channel === 'crescent' && rawStep > 8) {
+    return builderStep - 1; // shift down by 1 after treadle skip
+  }
+  return builderStep;
+}
+
+function getCustomDisplayTotal(channel: string): number {
+  return channel === 'crescent' ? CUSTOM_BUILDER_STEPS - 1 : CUSTOM_BUILDER_STEPS;
+}
+
+// Get max button count based on channel and pedal design
+function getMaxButtons(channel: string, pedalDesign: string): number {
+  if (channel === 'crescent') return 3;
+  // Aero channel: depends on pedal design
+  switch (pedalDesign) {
+    case 'single': return 2;
+    case 'twin': return 3;
+    case 'triple': return 4;
+    default: return 2;
+  }
+}
+
+// Builder step labels for summary
+const BUILDER_LABELS: Record<string, string> = {
+  selectedChannel: 'Channel',
+  selectedPedalDesign: 'Pedal Design',
+  selectedButtonCount: 'Number of Buttons',
+  selectedOutputType: 'Output Type',
+  selectedWiredWireless: 'Connection',
+  selectedToeLoop: 'Toe Loop',
+  selectedTreadleType: 'Treadle Type',
+  selectedCustomLabeling: 'Custom Labeling',
+  selectedLEDs: 'LEDs',
+};
+
+// Friendly display values
+function getDisplayValue(key: string, value: string): string {
+  const map: Record<string, Record<string, string>> = {
+    selectedChannel: { crescent: 'Crescent Channel', aero: 'Aero Channel' },
+    selectedPedalDesign: { single: 'Single Pedal', twin: 'Twin Pedal', triple: 'Triple Pedal' },
+    selectedOutputType: { on_off: 'On / Off', variable: 'Variable Output' },
+    selectedWiredWireless: { wired: 'Wired', wireless: 'Wireless' },
+    selectedToeLoop: { yes: 'Yes', no: 'No' },
+    selectedTreadleType: { flip_up: 'Flip Up', aquiline: 'Aquiline' },
+    selectedCustomLabeling: { yes: 'Yes', no: 'No' },
+    selectedLEDs: { yes: 'Yes', no: 'No' },
+  };
+  if (key === 'selectedButtonCount') return value;
+  return map[key]?.[value] || value;
+}
 
 export function MedicalFlow({
   wizardState,
@@ -80,6 +149,364 @@ export function MedicalFlow({
     wizardState.setSelectedTechnology('electrical');
     setTimeout(onViewStandardProducts, 150);
   };
+
+  // ── Custom builder handlers ──
+
+  const handleBuilderSelect = (setter: (id: string) => void, id: string) => {
+    setter(id);
+    setTimeout(onContinue, 150);
+  };
+
+  // Generate button count options based on channel + pedal
+  const maxButtons = getMaxButtons(wizardState.selectedChannel, wizardState.selectedPedalDesign);
+  const buttonCountOptions = Array.from({ length: maxButtons }, (_, i) => ({
+    id: String(i + 1),
+    label: `${i + 1} Button${i > 0 ? 's' : ''}`,
+    description: `${i + 1} button${i > 0 ? 's' : ''} per pedal.`,
+  }));
+
+  // ── Render builder step content ──
+
+  const renderBuilderStep = () => {
+    switch (wizardState.step) {
+      case 2: // Channel selection
+        return (
+          <div className="space-y-6">
+            <div className="max-w-3xl mx-auto mb-6 rounded-2xl overflow-hidden shadow-lg">
+              <img
+                src={BANNER_IMAGE}
+                alt="Linemaster medical footswitches"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Select Channel Type
+              </h2>
+              <p className="text-muted-foreground">Choose the housing style for your custom footswitch.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {consoleStyles.map((style, i) => (
+                <OptionCard
+                  key={style.id}
+                  label={style.label}
+                  description={style.description}
+                  icon={style.icon}
+                  selected={wizardState.selectedChannel === style.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedChannel, style.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 3: // Pedal design
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Pedal Design
+              </h2>
+              <p className="text-muted-foreground">How many pedal units do you need?</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+              {pedalDesigns.map((design, i) => (
+                <OptionCard
+                  key={design.id}
+                  label={design.label}
+                  description={design.description}
+                  icon={design.icon}
+                  selected={wizardState.selectedPedalDesign === design.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedPedalDesign, design.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 4: // Number of buttons
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Number of Buttons
+              </h2>
+              <p className="text-muted-foreground">
+                How many buttons per pedal?
+                {wizardState.selectedChannel === 'aero' && (
+                  <span className="block text-xs mt-1 text-red-400">
+                    Aero {wizardState.selectedPedalDesign} supports up to {maxButtons} button{maxButtons > 1 ? 's' : ''}
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className={cn(
+              "grid gap-6 max-w-3xl mx-auto",
+              buttonCountOptions.length <= 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
+            )}>
+              {buttonCountOptions.map((opt, i) => (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  description={opt.description}
+                  selected={wizardState.selectedButtonCount === opt.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedButtonCount, opt.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 5: // Output type
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Output Type
+              </h2>
+              <p className="text-muted-foreground">What type of output do you need?</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {outputTypes.map((opt, i) => (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  description={opt.description}
+                  icon={opt.icon}
+                  selected={wizardState.selectedOutputType === opt.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedOutputType, opt.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 6: // Wired / Wireless
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Connection Type
+              </h2>
+              <p className="text-muted-foreground">Wired or wireless?</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {wiredWirelessOptions.map((opt, i) => (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  description={opt.description}
+                  icon={opt.icon}
+                  selected={wizardState.selectedWiredWireless === opt.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedWiredWireless, opt.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 7: // Toe loop
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Toe Loop
+              </h2>
+              <p className="text-muted-foreground">Would you like toe loops for secure foot positioning?</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {toeLoopOptions.map((opt, i) => (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  description={opt.description}
+                  icon={opt.icon}
+                  selected={wizardState.selectedToeLoop === opt.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedToeLoop, opt.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 8: // Treadle type (Aero only)
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Treadle Type
+              </h2>
+              <p className="text-muted-foreground">Choose the treadle style for your Aero footswitch.</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {treadleTypes.map((opt, i) => (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  description={opt.description}
+                  icon={opt.icon}
+                  selected={wizardState.selectedTreadleType === opt.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedTreadleType, opt.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 9: // Custom labeling
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                Custom Labeling
+              </h2>
+              <p className="text-muted-foreground">Would you like custom labels or markings on your footswitch?</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {customLabelingOptions.map((opt, i) => (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  description={opt.description}
+                  icon={opt.icon}
+                  selected={wizardState.selectedCustomLabeling === opt.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedCustomLabeling, opt.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 10: // LEDs
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2 mb-8">
+              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                LED Indicators
+              </h2>
+              <p className="text-muted-foreground">Would you like LED indicators on your footswitch?</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {ledOptions.map((opt, i) => (
+                <OptionCard
+                  key={opt.id}
+                  label={opt.label}
+                  description={opt.description}
+                  icon={opt.icon}
+                  selected={wizardState.selectedLEDs === opt.id}
+                  onClick={() => handleBuilderSelect(wizardState.setSelectedLEDs, opt.id)}
+                  index={i}
+                />
+              ))}
+            </div>
+          </div>
+        );
+
+      case 11: // Summary
+        return renderSummary();
+
+      default:
+        return null;
+    }
+  };
+
+  // ── Summary page ──
+
+  const renderSummary = () => {
+    const configEntries: { label: string; value: string }[] = [];
+    const fields: { key: keyof typeof BUILDER_LABELS; stateKey: keyof WizardState }[] = [
+      { key: 'selectedChannel', stateKey: 'selectedChannel' },
+      { key: 'selectedPedalDesign', stateKey: 'selectedPedalDesign' },
+      { key: 'selectedButtonCount', stateKey: 'selectedButtonCount' },
+      { key: 'selectedOutputType', stateKey: 'selectedOutputType' },
+      { key: 'selectedWiredWireless', stateKey: 'selectedWiredWireless' },
+      { key: 'selectedToeLoop', stateKey: 'selectedToeLoop' },
+      ...(wizardState.selectedChannel === 'aero' ? [{ key: 'selectedTreadleType' as keyof typeof BUILDER_LABELS, stateKey: 'selectedTreadleType' as keyof WizardState }] : []),
+      { key: 'selectedCustomLabeling', stateKey: 'selectedCustomLabeling' },
+      { key: 'selectedLEDs', stateKey: 'selectedLEDs' },
+    ];
+
+    for (const { key, stateKey } of fields) {
+      const val = wizardState[stateKey] as string;
+      if (val) {
+        configEntries.push({
+          label: BUILDER_LABELS[key],
+          value: getDisplayValue(key, val),
+        });
+      }
+    }
+
+    return (
+      <div className="space-y-6 max-w-2xl mx-auto">
+        <div className="text-center space-y-2 mb-8">
+          <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+            <Check className="w-8 h-8 text-red-600" aria-hidden="true" />
+          </div>
+          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+            Your Custom Switch Configuration
+          </h2>
+          <p className="text-muted-foreground">Review your selections below.</p>
+        </div>
+
+        <MedicalGlassCard className="p-6 md:p-8">
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {configEntries.map(({ label, value }) => (
+              <div key={label} className="flex justify-between items-center py-3 first:pt-0 last:pb-0">
+                <span className="text-sm font-medium text-muted-foreground">{label}</span>
+                <span className="text-sm font-semibold text-foreground">{value}</span>
+              </div>
+            ))}
+          </div>
+        </MedicalGlassCard>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+          <Button
+            className="bg-red-600 hover:bg-red-700 text-white px-6"
+            onClick={onGeneratePDF}
+          >
+            <Download className="w-4 h-4 mr-2" aria-hidden="true" />
+            Download Summary (PDF)
+          </Button>
+          <Button
+            variant="outline"
+            className="border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
+            onClick={() => window.open('https://linemaster.com/contact', '_blank')}
+          >
+            <ExternalLink className="w-4 h-4 mr-2" aria-hidden="true" />
+            Contact Engineering Team
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+          <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
+            <Phone className="w-5 h-5 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
+            <p className="text-sm font-medium text-foreground">Call Us</p>
+            <p className="text-xs text-muted-foreground mt-1">(203) 484-3400</p>
+          </div>
+          <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
+            <Mail className="w-5 h-5 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
+            <p className="text-sm font-medium text-foreground">Email</p>
+            <p className="text-xs text-muted-foreground mt-1">sales@linemaster.com</p>
+          </div>
+          <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
+            <MessageSquare className="w-5 h-5 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
+            <p className="text-sm font-medium text-foreground">Request Quote</p>
+            <p className="text-xs text-muted-foreground mt-1">Online form</p>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ── Stock flow step rendering ──
 
   const renderStep = () => {
     switch (wizardState.step) {
@@ -195,136 +622,80 @@ export function MedicalFlow({
         );
 
       case 2:
-        // Custom path: Contact / Engineering page
-        if (isCustomPath) {
+        // Stock path: Action Selection
+        if (!isCustomPath) {
           return (
-            <div className="flex items-center justify-center min-h-[400px]">
-              <div className="max-w-2xl w-full space-y-6">
-                <MedicalGlassCard className="p-8 md:p-10">
-                  <div className="text-center space-y-4 mb-8">
-                    <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                      <Heart className="w-8 h-8 text-red-600" aria-hidden="true" />
-                    </div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                      Custom Medical Solution
-                    </h2>
-                    <p className="text-muted-foreground max-w-lg mx-auto">
-                      Our engineering team specializes in designing custom medical-grade foot controls
-                      tailored to your exact specifications, including compliance with IEC 60601 and other regulatory requirements.
-                    </p>
-                  </div>
+            <div className="space-y-6">
+              <div className="text-center space-y-2 mb-8">
+                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                  Action Type
+                </h2>
+                <p className="text-muted-foreground">How should the foot switch activate?</p>
+              </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-                      <Phone className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
-                      <p className="text-sm font-medium text-foreground">Call Us</p>
-                      <p className="text-xs text-muted-foreground mt-1">(203) 484-3400</p>
-                    </div>
-                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-                      <Mail className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
-                      <p className="text-sm font-medium text-foreground">Email</p>
-                      <p className="text-xs text-muted-foreground mt-1">sales@linemaster.com</p>
-                    </div>
-                    <div className="text-center p-4 rounded-xl bg-red-50/50 dark:bg-red-900/30">
-                      <MessageSquare className="w-6 h-6 text-red-600 dark:text-red-400 mx-auto mb-2" aria-hidden="true" />
-                      <p className="text-sm font-medium text-foreground">Request Quote</p>
-                      <p className="text-xs text-muted-foreground mt-1">Online form</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button
-                      className="bg-red-600 hover:bg-red-700 text-white px-8"
-                      onClick={() => window.location.href = 'https://linemaster.com/contact'}
-                    >
-                      Contact Engineering Team
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        wizardState.setSelectedMedicalPath('stock');
-                        // Stay on step 2, which now renders action selection
-                      }}
-                    >
-                      Browse Stock Products Instead
-                    </Button>
-                  </div>
-                </MedicalGlassCard>
-
-                <div className="flex justify-center">
-                  <Button variant="ghost" onClick={onBack} className="text-muted-foreground">
-                    <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-                    Back to options
-                  </Button>
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                {MEDICAL_ACTIONS.map((action, i) => (
+                  <OptionCard
+                    key={action.id}
+                    label={action.label}
+                    description={action.description}
+                    icon={action.icon}
+                    selected={wizardState.selectedAction === action.id}
+                    count={getActionCount(action.id)}
+                    onClick={() => handleActionSelect(action.id)}
+                    index={i}
+                  />
+                ))}
               </div>
             </div>
           );
         }
+        // Custom path falls through to builder
+        return renderBuilderStep();
 
-        // Stock path: Action Selection
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Action Type
-              </h2>
-              <p className="text-muted-foreground">How should the foot switch activate?</p>
-            </div>
+      case 3:
+        if (!isCustomPath) {
+          // Stock path: Environment Selection
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2 mb-8">
+                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                  Operating Environment
+                </h2>
+                <p className="text-muted-foreground">Where will the foot switch be used?</p>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {MEDICAL_ACTIONS.map((action, i) => (
-                <OptionCard
-                  key={action.id}
-                  id={action.id}
-                  label={action.label}
-                  description={action.description}
-                  icon={action.icon}
-                  selected={wizardState.selectedAction === action.id}
-                  count={getActionCount(action.id)}
-                  onClick={() => handleActionSelect(action.id)}
-                  index={i}
-                />
-              ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                {MEDICAL_ENVIRONMENTS.map((env, i) => (
+                  <OptionCard
+                    key={env.id}
+                    label={env.label}
+                    description={env.description}
+                    icon={env.icon}
+                    selected={wizardState.selectedEnvironment === env.id}
+                    count={getEnvironmentCount(env.id)}
+                    onClick={() => handleEnvironmentSelect(env.id)}
+                    index={i}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        );
+          );
+        }
+        return renderBuilderStep();
 
-      case 3: // Stock path: Environment Selection
-        return (
-          <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Operating Environment
-              </h2>
-              <p className="text-muted-foreground">Where will the foot switch be used?</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {MEDICAL_ENVIRONMENTS.map((env, i) => (
-                <OptionCard
-                  key={env.id}
-                  id={env.id}
-                  label={env.label}
-                  description={env.description}
-                  icon={env.icon}
-                  selected={wizardState.selectedEnvironment === env.id}
-                  count={getEnvironmentCount(env.id)}
-                  onClick={() => handleEnvironmentSelect(env.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
+      // Steps 4-11: all custom builder steps
+      case 4: case 5: case 6: case 7: case 8: case 9: case 10: case 11:
+        if (isCustomPath) return renderBuilderStep();
+        return null;
 
       default:
         return null;
     }
   };
 
-  // Fork step and custom contact have their own self-contained layout
-  if (wizardState.step === 1 || (wizardState.step === 2 && isCustomPath)) {
+  // Fork step uses its own self-contained layout
+  if (wizardState.step === 1) {
     return (
       <div className="min-h-screen mesh-gradient-light dark:bg-gradient-to-b dark:from-gray-900 dark:to-black relative">
         <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
@@ -344,20 +715,28 @@ export function MedicalFlow({
     );
   }
 
-  // Steps 2-3 (stock path): Layout matching standard wizard flow
-  const progressPercent = Math.round((displayStep / STOCK_DISPLAY_TOTAL) * 100);
+  // Custom builder and stock steps use progress bar layout
+  const isBuilder = isCustomPath && wizardState.step >= 2;
+  const builderDisplayStep = isBuilder
+    ? getCustomDisplayStep(wizardState.step, wizardState.selectedChannel)
+    : displayStep;
+  const builderDisplayTotal = isBuilder
+    ? getCustomDisplayTotal(wizardState.selectedChannel)
+    : STOCK_DISPLAY_TOTAL;
+  const progressPercent = Math.round((builderDisplayStep / builderDisplayTotal) * 100);
+  const label = isBuilder ? 'Custom Builder' : 'Medical';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50/30 to-white dark:from-gray-900 dark:to-black relative">
       <div className="container mx-auto px-4 pt-24 pb-20 relative z-10">
 
-        {/* Progress Bar - matching standard flow */}
+        {/* Progress Bar */}
         <div className="max-w-4xl mx-auto mb-14">
           <div className="flex justify-between text-xs font-medium text-muted-foreground mb-2.5 tracking-wide">
-            <span className="uppercase">Step {displayStep} of {STOCK_DISPLAY_TOTAL}</span>
-            <span className="text-xs text-red-500 font-semibold tracking-widest uppercase">Medical</span>
+            <span className="uppercase">Step {builderDisplayStep} of {builderDisplayTotal}</span>
+            <span className="text-xs text-red-500 font-semibold tracking-widest uppercase">{label}</span>
           </div>
-          <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`Medical wizard progress: step ${displayStep} of ${STOCK_DISPLAY_TOTAL}`}>
+          <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${label} wizard progress: step ${builderDisplayStep} of ${builderDisplayTotal}`}>
             <MotionDiv
               className="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full"
               initial={{ width: 0 }}
@@ -368,7 +747,7 @@ export function MedicalFlow({
         </div>
 
         <div className="max-w-4xl mx-auto">
-          {/* Inline navigation - matching standard flow */}
+          {/* Inline navigation */}
           <div className="flex items-center justify-between mb-8">
             <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
               <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
@@ -378,7 +757,7 @@ export function MedicalFlow({
           {/* Content Area with Animation */}
           <AnimatePresence mode="wait">
             <MotionDiv
-              key={wizardState.step}
+              key={`${wizardState.step}-${isCustomPath ? 'custom' : 'stock'}`}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}

@@ -47,7 +47,11 @@ export async function generatePDF(opts: GeneratePDFOptions) {
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(80, 80, 80);
-  const subtitle = wizardState.flow === 'medical' ? 'Medical Product Specifications' : 'Product Finder Results';
+  const subtitle = wizardState.flow === 'medical' && wizardState.selectedMedicalPath === 'custom'
+    ? 'Custom Switch Builder Configuration'
+    : wizardState.flow === 'medical'
+      ? 'Medical Product Specifications'
+      : 'Product Finder Results';
   doc.text(subtitle, 15, 24);
 
   // Accent line under header
@@ -73,7 +77,30 @@ export async function generatePDF(opts: GeneratePDFOptions) {
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
 
-  if (wizardState.flow === 'medical') {
+  if (wizardState.flow === 'medical' && wizardState.selectedMedicalPath === 'custom') {
+    // Custom switch builder configuration
+    const builderFields: [string, string][] = [
+      ['Channel', wizardState.selectedChannel === 'crescent' ? 'Crescent Channel' : 'Aero Channel'],
+      ['Pedal Design', wizardState.selectedPedalDesign === 'single' ? 'Single Pedal' : wizardState.selectedPedalDesign === 'twin' ? 'Twin Pedal' : 'Triple Pedal'],
+      ['Number of Buttons', wizardState.selectedButtonCount],
+      ['Output Type', wizardState.selectedOutputType === 'on_off' ? 'On / Off' : 'Variable Output'],
+      ['Connection', wizardState.selectedWiredWireless === 'wired' ? 'Wired' : 'Wireless'],
+      ['Toe Loop', wizardState.selectedToeLoop === 'yes' ? 'Yes' : 'No'],
+    ];
+    if (wizardState.selectedChannel === 'aero' && wizardState.selectedTreadleType) {
+      builderFields.push(['Treadle Type', wizardState.selectedTreadleType === 'flip_up' ? 'Flip Up' : 'Aquiline']);
+    }
+    builderFields.push(
+      ['Custom Labeling', wizardState.selectedCustomLabeling === 'yes' ? 'Yes' : 'No'],
+      ['LEDs', wizardState.selectedLEDs === 'yes' ? 'Yes' : 'No'],
+    );
+    for (const [label, value] of builderFields) {
+      if (value) {
+        doc.text(`${label}: ${value}`, 20, yPos);
+        yPos += 6;
+      }
+    }
+  } else if (wizardState.flow === 'medical') {
     doc.text(`Console Style: ${wizardState.selectedConsoleStyle}`, 20, yPos);
     yPos += 6;
     doc.text(`Pedal Configuration: ${wizardState.selectedPedalCount}`, 20, yPos);

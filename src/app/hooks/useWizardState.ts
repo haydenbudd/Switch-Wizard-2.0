@@ -23,6 +23,16 @@ export interface WizardState {
   selectedPedalCount: string;
   selectedMedicalFeatures: string[];
   selectedAccessories: string[];
+  // Custom switch builder
+  selectedChannel: string;
+  selectedPedalDesign: string;
+  selectedButtonCount: string;
+  selectedOutputType: string;
+  selectedWiredWireless: string;
+  selectedToeLoop: string;
+  selectedTreadleType: string;
+  selectedCustomLabeling: string;
+  selectedLEDs: string;
   // Setters
   setFlow: (flow: FlowType) => void;
   setStep: (step: number) => void;
@@ -43,6 +53,16 @@ export interface WizardState {
   setSelectedPedalCount: (id: string) => void;
   setSelectedMedicalFeatures: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedAccessories: React.Dispatch<React.SetStateAction<string[]>>;
+  // Custom switch builder setters
+  setSelectedChannel: (id: string) => void;
+  setSelectedPedalDesign: (id: string) => void;
+  setSelectedButtonCount: (id: string) => void;
+  setSelectedOutputType: (id: string) => void;
+  setSelectedWiredWireless: (id: string) => void;
+  setSelectedToeLoop: (id: string) => void;
+  setSelectedTreadleType: (id: string) => void;
+  setSelectedCustomLabeling: (id: string) => void;
+  setSelectedLEDs: (id: string) => void;
   resetWizard: () => void;
 }
 
@@ -67,6 +87,16 @@ export function useWizardState(): WizardState {
   const [selectedPedalCount, setSelectedPedalCount] = useState('');
   const [selectedMedicalFeatures, setSelectedMedicalFeatures] = useState<string[]>([]);
   const [selectedAccessories, setSelectedAccessories] = useState<string[]>([]);
+  // Custom switch builder
+  const [selectedChannel, setSelectedChannel] = useState('');
+  const [selectedPedalDesign, setSelectedPedalDesign] = useState('');
+  const [selectedButtonCount, setSelectedButtonCount] = useState('');
+  const [selectedOutputType, setSelectedOutputType] = useState('');
+  const [selectedWiredWireless, setSelectedWiredWireless] = useState('');
+  const [selectedToeLoop, setSelectedToeLoop] = useState('');
+  const [selectedTreadleType, setSelectedTreadleType] = useState('');
+  const [selectedCustomLabeling, setSelectedCustomLabeling] = useState('');
+  const [selectedLEDs, setSelectedLEDs] = useState('');
 
   const resetWizard = useCallback(() => {
     setFlow('standard');
@@ -88,6 +118,15 @@ export function useWizardState(): WizardState {
     setSelectedPedalCount('');
     setSelectedMedicalFeatures([]);
     setSelectedAccessories([]);
+    setSelectedChannel('');
+    setSelectedPedalDesign('');
+    setSelectedButtonCount('');
+    setSelectedOutputType('');
+    setSelectedWiredWireless('');
+    setSelectedToeLoop('');
+    setSelectedTreadleType('');
+    setSelectedCustomLabeling('');
+    setSelectedLEDs('');
   }, []);
 
   return {
@@ -129,6 +168,24 @@ export function useWizardState(): WizardState {
     setSelectedPedalCount,
     setSelectedMedicalFeatures,
     setSelectedAccessories,
+    selectedChannel,
+    selectedPedalDesign,
+    selectedButtonCount,
+    selectedOutputType,
+    selectedWiredWireless,
+    selectedToeLoop,
+    selectedTreadleType,
+    selectedCustomLabeling,
+    selectedLEDs,
+    setSelectedChannel,
+    setSelectedPedalDesign,
+    setSelectedButtonCount,
+    setSelectedOutputType,
+    setSelectedWiredWireless,
+    setSelectedToeLoop,
+    setSelectedTreadleType,
+    setSelectedCustomLabeling,
+    setSelectedLEDs,
     resetWizard,
   };
 }

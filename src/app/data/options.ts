@@ -282,14 +282,14 @@ export const features: Option[] = [
 
 export const consoleStyles: Option[] = [
   {
+    id: 'crescent',
+    label: 'Crescent Channel',
+    description: 'Classic ergonomic housing with curved profile.',
+  },
+  {
     id: 'aero',
     label: 'Aero Channel',
     description: 'Low-profile, streamlined design.',
-  },
-  {
-    id: 'custom',
-    label: 'Custom Design',
-    description: 'Unique housing tailored to your needs.',
   },
 ];
 
@@ -492,4 +492,42 @@ export const connections: Option[] = [
     description: 'Factory-attached cable ready for direct connection.',
     sortOrder: 2
   },
+];
+
+// ── Custom Switch Builder Options ──────────────────────────────
+
+export const pedalDesigns: Option[] = [
+  { id: 'single', label: 'Single Pedal', description: 'One pedal unit.' },
+  { id: 'twin', label: 'Twin Pedal', description: 'Two pedal units side by side.' },
+  { id: 'triple', label: 'Triple Pedal', description: 'Three pedal units side by side.' },
+];
+
+export const outputTypes: Option[] = [
+  { id: 'on_off', label: 'On / Off', description: 'Simple on/off switching output.' },
+  { id: 'variable', label: 'Variable Output', description: 'Proportional control — output varies with pressure.' },
+];
+
+export const wiredWirelessOptions: Option[] = [
+  { id: 'wired', label: 'Wired', icon: Cable, description: 'Traditional wired connection.' },
+  { id: 'wireless', label: 'Wireless', icon: Radio, description: 'RF wireless — no cords.' },
+];
+
+export const toeLoopOptions: Option[] = [
+  { id: 'yes', label: 'Yes', description: 'Include toe loops for secure foot positioning.' },
+  { id: 'no', label: 'No', description: 'No toe loops.' },
+];
+
+export const treadleTypes: Option[] = [
+  { id: 'flip_up', label: 'Flip Up', description: 'Hinged treadle that flips up.' },
+  { id: 'aquiline', label: 'Aquiline', description: 'Curved, ergonomic aquiline treadle design.' },
+];
+
+export const customLabelingOptions: Option[] = [
+  { id: 'yes', label: 'Yes', description: 'Add custom labels or markings.' },
+  { id: 'no', label: 'No', description: 'Standard labeling.' },
+];
+
+export const ledOptions: Option[] = [
+  { id: 'yes', label: 'Yes', description: 'Include LED indicators.' },
+  { id: 'no', label: 'No', description: 'No LEDs.' },
 ];
