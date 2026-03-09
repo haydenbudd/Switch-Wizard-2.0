@@ -147,13 +147,37 @@ function buildCdnImageUrl(productPageId: string): string {
   return `https://linemaster.com/cdn/images/products/${productPageId}/${productPageId}-a-shadow@1200.png`;
 }
 
+// Fallback images by series name when CDN image is unavailable
+const SERIES_IMAGES: Record<string, string> = {
+  'hercules': 'https://linemaster.com/wp-content/uploads/2025/04/hercules-full-shield.png',
+  'atlas': 'https://linemaster.com/wp-content/uploads/2025/04/atlas.png',
+  'clipper': 'https://linemaster.com/wp-content/uploads/2025/04/clipper_duo.png',
+  'classic iv': 'https://linemaster.com/wp-content/uploads/2025/04/classic-iv.png',
+  'classic': 'https://linemaster.com/wp-content/uploads/2025/04/classic-iv.png',
+  'dolphin': 'https://linemaster.com/wp-content/uploads/2025/04/dolphin-2.png',
+  'gem-v': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
+  'gem': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
+  'varior': 'https://linemaster.com/wp-content/uploads/2025/04/varior-potentiometer.png',
+  'air seal': 'https://linemaster.com/wp-content/uploads/2025/03/air_seal.png',
+  'air-seal': 'https://linemaster.com/wp-content/uploads/2025/03/air_seal.png',
+  'rf wireless hercules': 'https://linemaster.com/wp-content/uploads/2025/04/rf-hercules.png',
+  'airval hercules': 'https://linemaster.com/wp-content/uploads/2025/03/airval-hercules-duo_optimized.png',
+};
+
 function deriveImage(row: StockSwitchRow): string {
   // 1. Use DB image_url if it's a real product image (not a placeholder)
   if (row.image_url && !row.image_url.includes('placeholder')) return row.image_url;
 
-  // 2. Derive per-product image from the product page link
+  // 2. Derive per-product CDN image from the product page link (unique per product)
   const pageId = extractProductPageId(row.Link);
   if (pageId) return buildCdnImageUrl(pageId);
+
+  // 3. Fall back to series-level image
+  const series = (row.series || '').toLowerCase();
+  if (SERIES_IMAGES[series]) return SERIES_IMAGES[series];
+  for (const [key, url] of Object.entries(SERIES_IMAGES)) {
+    if (series.includes(key)) return url;
+  }
 
   return '';
 }
