@@ -67,7 +67,7 @@ export async function generatePDF(opts: GeneratePDFOptions) {
 
   // Header with logo
   doc.setFillColor(255, 255, 255);
-  doc.rect(0, 0, pageWidth, 27, 'F');
+  doc.rect(0, 0, pageWidth, 34, 'F');
 
   // Logo — original is 1323x496, render at ~50x19mm in the header
   const logoW = 50;
@@ -84,21 +84,21 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     : wizardState.flow === 'medical'
       ? 'Medical Product Specifications'
       : 'Product Finder Results';
-  doc.text(subtitle, 15, 22);
+  doc.text(subtitle, 15, 27);
 
   // Accent line under header
   doc.setDrawColor(99, 102, 241);
   doc.setLineWidth(0.8);
-  doc.line(15, 25, pageWidth - 15, 25);
+  doc.line(15, 31, pageWidth - 15, 31);
 
   // Date on right
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   doc.setFontSize(9);
   doc.setTextColor(130, 130, 130);
-  doc.text(`Generated: ${date}`, pageWidth - 15, 22, { align: 'right' });
+  doc.text(`Generated: ${date}`, pageWidth - 15, 27, { align: 'right' });
 
   doc.setTextColor(0, 0, 0);
-  let yPos = 33;
+  let yPos = 38;
 
   // ── "Not a quote" disclaimer ──
   if (isCustomBuilder) {
