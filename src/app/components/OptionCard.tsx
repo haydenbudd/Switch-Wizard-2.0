@@ -14,6 +14,8 @@ interface OptionCardProps {
   className?: string;
   count?: number;
   index?: number;
+  /** ARIA role — use 'radio' for single-select steps, 'checkbox' for multi-select */
+  role?: 'radio' | 'checkbox';
 }
 
 export const OptionCard = memo(function OptionCard({
@@ -26,6 +28,7 @@ export const OptionCard = memo(function OptionCard({
   count,
   className,
   index = 0,
+  role = 'radio',
 }: OptionCardProps) {
   const isDisabled = disabled || count === 0;
   return (
@@ -33,8 +36,9 @@ export const OptionCard = memo(function OptionCard({
       interactive={!isDisabled}
       hoverEffect={!isDisabled && !selected}
       onClick={() => !isDisabled && onClick()}
+      role={role}
       aria-label={`${label}${selected ? ', selected' : ''}${isDisabled ? ', unavailable' : ''}${count !== undefined ? `, ${count} products` : ''}`}
-      aria-pressed={selected}
+      aria-checked={selected}
       aria-disabled={isDisabled}
       className={cn(
         "h-full flex flex-col items-center text-center justify-center min-h-[180px] relative transition-all duration-300 animate-card-enter",

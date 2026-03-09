@@ -1,23 +1,35 @@
 import { GlassCard } from '@/app/components/GlassCard';
 import { ProductCard } from '@/app/components/ProductCard';
+import { CompareProducts } from '@/app/components/wizard/CompareProducts';
 import { Button } from '@/app/components/ui/button';
 import { Product, Option } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
-import { RefreshCw, Download, ArrowLeft, SlidersHorizontal, ArrowUp, Check, Search, Link } from 'lucide-react';
+import { RefreshCw, Download, ArrowLeft, SlidersHorizontal, ArrowUp, Check, Search, Link, GitCompareArrows, Mail, Menu } from 'lucide-react';
 import { buildShareUrl } from '@/app/utils/shareUrl';
 import { toast } from 'sonner';
 import { EnhancedSearch } from '@/app/components/EnhancedSearch';
 import { FilterChip } from '@/app/components/FilterChip';
-import { 
-  DropdownMenu, 
-  DropdownMenuTrigger, 
-  DropdownMenuContent, 
-  DropdownMenuRadioGroup, 
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuLabel,
   DropdownMenuSeparator
 } from '@/app/components/ui/dropdown-menu';
-import { useState, useMemo } from 'react';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerClose,
+} from '@/app/components/ui/drawer';
+import { useState, useMemo, useCallback } from 'react';
+import { getProcessedProducts } from '@/app/utils/productFilters';
+
+const MAX_COMPARE = 3;
 
 interface ResultsPageProps {
   wizardState: WizardState;
@@ -49,7 +61,7 @@ interface ResultsPageProps {
 
 export function ResultsPage({
   wizardState,
-  products, // All products, used for counting
+  products,
   applications,
   technologies,
   actions,
@@ -77,6 +89,24 @@ export function ResultsPage({
   // Guard against undefined props in environments like Figma Make
   if (!wizardState || !filterProducts) return null;
 
+  // Comparison state
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  // Mobile action drawer state
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  const handleCompareToggle = useCallback((id: string) => {
+    setCompareIds(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      if (prev.length >= MAX_COMPARE) {
+        toast.info(`Maximum ${MAX_COMPARE} products can be compared`);
+        return prev;
+      }
+      return [...prev, id];
+    });
+  }, []);
+
   // Primary filtered list based on wizard state
   const wizardMatches = filterProducts();
 
@@ -88,56 +118,19 @@ export function ResultsPage({
 
   // Secondary filtering based on Results Page controls (search, sort, etc)
   const finalResults = useMemo(() => {
-    let result = [...wizardMatches];
-
-    // Search
-    if (searchTerm) {
-      const lower = searchTerm.toLowerCase();
-      result = result.filter(p =>
-        p.series.toLowerCase().includes(lower) ||
-        p.description.toLowerCase().includes(lower) ||
-        p.part_number?.toLowerCase().includes(lower)
-      );
-    }
-
-    // Duty Filter
-    if (dutyFilter.length > 0) {
-      result = result.filter(p => dutyFilter.includes(p.duty));
-    }
-
-    // Corded Filter
-    if (cordedFilter !== 'all') {
-      result = result.filter(p => {
-        if (!p.connector_type) return false;
-        const isPrewired = p.connector_type.includes('pre-wired') || p.connector_type.includes('plug');
-        return cordedFilter === 'corded' ? isPrewired : !isPrewired;
-      });
-    }
-
-    // Material Filter
-    if (materialFilter.length > 0) {
-      result = result.filter(p => materialFilter.includes(p.material));
-    }
-
-    // Sort
-    result.sort((a, b) => {
-      if (sortBy === 'duty') {
-        const dutyOrder = { heavy: 3, medium: 2, light: 1 };
-        return (dutyOrder[b.duty as keyof typeof dutyOrder] || 0) - (dutyOrder[a.duty as keyof typeof dutyOrder] || 0);
-      }
-      if (sortBy === 'ip') {
-        const getIpVal = (ip: string) => {
-          // IPXX means no IP protection — sort to bottom
-          if (ip === 'IPXX') return 0;
-          return parseInt(ip.replace(/\D/g, '') || '0');
-        };
-        return getIpVal(b.ip) - getIpVal(a.ip);
-      }
-      return 0; // Relevance is default order
+    return getProcessedProducts(wizardMatches, {
+      searchTerm,
+      dutyFilter,
+      materialFilter,
+      cordedFilter,
+      sortBy,
     });
-
-    return result;
   }, [wizardMatches, searchTerm, dutyFilter, cordedFilter, materialFilter, sortBy]);
+
+  // Products selected for comparison
+  const compareProducts = useMemo(() => {
+    return compareIds.map(id => finalResults.find(p => p.id === id) || products.find(p => p.id === id)).filter(Boolean) as Product[];
+  }, [compareIds, finalResults, products]);
 
   // Alternatives if no results
   const alternatives = useMemo(() => {
@@ -195,6 +188,25 @@ export function ResultsPage({
     }
   };
 
+  const handleCopyLink = () => {
+    const url = buildShareUrl(wizardState);
+    navigator.clipboard.writeText(url).then(() => {
+      toast.success('Link copied to clipboard');
+    }).catch(() => {
+      toast.error('Failed to copy link');
+    });
+  };
+
+  // Build mailto for custom solution / contact engineering
+  const contactSubject = encodeURIComponent('Custom Foot Switch Inquiry');
+  const contactBody = encodeURIComponent(
+    `Hello,\n\nI'm looking for a foot switch with the following requirements:\n\n` +
+    `Application: ${wizardState.selectedApplication || 'N/A'}\n` +
+    `Technology: ${wizardState.selectedTechnology || 'N/A'}\n` +
+    `Features: ${wizardState.selectedFeatures.join(', ') || 'N/A'}\n\n` +
+    `Please contact me to discuss options.\n\nThank you.`
+  );
+
   return (
     <div className="container mx-auto px-4 py-8 pb-32">
       {/* Screen reader announcement for result count changes */}
@@ -217,24 +229,17 @@ export function ResultsPage({
             </h2>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => {
-              const url = buildShareUrl(wizardState);
-              navigator.clipboard.writeText(url).then(() => {
-                toast.success('Link copied to clipboard');
-              }).catch(() => {
-                toast.error('Failed to copy link');
-              });
-            }} className="gap-2">
+            <Button variant="outline" onClick={handleCopyLink} className="gap-2">
               <Link className="w-4 h-4" aria-hidden="true" />
-              Copy Link
+              <span className="hidden sm:inline">Copy Link</span>
             </Button>
             <Button variant="outline" onClick={onGeneratePDF} className="gap-2">
               <Download className="w-4 h-4" aria-hidden="true" />
-              Download PDF
+              <span className="hidden sm:inline">Download PDF</span>
             </Button>
             <Button variant="ghost" onClick={onReset} className="gap-2">
               <RefreshCw className="w-4 h-4" aria-hidden="true" />
-              Reset
+              <span className="hidden sm:inline">Reset</span>
             </Button>
           </div>
         </div>
@@ -242,7 +247,7 @@ export function ResultsPage({
         {/* Active Filters Display */}
         <div className="flex flex-wrap gap-2 items-center glass-card p-3 rounded-xl">
           <span className="text-sm font-medium text-muted-foreground mr-2">Filters:</span>
-          
+
           {wizardState.selectedApplication && (
             <FilterChip
               label={(applications || []).find(a => a.id === wizardState.selectedApplication)?.label || wizardState.selectedApplication}
@@ -267,12 +272,11 @@ export function ResultsPage({
               onRemove={() => removeWizardFilter('environment')}
             />
           )}
-          
-          {/* Add chips for result-page specific filters */}
+
           {searchTerm && (
             <FilterChip label={`Search: "${searchTerm}"`} onRemove={() => setSearchTerm('')} className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" />
           )}
-          
+
           {dutyFilter.length > 0 && (
             <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" />
           )}
@@ -284,12 +288,12 @@ export function ResultsPage({
 
         {/* Toolbar */}
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between sticky top-16 z-30 glass-card p-4 rounded-2xl">
-          <EnhancedSearch 
-            searchTerm={searchTerm} 
+          <EnhancedSearch
+            searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             className="w-full md:w-96"
           />
-          
+
           <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
             {/* Sort Dropdown */}
             <DropdownMenu>
@@ -326,11 +330,10 @@ export function ResultsPage({
                   <DropdownMenuRadioItem value="corded">Pre-wired / Plug</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="cordless">Terminals (User wired)</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
-                
+
                 <DropdownMenuSeparator />
-                
+
                 <DropdownMenuLabel>Duty Rating</DropdownMenuLabel>
-                {/* Simplified Multi-select via standard items for now */}
                 {['light', 'medium', 'heavy'].map(duty => (
                   <div key={duty} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
                     role="checkbox"
@@ -394,6 +397,8 @@ export function ResultsPage({
             <ProductCard
               key={product.id}
               product={product}
+              isComparing={compareIds.includes(product.id)}
+              onCompareToggle={handleCompareToggle}
             />
           ))}
         </div>
@@ -408,7 +413,7 @@ export function ResultsPage({
             <p className="text-muted-foreground mb-6">
               We couldn't find any products matching all your criteria. Try removing some filters or viewing our full catalog.
             </p>
-            
+
             {/* Custom Solution CTA */}
             {needsCustomSolution && (
               <GlassCard className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 mb-6 text-left">
@@ -416,7 +421,11 @@ export function ResultsPage({
                 <p className="text-sm text-blue-600/80 dark:text-blue-400/80 mb-3">
                   Your requirements for {wizardState.selectedFeatures.join(', ')} might require a custom build.
                 </p>
-                <Button size="sm" className="w-full">Contact Engineering</Button>
+                <a href={`mailto:sales@linemaster.com?subject=${contactSubject}&body=${contactBody}`}>
+                  <Button size="sm" className="w-full gap-2">
+                    <Mail className="w-4 h-4" /> Contact Engineering
+                  </Button>
+                </a>
               </GlassCard>
             )}
 
@@ -435,12 +444,70 @@ export function ResultsPage({
         </div>
       )}
 
-      {/* Floating Action Button for Mobile */}
+      {/* Floating Compare Button */}
+      {compareIds.length >= 2 && (
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom-4 duration-300">
+          <Button
+            size="lg"
+            className="gap-2 shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90 rounded-full px-6"
+            onClick={() => setCompareOpen(true)}
+          >
+            <GitCompareArrows className="w-4 h-4" />
+            Compare ({compareIds.length})
+          </Button>
+        </div>
+      )}
+
+      {/* Compare Drawer */}
+      <CompareProducts
+        products={compareProducts}
+        open={compareOpen}
+        onOpenChange={setCompareOpen}
+        onRemove={(id) => setCompareIds(prev => prev.filter(x => x !== id))}
+      />
+
+      {/* Mobile Action Drawer */}
       <div className="fixed bottom-6 right-6 md:hidden z-40">
-        <Button size="icon" className="h-12 w-12 rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90" onClick={onBack} aria-label="Go back">
-          <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+        <Button
+          size="icon"
+          className="h-12 w-12 rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90"
+          onClick={() => setMobileDrawerOpen(true)}
+          aria-label="Open actions menu"
+        >
+          <Menu className="w-5 h-5" aria-hidden="true" />
         </Button>
       </div>
+
+      <Drawer open={mobileDrawerOpen} onOpenChange={setMobileDrawerOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Actions</DrawerTitle>
+            <DrawerDescription>{finalResults.length} products found</DrawerDescription>
+          </DrawerHeader>
+          <div className="flex flex-col gap-2 p-4 pb-8">
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-full gap-2 justify-start" onClick={onBack}>
+                <ArrowLeft className="w-4 h-4" /> Go Back
+              </Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-full gap-2 justify-start" onClick={handleCopyLink}>
+                <Link className="w-4 h-4" /> Copy Share Link
+              </Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-full gap-2 justify-start" onClick={onGeneratePDF}>
+                <Download className="w-4 h-4" /> Download PDF
+              </Button>
+            </DrawerClose>
+            <DrawerClose asChild>
+              <Button variant="outline" className="w-full gap-2 justify-start text-destructive" onClick={onReset}>
+                <RefreshCw className="w-4 h-4" /> Reset Wizard
+              </Button>
+            </DrawerClose>
+          </div>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 }

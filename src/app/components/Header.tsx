@@ -46,7 +46,7 @@ export function Header({ onReset }: HeaderProps) {
     <header className="sticky top-0 z-50 pt-3 pb-1">
       <div className="mx-auto px-4">
         {/* Pill toolbar — top right */}
-        <nav aria-label="Wizard controls" className="absolute top-3 right-4 flex items-center gap-0.5 rounded-full glass-card px-1 py-1">
+        <nav aria-label="Wizard controls" className="group absolute top-3 right-4 flex items-center gap-0.5 rounded-full glass-card px-1 py-1">
           <button
             className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
             title={isDark ? 'Light mode' : 'Dark mode'}
@@ -61,7 +61,7 @@ export function Header({ onReset }: HeaderProps) {
           </button>
 
           <button
-            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
+            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
             title="Admin Panel"
             aria-label="Open admin panel"
             onClick={() => navigate('/admin')}
