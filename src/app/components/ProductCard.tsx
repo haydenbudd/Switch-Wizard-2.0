@@ -42,16 +42,18 @@ interface ProductCardProps {
   product: Product;
   isComparing?: boolean;
   onCompareToggle?: (id: string) => void;
+  onViewDetails?: (product: Product) => void;
 }
 
-export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle, onViewDetails }: ProductCardProps) {
   if (!product) return null;
   const isFlagship = product.flagship;
 
   return (
     <GlassCard
-      className="h-full flex flex-col group relative overflow-hidden transition-all duration-500"
+      className="h-full flex flex-col group relative overflow-hidden transition-all duration-500 cursor-pointer"
       hoverEffect={true}
+      onClick={() => onViewDetails?.(product)}
     >
       {/* Compare checkbox */}
       {onCompareToggle && (
@@ -156,18 +158,14 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
 
         {/* Footer Actions */}
         <div className="mt-auto pt-4 flex items-center gap-2 border-t border-border/50">
-          <a
-            href={product.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1"
+          <Button
+            className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 text-primary-foreground border-0 transition-all duration-300"
+            onClick={(e) => { e.stopPropagation(); onViewDetails?.(product); }}
             aria-label={`View details for ${product.series}`}
           >
-            <Button className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 text-primary-foreground border-0 transition-all duration-300" tabIndex={-1}>
-              View Details
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
-            </Button>
-          </a>
+            View Details
+            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
+          </Button>
         </div>
       </div>
     </GlassCard>
