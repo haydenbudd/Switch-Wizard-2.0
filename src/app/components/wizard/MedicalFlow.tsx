@@ -6,6 +6,7 @@ import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
 import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { Header } from '@/app/components/Header';
 import {
   consoleStyles,
   pedalDesigns,
@@ -15,11 +16,13 @@ import {
   treadleTypes,
   customLabelingOptions,
   ledOptions,
+  NumberIcon,
 } from '@/app/data/options';
 
 const MotionDiv = motion.div;
 
-const BANNER_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/03/medical-footswitches-trio-banner-1.jpg';
+const CRESCENT_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/neuro-and-ent-1-optimized.png';
+const AERO_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/electro-surgical-cardiac-2-optimized.png';
 
 // Medical-specific action options (all medical products are electrical)
 const MEDICAL_ACTIONS = [
@@ -163,6 +166,7 @@ export function MedicalFlow({
     id: String(i + 1),
     label: `${i + 1} Button${i > 0 ? 's' : ''}`,
     description: `${i + 1} button${i > 0 ? 's' : ''} per pedal.`,
+    icon: NumberIcon(i + 1),
   }));
 
   // ── Render builder step content ──
@@ -170,36 +174,62 @@ export function MedicalFlow({
   const renderBuilderStep = () => {
     switch (wizardState.step) {
       case 2: // Channel selection
-        return (
-          <div className="space-y-6">
-            <div className="max-w-3xl mx-auto mb-6 rounded-2xl overflow-hidden shadow-lg">
-              <img
-                src={BANNER_IMAGE}
-                alt="Linemaster medical footswitches"
-                className="w-full h-auto object-cover"
-              />
+        {
+          const channelCards = [
+            { id: 'crescent', label: 'Crescent Channel', description: 'Classic ergonomic housing with curved profile.', image: CRESCENT_IMAGE },
+            { id: 'aero', label: 'Aero Channel', description: 'Low-profile, streamlined design.', image: AERO_IMAGE },
+          ];
+          return (
+            <div className="space-y-6">
+              <div className="text-center space-y-2 mb-8">
+                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
+                  Select Channel Type
+                </h2>
+                <p className="text-muted-foreground">Choose the housing style for your custom footswitch.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                {channelCards.map((ch) => (
+                  <div
+                    key={ch.id}
+                    onClick={() => handleBuilderSelect(wizardState.setSelectedChannel, ch.id)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleBuilderSelect(wizardState.setSelectedChannel, ch.id); } }}
+                    role="radio"
+                    aria-checked={wizardState.selectedChannel === ch.id}
+                    tabIndex={0}
+                    className={cn(
+                      "group relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-200",
+                      wizardState.selectedChannel === ch.id
+                        ? "border-red-500 shadow-lg shadow-red-500/10"
+                        : "border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-700 hover:shadow-md"
+                    )}
+                  >
+                    <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                      <img
+                        src={ch.image}
+                        alt={ch.label}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <h3 className={cn(
+                        "font-semibold text-lg mb-1 transition-colors",
+                        wizardState.selectedChannel === ch.id ? "text-red-600 dark:text-red-400" : "text-foreground"
+                      )}>
+                        {ch.label}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">{ch.description}</p>
+                    </div>
+                    {wizardState.selectedChannel === ch.id && (
+                      <div className="absolute top-3 right-3 bg-red-500 rounded-full p-1.5 text-white shadow-md" aria-hidden="true">
+                        <Check className="w-4 h-4" />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Select Channel Type
-              </h2>
-              <p className="text-muted-foreground">Choose the housing style for your custom footswitch.</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-              {consoleStyles.map((style, i) => (
-                <OptionCard
-                  key={style.id}
-                  label={style.label}
-                  description={style.description}
-                  icon={style.icon}
-                  selected={wizardState.selectedChannel === style.id}
-                  onClick={() => handleBuilderSelect(wizardState.setSelectedChannel, style.id)}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        );
+          );
+        }
 
       case 3: // Pedal design
         return (
@@ -244,6 +274,7 @@ export function MedicalFlow({
             </div>
             <div className={cn(
               "grid gap-6 max-w-3xl mx-auto",
+              buttonCountOptions.length === 4 ? "grid-cols-1 md:grid-cols-2" :
               buttonCountOptions.length <= 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
             )}>
               {buttonCountOptions.map((opt, i) => (
@@ -251,6 +282,7 @@ export function MedicalFlow({
                   key={opt.id}
                   label={opt.label}
                   description={opt.description}
+                  icon={opt.icon}
                   selected={wizardState.selectedButtonCount === opt.id}
                   onClick={() => handleBuilderSelect(wizardState.setSelectedButtonCount, opt.id)}
                   index={i}
@@ -510,6 +542,9 @@ export function MedicalFlow({
 
   const renderStep = () => {
     switch (wizardState.step) {
+      case 0: // Brief transitional state while setTimeout fires
+        return null;
+
       case 1: // Fork step - "How would you like to proceed?"
         return (
           <div className="flex items-center justify-center min-h-[400px]">
@@ -694,10 +729,11 @@ export function MedicalFlow({
     }
   };
 
-  // Fork step uses its own self-contained layout
-  if (wizardState.step === 1) {
+  // Fork step (and transitional step 0) use self-contained layout
+  if (wizardState.step <= 1) {
     return (
       <div className="min-h-screen mesh-gradient-light dark:bg-gradient-to-b dark:from-gray-900 dark:to-black relative">
+        <Header onReset={onReset} />
         <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
           <AnimatePresence mode="wait">
             <MotionDiv
@@ -728,6 +764,7 @@ export function MedicalFlow({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50/30 to-white dark:from-gray-900 dark:to-black relative">
+      <Header onReset={onReset} />
       <div className="container mx-auto px-4 pt-24 pb-20 relative z-10">
 
         {/* Progress Bar */}
