@@ -43,7 +43,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
           className="fixed bottom-0 left-0 right-0 z-50"
         >
           <div className="mx-auto max-w-5xl px-4 pb-4">
-            <div className="rounded-t-2xl border border-b-0 border-border/60 bg-background/95 backdrop-blur-xl shadow-2xl shadow-black/20 overflow-hidden">
+            <div className="rounded-2xl border border-border/60 bg-background/95 backdrop-blur-xl shadow-2xl shadow-black/20 overflow-hidden">
 
               {/* Collapsed bar — always visible */}
               <button
@@ -52,12 +52,12 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                     setExpanded(prev => !prev);
                   }
                 }}
-                className="w-full flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors"
+                className="w-full flex items-center justify-between px-6 py-3.5 hover:bg-muted/30 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 text-primary">
-                    <GitCompareArrows className="w-4 h-4" />
-                    <span className="font-semibold text-sm">
+                  <div className="flex items-center gap-1.5 text-primary">
+                    <GitCompareArrows className="w-5 h-5" />
+                    <span className="font-semibold text-base">
                       Compare ({products.length})
                     </span>
                   </div>
@@ -67,7 +67,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                     {products.map(p => (
                       <div
                         key={p.id}
-                        className="w-8 h-8 rounded-full border-2 border-background bg-secondary flex items-center justify-center overflow-hidden"
+                        className="w-9 h-9 rounded-full border-2 border-background bg-secondary flex items-center justify-center overflow-hidden"
                         title={p.series}
                       >
                         {p.image ? (
@@ -77,22 +77,22 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <span className="text-[9px] font-bold text-muted-foreground">{p.series.slice(0, 2)}</span>
+                          <span className="text-[10px] font-bold text-muted-foreground">{p.series.slice(0, 2)}</span>
                         )}
                       </div>
                     ))}
                   </div>
 
                   {products.length < 2 && (
-                    <span className="text-xs text-muted-foreground">Add {2 - products.length} more to compare</span>
+                    <span className="text-sm text-muted-foreground">Add {2 - products.length} more to compare</span>
                   )}
                 </div>
 
                 <div className="flex items-center gap-2">
                   {products.length >= 2 && (
                     expanded
-                      ? <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                      : <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                      ? <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                      : <ChevronUp className="w-5 h-5 text-muted-foreground" />
                   )}
                 </div>
               </button>
