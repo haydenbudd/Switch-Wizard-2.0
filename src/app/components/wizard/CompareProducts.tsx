@@ -6,6 +6,15 @@ import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import {
+  colorClasses,
+  getTechColor,
+  getDutyColor,
+  getIpColor,
+  getMaterialColor,
+  getConnectionColor,
+  getFeatureColor,
+} from '@/app/lib/attributeColors';
 
 const MotionDiv = motion.div;
 
@@ -16,15 +25,15 @@ interface CompareProductsProps {
   onRemove: (id: string) => void;
 }
 
-const COMPARE_ROWS: { label: string; getValue: (p: Product) => string }[] = [
-  { label: 'Technology', getValue: (p) => p.technology },
-  { label: 'Duty Rating', getValue: (p) => p.duty },
-  { label: 'IP Rating', getValue: (p) => p.ip },
-  { label: 'Material', getValue: (p) => p.material },
-  { label: 'Circuit Count', getValue: (p) => p.circuitry || '—' },
-  { label: 'Connection', getValue: (p) => p.connector_type?.replace(/-/g, ' ') || '—' },
-  { label: 'Part Number', getValue: (p) => p.part_number || '—' },
-  { label: 'Features', getValue: (p) => (p.features || []).map(f => f.replace('_', ' ')).join(', ') || '—' },
+const COMPARE_ROWS: { label: string; getValue: (p: Product) => string; getColor: (p: Product) => string }[] = [
+  { label: 'Technology', getValue: (p) => p.technology, getColor: (p) => colorClasses(getTechColor(p.technology)) },
+  { label: 'Duty Rating', getValue: (p) => p.duty, getColor: (p) => colorClasses(getDutyColor(p.duty)) },
+  { label: 'IP Rating', getValue: (p) => p.ip, getColor: (p) => colorClasses(getIpColor(p.ip)) },
+  { label: 'Material', getValue: (p) => p.material, getColor: (p) => colorClasses(getMaterialColor(p.material)) },
+  { label: 'Circuit Count', getValue: (p) => p.circuitry || '—', getColor: () => '' },
+  { label: 'Connection', getValue: (p) => p.connector_type?.replace(/-/g, ' ') || '—', getColor: (p) => p.connector_type ? colorClasses(getConnectionColor(p.connector_type)) : '' },
+  { label: 'Part Number', getValue: (p) => p.part_number || '—', getColor: () => '' },
+  { label: 'Features', getValue: (p) => (p.features || []).map(f => f.replace('_', ' ')).join(', ') || '—', getColor: () => '' },
 ];
 
 export function CompareProducts({ products, open, onOpenChange, onRemove }: CompareProductsProps) {
@@ -145,9 +154,31 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                 <td className="p-3 text-sm font-medium text-muted-foreground">{row.label}</td>
                                 {products.map((product) => {
                                   const value = row.getValue(product);
+                                  const color = row.getColor(product);
+                                  // For the Features row, render individual colored badges
+                                  if (row.label === 'Features' && product.features && product.features.length > 0) {
+                                    return (
+                                      <td key={product.id} className="p-3 text-center">
+                                        <div className="flex flex-wrap justify-center gap-1">
+                                          {product.features.map((f) => (
+                                            <Badge
+                                              key={f}
+                                              variant="secondary"
+                                              className={`text-xs capitalize font-normal ${colorClasses(getFeatureColor(f))}`}
+                                            >
+                                              {f.replace('_', ' ')}
+                                            </Badge>
+                                          ))}
+                                        </div>
+                                      </td>
+                                    );
+                                  }
                                   return (
                                     <td key={product.id} className="p-3 text-center">
-                                      <Badge variant="secondary" className="text-xs capitalize font-normal">
+                                      <Badge
+                                        variant="secondary"
+                                        className={`text-xs capitalize font-normal ${color}`}
+                                      >
                                         {value}
                                       </Badge>
                                     </td>

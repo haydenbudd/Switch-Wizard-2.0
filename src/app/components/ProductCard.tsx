@@ -6,6 +6,7 @@ import { Product } from '@/app/lib/api';
 import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package, Droplets, Anvil, Sparkles, Hexagon, Feather, Gem, Component, GitCompareArrows } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl } from '@/app/utils/imageProxy';
+import { colorClasses, getIpColor, getMaterialColor, getFeatureColor } from '@/app/lib/attributeColors';
 
 // Icon mapping for features - defined outside component to avoid re-creation on every render
 function FeatureIcon({ feature }: { feature: string }) {
@@ -136,11 +137,11 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
 
         {/* Specs & Features */}
         <div className="flex flex-wrap gap-1.5 mb-6">
-          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal flex items-center">
+          <Badge variant="secondary" className={`text-[10px] px-2 py-0.5 h-5 font-normal flex items-center ${colorClasses(getIpColor(product.ip))}`}>
             <IpIcon />
             {product.ip}
           </Badge>
-          <Badge variant="secondary" className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize flex items-center">
+          <Badge variant="secondary" className={`text-[10px] px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getMaterialColor(product.material))}`}>
             <MaterialIcon material={product.material} />
             {product.material}
           </Badge>
@@ -148,7 +149,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
             <Badge
               key={feature}
               variant="secondary"
-              className="text-[10px] bg-secondary/50 px-2 py-0.5 h-5 font-normal capitalize flex items-center"
+              className={`text-[10px] px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getFeatureColor(feature))}`}
             >
               <FeatureIcon feature={feature} />
               {feature.replace('_', ' ')}

@@ -28,6 +28,16 @@ import {
   FileText,
 } from 'lucide-react';
 import { useEffect, useCallback } from 'react';
+import {
+  colorClasses,
+  getTechColor,
+  getDutyColor,
+  getIpColor,
+  getMaterialColor,
+  getConnectionColor,
+  getFeatureColor,
+  type AttributeColor,
+} from '@/app/lib/attributeColors';
 
 const MotionDiv = motion.div;
 
@@ -117,18 +127,18 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
   const datasheetUrl = getDatasheetUrl(product.series);
 
-  const specs: { icon: React.ReactNode; label: string; value: string }[] = [
-    { icon: <TechIcon tech={product.technology} />, label: 'Technology', value: product.technology },
-    { icon: <Gauge className="w-4 h-4 text-muted-foreground" />, label: 'Duty Rating', value: product.duty },
-    { icon: <Droplets className="w-4 h-4 text-muted-foreground" />, label: 'IP Rating', value: product.ip },
-    { icon: <MaterialIcon material={product.material} />, label: 'Material', value: product.material },
+  const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor }[] = [
+    { icon: <TechIcon tech={product.technology} />, label: 'Technology', value: product.technology, color: getTechColor(product.technology) },
+    { icon: <Gauge className="w-4 h-4 text-muted-foreground" />, label: 'Duty Rating', value: product.duty, color: getDutyColor(product.duty) },
+    { icon: <Droplets className="w-4 h-4 text-muted-foreground" />, label: 'IP Rating', value: product.ip, color: getIpColor(product.ip) },
+    { icon: <MaterialIcon material={product.material} />, label: 'Material', value: product.material, color: getMaterialColor(product.material) },
   ];
 
   if (product.circuitry) {
     specs.push({ icon: <Hash className="w-4 h-4 text-muted-foreground" />, label: 'Circuits', value: product.circuitry });
   }
   if (product.connector_type) {
-    specs.push({ icon: <Cable className="w-4 h-4 text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)! });
+    specs.push({ icon: <Cable className="w-4 h-4 text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
   }
   if (product.stages) {
     specs.push({ icon: <Layers className="w-4 h-4 text-muted-foreground" />, label: 'Stages', value: product.stages });
@@ -225,16 +235,16 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
               {/* Quick badges */}
               <div className="flex flex-wrap items-center gap-2 mb-4 mt-2">
-                <Badge variant="outline" className="capitalize text-xs">
+                <Badge variant="outline" className={`capitalize text-xs ${colorClasses(getTechColor(product.technology))}`}>
                   {product.technology}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className={`capitalize text-xs ${product.duty === 'heavy' ? 'border-orange-300 text-orange-700 dark:border-orange-700 dark:text-orange-300' : ''}`}
+                  className={`capitalize text-xs ${colorClasses(getDutyColor(product.duty))}`}
                 >
                   {product.duty} Duty
                 </Badge>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className={`text-xs ${colorClasses(getIpColor(product.ip))}`}>
                   {product.ip}
                 </Badge>
                 {product.actions?.map((action) => (
@@ -254,12 +264,16 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                 {specs.map((spec) => (
                   <div
                     key={spec.label}
-                    className="flex items-center gap-3 rounded-xl bg-muted/40 border border-border/30 px-4 py-3"
+                    className={`flex items-center gap-3 rounded-xl px-4 py-3 ${
+                      spec.color
+                        ? `${spec.color.bg} border ${spec.color.border}`
+                        : 'bg-muted/40 border border-border/30'
+                    }`}
                   >
                     {spec.icon}
                     <div className="min-w-0">
                       <div className="text-[11px] text-muted-foreground uppercase tracking-wide">{spec.label}</div>
-                      <div className="text-sm font-medium capitalize truncate">{spec.value}</div>
+                      <div className={`text-sm font-medium capitalize truncate ${spec.color ? spec.color.text : ''}`}>{spec.value}</div>
                     </div>
                   </div>
                 ))}
@@ -271,7 +285,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                   <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Features</h3>
                   <div className="flex flex-wrap gap-2">
                     {product.features.map((feature) => (
-                      <Badge key={feature} variant="secondary" className="capitalize text-xs gap-1.5 px-3 py-1">
+                      <Badge key={feature} variant="secondary" className={`capitalize text-xs gap-1.5 px-3 py-1 ${colorClasses(getFeatureColor(feature))}`}>
                         {feature === 'shield' && <Shield className="w-3 h-3" />}
                         {feature === 'multi_stage' && <Layers className="w-3 h-3" />}
                         {feature === 'twin' && <Layers className="w-3 h-3" />}
