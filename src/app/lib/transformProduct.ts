@@ -133,50 +133,27 @@ function deriveFeatures(row: StockSwitchRow): string[] {
   return features;
 }
 
-// Fallback images by series name when image_url is null in the database
-const SERIES_IMAGES: Record<string, string> = {
-  'hercules': 'https://linemaster.com/wp-content/uploads/2025/04/hercules-full-shield.png',
-  'atlas': 'https://linemaster.com/wp-content/uploads/2025/04/atlas.png',
-  'nautilus': 'https://linemaster.com/wp-content/uploads/2025/04/atlas.png',
-  'clipper': 'https://linemaster.com/wp-content/uploads/2025/04/clipper_duo.png',
-  'classic iv': 'https://linemaster.com/wp-content/uploads/2025/04/classic-iv.png',
-  'classic': 'https://linemaster.com/wp-content/uploads/2025/04/classic-iv.png',
-  'dolphin': 'https://linemaster.com/wp-content/uploads/2025/04/dolphin-2.png',
-  'gem-v': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'gem': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'varior': 'https://linemaster.com/wp-content/uploads/2025/04/varior-potentiometer.png',
-  'air seal': 'https://linemaster.com/wp-content/uploads/2025/03/air_seal.png',
-  'air-seal': 'https://linemaster.com/wp-content/uploads/2025/03/air_seal.png',
-  'rf wireless hercules': 'https://linemaster.com/wp-content/uploads/2025/04/rf-hercules.png',
-  'rf wireless clipper': 'https://linemaster.com/wp-content/uploads/2025/04/rf-hercules.png',
-  'rf wireless aquiline': 'https://linemaster.com/wp-content/uploads/2025/04/rf-hercules.png',
-  'airval hercules': 'https://linemaster.com/wp-content/uploads/2025/03/airval-hercules-duo_optimized.png',
-  'airval clipper': 'https://linemaster.com/wp-content/uploads/2025/03/airval-hercules-duo_optimized.png',
-  'airval treadlite': 'https://linemaster.com/wp-content/uploads/2025/03/airval-hercules-duo_optimized.png',
-  'aquiline': 'https://linemaster.com/wp-content/uploads/2025/04/dolphin-2.png',
-  'medical grade v': 'https://linemaster.com/wp-content/uploads/2025/04/dolphin-2.png',
-  'executive': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'treadlite': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'treadlite ii': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'compact': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'lektro': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'vanguard': 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
-  'explosion proof': 'https://linemaster.com/wp-content/uploads/2025/04/atlas.png',
-};
+// Extract the Linemaster product page ID from a product Link URL.
+// e.g. "https://linemaster.com/product/167/hercules-full-shield/" → "167"
+function extractProductPageId(link: string | null): string | null {
+  if (!link) return null;
+  const match = link.match(/\/product\/(\d+)\//);
+  return match ? match[1] : null;
+}
+
+// Build a per-product CDN image URL from the product page ID.
+// Linemaster hosts product images at /cdn/images/products/{id}/{id}-a-shadow@1200.png
+function buildCdnImageUrl(productPageId: string): string {
+  return `https://linemaster.com/cdn/images/products/${productPageId}/${productPageId}-a-shadow@1200.png`;
+}
 
 function deriveImage(row: StockSwitchRow): string {
-  // Use DB image_url only if it's a real product image (not a placeholder)
+  // 1. Use DB image_url if it's a real product image (not a placeholder)
   if (row.image_url && !row.image_url.includes('placeholder')) return row.image_url;
 
-  const series = (row.series || '').toLowerCase();
-
-  // Try exact match first
-  if (SERIES_IMAGES[series]) return SERIES_IMAGES[series];
-
-  // Try partial match (e.g. "Hercules Duo" matches "hercules")
-  for (const [key, url] of Object.entries(SERIES_IMAGES)) {
-    if (series.includes(key)) return url;
-  }
+  // 2. Derive per-product image from the product page link
+  const pageId = extractProductPageId(row.Link);
+  if (pageId) return buildCdnImageUrl(pageId);
 
   return '';
 }

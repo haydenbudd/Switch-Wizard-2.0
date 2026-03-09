@@ -293,7 +293,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                 >
                   <Button className="w-full gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15">
                     <ExternalLink className="w-4 h-4" />
-                    View on Linemaster.com
+                    View Product Page
                   </Button>
                 </a>
                 {datasheetUrl && (
