@@ -6,6 +6,7 @@ import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
 import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { Header } from '@/app/components/Header';
 import {
   consoleStyles,
   pedalDesigns,
@@ -740,6 +741,7 @@ export function MedicalFlow({
   if (wizardState.step <= 1) {
     return (
       <div className="min-h-screen mesh-gradient-light dark:bg-gradient-to-b dark:from-gray-900 dark:to-black relative">
+        <Header onReset={onReset} />
         <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
           <AnimatePresence mode="wait">
             <MotionDiv
@@ -770,6 +772,7 @@ export function MedicalFlow({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-50/30 to-white dark:from-gray-900 dark:to-black relative">
+      <Header onReset={onReset} />
       <div className="container mx-auto px-4 pt-24 pb-20 relative z-10">
 
         {/* Progress Bar */}
