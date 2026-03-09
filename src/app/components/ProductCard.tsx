@@ -58,17 +58,17 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
       {/* Compare checkbox */}
       {onCompareToggle && (
         <button
-          className={`absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-lg border-2 px-2.5 py-1.5 text-xs font-medium transition-all duration-200 ${
+          className={`absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 text-xs font-semibold transition-all duration-300 ${
             isComparing
-              ? 'bg-primary border-primary text-white shadow-md shadow-primary/30'
-              : 'border-border bg-background/90 backdrop-blur-sm hover:border-primary hover:bg-background text-muted-foreground hover:text-foreground shadow-sm'
+              ? 'bg-primary border-primary text-white shadow-lg shadow-primary/40 scale-105'
+              : 'border-primary/40 bg-background/95 backdrop-blur-md hover:border-primary hover:bg-primary/10 text-primary hover:text-primary shadow-md hover:shadow-lg hover:scale-105'
           }`}
           onClick={(e) => { e.stopPropagation(); onCompareToggle(product.id); }}
           aria-label={`${isComparing ? 'Remove from' : 'Add to'} comparison: ${product.series}`}
           aria-pressed={isComparing}
           title={isComparing ? 'Remove from comparison' : 'Add to comparison'}
         >
-          <GitCompareArrows className="w-3.5 h-3.5" />
+          <GitCompareArrows className={`w-3.5 h-3.5 transition-transform duration-300 ${isComparing ? 'rotate-180' : ''}`} />
           {isComparing ? 'Comparing' : 'Compare'}
         </button>
       )}
