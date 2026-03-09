@@ -41,8 +41,7 @@ import {
   SlidersHorizontal,
   Check,
   X,
-  FlipVertical,
-  Bird,
+  ArrowUpFromLine,
   Tag,
   Lightbulb,
   LightbulbOff,
@@ -77,6 +76,21 @@ export function NumberIcon(n: number): ElementType {
   component.displayName = `NumberIcon${n}`;
   return component;
 }
+
+// Rounded-rectangle silhouette representing the Aquiline treadle profile
+const AquilineIcon: ElementType = (props: SVGProps<SVGSVGElement>) =>
+  createElement('svg', {
+    xmlns: 'http://www.w3.org/2000/svg',
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 2,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    ...props,
+  },
+    createElement('rect', { x: 5, y: 3, width: 14, height: 18, rx: 3, ry: 3 }),
+  );
 
 export interface Option {
   id: string;
@@ -530,8 +544,8 @@ export const toeLoopOptions: Option[] = [
 ];
 
 export const treadleTypes: Option[] = [
-  { id: 'flip_up', label: 'Flip Up', icon: FlipVertical, description: 'Hinged treadle that flips up.' },
-  { id: 'aquiline', label: 'Aquiline', icon: Bird, description: 'Curved, ergonomic aquiline treadle design.' },
+  { id: 'flip_up', label: 'Flip Up', icon: ArrowUpFromLine, description: 'Hinged treadle that flips up.' },
+  { id: 'aquiline', label: 'Aquiline', icon: AquilineIcon, description: 'Curved, ergonomic aquiline treadle design.' },
 ];
 
 export const customLabelingOptions: Option[] = [
