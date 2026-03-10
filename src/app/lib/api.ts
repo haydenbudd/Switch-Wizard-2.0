@@ -83,6 +83,7 @@ export interface Product {
   certifications?: string; // e.g. "UL, CSA, IEC"
   voltage?: string; // e.g. "120V - 240V"
   amperage?: string; // e.g. "10A - 15A"
+  specs?: Record<string, string>; // Full specs JSONB from scraped data
   flagship: boolean;
   image: string;
   link: string;
