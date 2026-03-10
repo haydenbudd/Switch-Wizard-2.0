@@ -5,6 +5,24 @@
 const fs = require('fs');
 const merged = JSON.parse(fs.readFileSync('scripts/output/linemaster_merged.json', 'utf-8'));
 
+// --- Load stages lookup from CSV (source of truth for Stages) ---
+const csvStagesLookup = {};
+const csvLines = fs.readFileSync('Product Finder.csv', 'utf-8').split('\n');
+const csvHeader = csvLines[0].split(',');
+const csvPartIdx = csvHeader.indexOf('Part');
+const csvStagesIdx = csvHeader.indexOf('Stages');
+const csvConfigIdx = csvHeader.indexOf('Configuration');
+for (let i = 1; i < csvLines.length; i++) {
+  if (!csvLines[i].trim()) continue;
+  const cols = csvLines[i].split(',');
+  const part = (cols[csvPartIdx] || '').trim();
+  const stages = (cols[csvStagesIdx] || '').trim();
+  const config = (cols[csvConfigIdx] || '').trim();
+  if (part) {
+    if (stages) csvStagesLookup[part] = stages;
+  }
+}
+
 // --- Series derivation from title ---
 function deriveSeries(title) {
   if (!title) return 'Unknown';
@@ -211,7 +229,9 @@ let skipped = 0;
 
 for (const product of merged) {
   const series = deriveSeries(product.title);
-  const { onOff, linear, stages } = deriveOnOff(product.actions);
+  const { onOff, linear, stages: derivedStages } = deriveOnOff(product.actions);
+  // Use CSV stages as source of truth, fall back to derived
+  const stages = csvStagesLookup[product.part_number] || derivedStages;
   const { wireless, pneumatic } = deriveTechFlags(product.switch_type);
   const connection = deriveConnection(product.switch_connections);
   const guard = deriveGuard(product.shields_guards);
@@ -240,7 +260,15 @@ for (const product of merged) {
     Color: product.housing_colors || null,
     Link: product.url || null,
     description: product.description || `${series} - ${product.part_number}`,
-    image_url: product.primary_image || null,
+    image_url: (() => {
+      // Derive image URL from product's own URL page ID for 1-to-1 mapping
+      const urlMatch = product.url && product.url.match(/\/product\/(\d+)\//);
+      if (urlMatch) {
+        const pageId = urlMatch[1];
+        return `https://linemaster.com/cdn/images/products/${pageId}/${pageId}-a-shadow@1200.png`;
+      }
+      return product.primary_image || null;
+    })(),
     applications: applications,
     duty: duty,
     features: guard ? 'shield' : null,
