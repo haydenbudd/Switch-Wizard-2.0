@@ -27,7 +27,7 @@ import {
   Star,
   FileText,
 } from 'lucide-react';
-import { useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   colorClasses,
   getTechColor,
@@ -104,6 +104,37 @@ function formatConnector(type?: string) {
     .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
+}
+
+const SPECS_COLLAPSED_LIMIT = 6;
+
+function DetailedSpecs({ specs }: { specs: Record<string, string> }) {
+  const [specsExpanded, setSpecsExpanded] = useState(false);
+  const entries = Object.entries(specs);
+  const hasMore = entries.length > SPECS_COLLAPSED_LIMIT;
+  const visibleEntries = specsExpanded ? entries : entries.slice(0, SPECS_COLLAPSED_LIMIT);
+
+  return (
+    <div className="mb-6">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Specifications</h3>
+      <div className="rounded-xl border border-border/40 divide-y divide-border/30">
+        {visibleEntries.map(([key, value]) => (
+          <div key={key} className="flex gap-4 px-4 py-2.5 text-sm">
+            <span className="text-muted-foreground whitespace-nowrap min-w-[140px]">{key}</span>
+            <span className="font-medium text-foreground">{value}</span>
+          </div>
+        ))}
+      </div>
+      {hasMore && (
+        <button
+          onClick={() => setSpecsExpanded((prev) => !prev)}
+          className="mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-1 py-0.5"
+        >
+          {specsExpanded ? 'Show less' : `Show all ${entries.length} specs`}
+        </button>
+      )}
+    </div>
+  );
 }
 
 export function ProductDetailModal({ product, open, onClose }: ProductDetailModalProps) {
@@ -302,17 +333,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
               {/* Detailed Specifications from scraped data */}
               {product.specs && Object.keys(product.specs).length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Specifications</h3>
-                  <div className="rounded-xl border border-border/40 divide-y divide-border/30">
-                    {Object.entries(product.specs).map(([key, value]) => (
-                      <div key={key} className="flex gap-4 px-4 py-2.5 text-sm">
-                        <span className="text-muted-foreground whitespace-nowrap min-w-[140px]">{key}</span>
-                        <span className="font-medium text-foreground">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <DetailedSpecs specs={product.specs} />
               )}
 
               {/* Actions */}

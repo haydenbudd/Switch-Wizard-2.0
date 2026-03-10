@@ -5,16 +5,49 @@
 const fs = require('fs');
 const merged = JSON.parse(fs.readFileSync('scripts/output/linemaster_merged.json', 'utf-8'));
 
+// --- RFC 4180-compliant CSV line parser ---
+function parseCSVLine(line) {
+  const fields = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++; // skip escaped quote
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += ch;
+      }
+    } else {
+      if (ch === '"') {
+        inQuotes = true;
+      } else if (ch === ',') {
+        fields.push(current);
+        current = '';
+      } else {
+        current += ch;
+      }
+    }
+  }
+  fields.push(current);
+  return fields;
+}
+
 // --- Load stages lookup from CSV (source of truth for Stages) ---
 const csvStagesLookup = {};
 const csvLines = fs.readFileSync('Product Finder.csv', 'utf-8').split('\n');
-const csvHeader = csvLines[0].split(',');
+const csvHeader = parseCSVLine(csvLines[0]);
 const csvPartIdx = csvHeader.indexOf('Part');
 const csvStagesIdx = csvHeader.indexOf('Stages');
 const csvConfigIdx = csvHeader.indexOf('Configuration');
 for (let i = 1; i < csvLines.length; i++) {
   if (!csvLines[i].trim()) continue;
-  const cols = csvLines[i].split(',');
+  const cols = parseCSVLine(csvLines[i]);
   const part = (cols[csvPartIdx] || '').trim();
   const stages = (cols[csvStagesIdx] || '').trim();
   const config = (cols[csvConfigIdx] || '').trim();
@@ -241,6 +274,12 @@ for (const product of merged) {
   const circuitCount = deriveCircuitCount(product.circuitries);
   const applications = deriveApplications(series, product.switch_type);
 
+  // Derive image URL from product's own URL page ID for 1-to-1 mapping
+  const urlMatch = product.url && product.url.match(/\/product\/(\d+)\//);
+  const imageUrl = urlMatch
+    ? `https://linemaster.com/cdn/images/products/${urlMatch[1]}/${urlMatch[1]}-a-shadow@1200.png`
+    : product.primary_image || null;
+
   const row = {
     series: series,
     Part: product.part_number,
@@ -260,15 +299,7 @@ for (const product of merged) {
     Color: product.housing_colors || null,
     Link: product.url || null,
     description: product.description || `${series} - ${product.part_number}`,
-    image_url: (() => {
-      // Derive image URL from product's own URL page ID for 1-to-1 mapping
-      const urlMatch = product.url && product.url.match(/\/product\/(\d+)\//);
-      if (urlMatch) {
-        const pageId = urlMatch[1];
-        return `https://linemaster.com/cdn/images/products/${pageId}/${pageId}-a-shadow@1200.png`;
-      }
-      return product.primary_image || null;
-    })(),
+    image_url: imageUrl,
     applications: applications,
     duty: duty,
     features: guard ? 'shield' : null,
