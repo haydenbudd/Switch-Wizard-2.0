@@ -133,20 +133,6 @@ function deriveFeatures(row: StockSwitchRow): string[] {
   return features;
 }
 
-// Extract the Linemaster product page ID from a product Link URL.
-// e.g. "https://linemaster.com/product/167/hercules-full-shield/" → "167"
-function extractProductPageId(link: string | null): string | null {
-  if (!link) return null;
-  const match = link.match(/\/product\/(\d+)\//);
-  return match ? match[1] : null;
-}
-
-// Build a per-product CDN image URL from the product page ID.
-// Linemaster hosts product images at /cdn/images/products/{id}/{id}-a-shadow@1200.png
-function buildCdnImageUrl(productPageId: string): string {
-  return `https://linemaster.com/cdn/images/products/${productPageId}/${productPageId}-a-shadow@1200.png`;
-}
-
 // Fallback images by series name when CDN image is unavailable
 const SERIES_IMAGES: Record<string, string> = {
   'hercules': 'https://linemaster.com/wp-content/uploads/2025/04/hercules-full-shield.png',
@@ -164,25 +150,14 @@ const SERIES_IMAGES: Record<string, string> = {
   'airval hercules': 'https://linemaster.com/wp-content/uploads/2025/03/airval-hercules-duo_optimized.png',
 };
 
-// Check whether a URL is a series-level fallback (shared across all products in a series)
-function isSeriesLevelImage(url: string): boolean {
-  return Object.values(SERIES_IMAGES).some(seriesUrl => url === seriesUrl);
-}
-
 function deriveImage(row: StockSwitchRow): string {
-  const pageId = extractProductPageId(row.Link);
   const dbUrl = row.image_url && !row.image_url.includes('placeholder') ? row.image_url : null;
 
-  // 1. Use DB image_url if it's a real per-product image (not a series-level fallback)
-  if (dbUrl && !isSeriesLevelImage(dbUrl)) return dbUrl;
-
-  // 2. Derive per-product CDN image from the product page link (unique per product)
-  if (pageId) return buildCdnImageUrl(pageId);
-
-  // 3. Use DB image_url even if it's a series-level image (better than nothing)
+  // 1. Use DB image_url directly — it contains the correct CDN image ID from scraped data
+  //    (Note: page ID ≠ CDN image ID, so never derive images from Link URLs)
   if (dbUrl) return dbUrl;
 
-  // 4. Fall back to series-level image by series name
+  // 2. Fall back to series-level image by series name
   const series = (row.series || '').toLowerCase();
   if (SERIES_IMAGES[series]) return SERIES_IMAGES[series];
   for (const [key, url] of Object.entries(SERIES_IMAGES)) {
