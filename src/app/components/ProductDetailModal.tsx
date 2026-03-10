@@ -298,6 +298,21 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                 </div>
               )}
 
+              {/* Detailed Specifications from scraped data */}
+              {product.specs && Object.keys(product.specs).length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Specifications</h3>
+                  <div className="rounded-xl border border-border/40 divide-y divide-border/30">
+                    {Object.entries(product.specs).map(([key, value]) => (
+                      <div key={key} className="flex gap-4 px-4 py-2.5 text-sm">
+                        <span className="text-muted-foreground whitespace-nowrap min-w-[140px]">{key}</span>
+                        <span className="font-medium text-foreground">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <a

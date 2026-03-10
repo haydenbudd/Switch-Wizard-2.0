@@ -26,6 +26,7 @@ export interface StockSwitchRow {
   features: string | null;
   Notes: string | null;
   'Circuits Controlled': string | null;
+  specs: Record<string, string> | null;
 }
 
 const INDUSTRIAL_EXPANSIONS = [
@@ -203,5 +204,6 @@ export function transformRow(row: StockSwitchRow): Product {
     configuration: row.Configuration ?? undefined,
     color: row.Color ?? undefined,
     pfc_config: row['PFC Config'] ?? undefined,
+    specs: row.specs ?? undefined,
   };
 }
