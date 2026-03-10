@@ -307,6 +307,35 @@ export function ProductForm({
         </div>
 
         <div className="space-y-2">
+          <Label>Pedal Count</Label>
+          <Input
+            type="number"
+            {...register('pedal_count', { valueAsNumber: true })}
+            placeholder="e.g. 1"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Stages</Label>
+          <Input {...register('stages')} placeholder="e.g. 2 Stage" />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Configuration</Label>
+          <Input {...register('configuration')} placeholder="e.g. Standard" />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Color</Label>
+          <Input {...register('color')} placeholder="e.g. Black" />
+        </div>
+
+        <div className="space-y-2">
+          <Label>PFC Config</Label>
+          <Input {...register('pfc_config')} placeholder="e.g. 3-way" />
+        </div>
+
+        <div className="space-y-2">
           <Label>Image URL</Label>
           <Input {...register('image')} placeholder="https://..." />
         </div>

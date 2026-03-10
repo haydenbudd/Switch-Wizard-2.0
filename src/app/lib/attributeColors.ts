@@ -76,6 +76,19 @@ export function getDutyColor(duty: string): AttributeColor {
   return dutyColors[duty?.toLowerCase()] || ipDefault;
 }
 
+// --- Circuit Count ---
+const circuitColors: Record<string, AttributeColor> = {
+  '1': { bg: 'bg-slate-100 dark:bg-slate-800/60', text: 'text-slate-600 dark:text-slate-400', border: 'border-slate-200 dark:border-slate-700' },
+  '2': { bg: 'bg-indigo-50 dark:bg-indigo-950/50', text: 'text-indigo-700 dark:text-indigo-400', border: 'border-indigo-200 dark:border-indigo-800' },
+  '3': { bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/50', text: 'text-fuchsia-700 dark:text-fuchsia-400', border: 'border-fuchsia-200 dark:border-fuchsia-800' },
+  '4': { bg: 'bg-rose-50 dark:bg-rose-950/50', text: 'text-rose-700 dark:text-rose-400', border: 'border-rose-200 dark:border-rose-800' },
+};
+
+export function getCircuitColor(count?: string): AttributeColor {
+  if (!count) return ipDefault;
+  return circuitColors[count] || { bg: 'bg-pink-50 dark:bg-pink-950/50', text: 'text-pink-700 dark:text-pink-400', border: 'border-pink-200 dark:border-pink-800' };
+}
+
 // --- Features ---
 const featureColors: Record<string, AttributeColor> = {
   shield:      { bg: 'bg-emerald-50 dark:bg-emerald-950/50', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-200 dark:border-emerald-800' },

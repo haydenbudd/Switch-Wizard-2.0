@@ -3,7 +3,7 @@ import { AlertTriangle, AlertCircle, Info, ChevronDown, ChevronRight, Pencil, Ch
 import { Product } from '@/app/lib/api';
 import { toast } from 'sonner';
 
-const EDITABLE_FIELDS = new Set(['image', 'description', 'link', 'material', 'ip', 'connector_type', 'voltage']);
+const EDITABLE_FIELDS = new Set(['image', 'description', 'link', 'material', 'ip', 'connector_type', 'voltage', 'circuitry', 'stages', 'configuration', 'color', 'pfc_config']);
 
 interface DataAuditProps {
   products: Product[];
