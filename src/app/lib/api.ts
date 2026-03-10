@@ -186,9 +186,10 @@ function productToRow(product: Partial<Product>): Record<string, unknown> {
     else if (hasMain) row['On/Off'] = 'Main';
   }
 
-  // Map features back to Guard
+  // Map features back to Guard and Gated
   if (product.features !== undefined) {
     if (product.features.includes('shield')) row.Guard = 'Full';
+    row.Gated = product.features.includes('gated') ? 'Yes' : null;
   }
 
   // Map connector_type back to Connection
