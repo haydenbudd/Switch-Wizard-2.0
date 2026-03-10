@@ -63,6 +63,7 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
   const [ipFilter, setIpFilter] = useState('');
   const [materialFilter, setMaterialFilter] = useState('');
   const [seriesFilter, setSeriesFilter] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Derive unique values for each filter
   const filterOptions = useMemo(() => {
@@ -89,10 +90,16 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
     };
   }, [products]);
 
-  const activeFilterCount = [techFilter, dutyFilter, ipFilter, materialFilter, seriesFilter].filter(Boolean).length;
+  const activeFilterCount = [techFilter, dutyFilter, ipFilter, materialFilter, seriesFilter, searchQuery].filter(Boolean).length;
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchesPartNumber = p.part_number?.toLowerCase().includes(q);
+        const matchesSeries = p.series?.toLowerCase().includes(q);
+        if (!matchesPartNumber && !matchesSeries) return false;
+      }
       if (techFilter && p.technology !== techFilter) return false;
       if (dutyFilter && p.duty !== dutyFilter) return false;
       if (ipFilter && p.ip !== ipFilter) return false;
@@ -100,7 +107,7 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
       if (seriesFilter && p.series !== seriesFilter) return false;
       return true;
     });
-  }, [products, techFilter, dutyFilter, ipFilter, materialFilter, seriesFilter]);
+  }, [products, searchQuery, techFilter, dutyFilter, ipFilter, materialFilter, seriesFilter]);
 
   const clearFilters = () => {
     setTechFilter('');
@@ -108,6 +115,7 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
     setIpFilter('');
     setMaterialFilter('');
     setSeriesFilter('');
+    setSearchQuery('');
   };
 
   if (loading) {
@@ -130,6 +138,13 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
     <div className="space-y-3">
       {/* Filter bar */}
       <div className="flex flex-wrap items-center gap-2 bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search part # or series..."
+          className="h-8 w-48 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-xs px-2 text-gray-700 dark:text-gray-300 focus:ring-1 focus:ring-primary"
+        />
         <FilterSelect label="Series" value={seriesFilter} options={filterOptions.series} onChange={setSeriesFilter} />
         <FilterSelect label="Technology" value={techFilter} options={filterOptions.techs} onChange={setTechFilter} />
         <FilterSelect label="Duty" value={dutyFilter} options={filterOptions.duties} onChange={setDutyFilter} />
@@ -168,6 +183,7 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
                     src={getProxiedImageUrl(product.image)}
                     alt={product.series}
                     className="w-10 h-10 object-contain rounded bg-gray-50"
+                    onError={(e) => { e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect fill="%23f3f4f6" width="200" height="200"/><text x="100" y="108" text-anchor="middle" fill="%239ca3af" font-size="14" font-family="system-ui">No Image</text></svg>'; }}
                   />
                 </TableCell>
                 <TableCell>
