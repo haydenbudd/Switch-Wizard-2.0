@@ -24,6 +24,7 @@ export interface StockSwitchRow {
   applications: string[] | null;
   duty: string | null;
   features: string | null;
+  Gated: string | null;
   Notes: string | null;
   'Circuits Controlled': string | null;
   specs: Record<string, string> | null;
@@ -116,8 +117,13 @@ function normalizeIp(raw: string | null): string {
 function deriveFeatures(row: StockSwitchRow): string[] {
   const features: string[] = [];
 
-  if (row.Guard === 'Full' || row.Guard === 'Standard') {
+  // Any non-null Guard value means the product has a shield/guard
+  if (row.Guard) {
     features.push('shield');
+  }
+
+  if (row.Gated === 'Yes') {
+    features.push('gated');
   }
 
   if (row['Number of Pedals'] != null && row['Number of Pedals'] >= 2) {

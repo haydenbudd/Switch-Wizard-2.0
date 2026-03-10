@@ -291,6 +291,11 @@ export const features: Option[] = [
     description: 'Two independent pedals.',
   },
   {
+    id: 'gated',
+    label: 'Gated Guard',
+    description: 'Hinged guard that must be lifted before activation.',
+  },
+  {
     id: 'custom_cable',
     label: 'Custom Cable Length',
     description: 'Non-standard cord length.',

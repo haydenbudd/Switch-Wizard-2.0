@@ -289,9 +289,10 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     {product.features.map((feature) => (
                       <Badge key={feature} variant="secondary" className={`capitalize text-xs gap-1.5 px-3 py-1 ${colorClasses(getFeatureColor(feature))}`}>
                         {feature === 'shield' && <Shield className="w-3 h-3" />}
+                        {feature === 'gated' && <Shield className="w-3 h-3" />}
                         {feature === 'multi_stage' && <Layers className="w-3 h-3" />}
                         {feature === 'twin' && <Layers className="w-3 h-3" />}
-                        {!['shield', 'multi_stage', 'twin'].includes(feature) && <CheckCircle2 className="w-3 h-3" />}
+                        {!['shield', 'gated', 'multi_stage', 'twin'].includes(feature) && <CheckCircle2 className="w-3 h-3" />}
                         {feature.replace(/_/g, ' ')}
                       </Badge>
                     ))}
