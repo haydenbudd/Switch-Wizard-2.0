@@ -124,6 +124,11 @@ export function BulkAttributeUpdater({ onUpdateComplete }: BulkAttributeUpdaterP
                   <SelectItem value="material">Material</SelectItem>
                   <SelectItem value="ip">IP Rating</SelectItem>
                   <SelectItem value="connector_type">Connector Type</SelectItem>
+                  <SelectItem value="circuitry">Circuits Controlled</SelectItem>
+                  <SelectItem value="stages">Stages</SelectItem>
+                  <SelectItem value="configuration">Configuration</SelectItem>
+                  <SelectItem value="color">Color</SelectItem>
+                  <SelectItem value="pfc_config">PFC Config</SelectItem>
                   <SelectItem value="applications">Application (Append)</SelectItem>
                 </SelectContent>
               </Select>

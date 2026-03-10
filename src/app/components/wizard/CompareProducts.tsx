@@ -14,6 +14,7 @@ import {
   getMaterialColor,
   getConnectionColor,
   getFeatureColor,
+  getCircuitColor,
 } from '@/app/lib/attributeColors';
 
 const MotionDiv = motion.div;
@@ -30,7 +31,7 @@ const COMPARE_ROWS: { label: string; getValue: (p: Product) => string; getColor:
   { label: 'Duty Rating', getValue: (p) => p.duty, getColor: (p) => colorClasses(getDutyColor(p.duty)) },
   { label: 'IP Rating', getValue: (p) => p.ip, getColor: (p) => colorClasses(getIpColor(p.ip)) },
   { label: 'Material', getValue: (p) => p.material, getColor: (p) => colorClasses(getMaterialColor(p.material)) },
-  { label: 'Circuit Count', getValue: (p) => p.circuitry || '—', getColor: () => '' },
+  { label: 'Circuit Count', getValue: (p) => p.circuitry || '—', getColor: (p) => p.circuitry ? colorClasses(getCircuitColor(p.circuitry)) : '' },
   { label: 'Connection', getValue: (p) => p.connector_type?.replace(/-/g, ' ') || '—', getColor: (p) => p.connector_type ? colorClasses(getConnectionColor(p.connector_type)) : '' },
   { label: 'Part Number', getValue: (p) => p.part_number || '—', getColor: () => '' },
   { label: 'Features', getValue: (p) => (p.features || []).map(f => f.replace('_', ' ')).join(', ') || '—', getColor: () => '' },

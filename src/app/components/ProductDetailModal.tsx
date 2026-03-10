@@ -36,6 +36,7 @@ import {
   getMaterialColor,
   getConnectionColor,
   getFeatureColor,
+  getCircuitColor,
   type AttributeColor,
 } from '@/app/lib/attributeColors';
 
@@ -135,7 +136,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
   ];
 
   if (product.circuitry) {
-    specs.push({ icon: <Hash className="w-4 h-4 text-muted-foreground" />, label: 'Circuits', value: product.circuitry });
+    specs.push({ icon: <Hash className="w-4 h-4 text-muted-foreground" />, label: 'Circuits', value: product.circuitry, color: getCircuitColor(product.circuitry) });
   }
   if (product.connector_type) {
     specs.push({ icon: <Cable className="w-4 h-4 text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
