@@ -119,8 +119,8 @@ function DetailedSpecs({ specs }: { specs: Record<string, string> }) {
       <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Specifications</h3>
       <div className="rounded-xl border border-border/40 divide-y divide-border/30">
         {visibleEntries.map(([key, value]) => (
-          <div key={key} className="flex gap-4 px-4 py-2.5 text-sm">
-            <span className="text-muted-foreground whitespace-nowrap min-w-[140px]">{key}</span>
+          <div key={key} className="flex flex-col sm:flex-row sm:gap-4 gap-0.5 px-4 py-2.5 text-sm">
+            <span className="text-muted-foreground whitespace-nowrap sm:min-w-[140px]">{key}</span>
             <span className="font-medium text-foreground">{value}</span>
           </div>
         ))}
@@ -293,7 +293,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
               </p>
 
               {/* Specs grid */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                 {specs.map((spec) => (
                   <div
                     key={spec.label}
