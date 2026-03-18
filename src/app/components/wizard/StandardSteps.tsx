@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff } from 'lucide-react';
+import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Shield, Flag, Award } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
@@ -97,7 +97,7 @@ export function StandardSteps({
           <h1 className="text-4xl md:text-6xl font-bold mb-5 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
             Find Your Solution
           </h1>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed text-center">
             Select your industry to begin. We'll guide you to the right foot switch.
           </p>
         </motion.div>
@@ -108,10 +108,11 @@ export function StandardSteps({
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {(categories || []).map((category, i) => (
             <motion.div
               key={category.id}
+              className="min-w-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 + i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -120,14 +121,14 @@ export function StandardSteps({
                 hoverEffect
                 interactive
                 aria-label={category.label}
-                className="p-10 h-full transition-all duration-300 group"
+                className="p-6 md:p-8 h-full transition-all duration-300 group"
                 onClick={() => onCategorySelect(category.id)}
               >
-                <div className="flex flex-col items-center text-center h-full">
-                  <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5">
+                <div className="flex flex-col items-center text-center h-full min-w-0">
+                  <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5 shrink-0">
                     {category.icon && <category.icon className="w-8 h-8" />}
                   </div>
-                  <h3 className="text-xl font-semibold tracking-tight mb-3">{category.label}</h3>
+                  <h3 className="text-xl font-semibold tracking-tight mb-3 break-words w-full">{category.label}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mt-auto">
                     {category.description}
                   </p>
@@ -136,6 +137,27 @@ export function StandardSteps({
             </motion.div>
           ))}
         </div>
+
+        {/* Trust Bar */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+          className="flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-16 pt-8 border-t border-border"
+        >
+          <div className="flex items-center gap-2.5 text-muted-foreground">
+            <Shield className="w-5 h-5 text-primary/60" />
+            <span className="text-sm font-medium">ISO Certified</span>
+          </div>
+          <div className="flex items-center gap-2.5 text-muted-foreground">
+            <Flag className="w-5 h-5 text-primary/60" />
+            <span className="text-sm font-medium">Made in USA</span>
+          </div>
+          <div className="flex items-center gap-2.5 text-muted-foreground">
+            <Award className="w-5 h-5 text-primary/60" />
+            <span className="text-sm font-medium">70+ Years of Excellence</span>
+          </div>
+        </motion.div>
       </div>
     );
   }
