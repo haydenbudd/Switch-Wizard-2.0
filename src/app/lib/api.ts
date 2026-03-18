@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import { transformRow, type StockSwitchRow } from './transformProduct';
-import { projectId, publicAnonKey } from '/utils/supabase/info';
+import { projectId, publicAnonKey } from '../../../utils/supabase/info';
 
 const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/make-server-963c7b83`;
 
