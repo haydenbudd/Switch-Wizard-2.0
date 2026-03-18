@@ -388,21 +388,21 @@ body,
 
 /* Responsive scaling — larger screens get a bigger wizard */
 #lm-product-finder {
-  zoom: 1;
+  zoom: 1.05;
 }
 @media (min-width: 1200px) {
   #lm-product-finder {
-    zoom: 1.1;
+    zoom: 1.15;
   }
 }
 @media (min-width: 1800px) {
   #lm-product-finder {
-    zoom: 1.2;
+    zoom: 1.3;
   }
 }
 @media (min-width: 2400px) {
   #lm-product-finder {
-    zoom: 1.25;
+    zoom: 1.45;
   }
 }
 
