@@ -291,7 +291,7 @@ export function ResultsPage({
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-row flex-nowrap gap-4 items-center sticky top-16 z-30 glass-card p-4 rounded-2xl">
+        <div className="!flex !flex-row !flex-nowrap gap-4 items-center sticky top-16 z-30 glass-card p-4 rounded-2xl" style={{ display: 'flex', flexWrap: 'nowrap' }}>
           <EnhancedSearch
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
