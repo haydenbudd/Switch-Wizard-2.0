@@ -137,11 +137,11 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
 
         {/* Specs & Features */}
         <div className="flex flex-wrap gap-1.5 mb-6">
-          <Badge variant="secondary" className={`text-sm px-2 py-0.5 h-5 font-normal flex items-center ${colorClasses(getIpColor(product.ip))}`}>
+          <Badge variant="secondary" className={`text-sm px-2.5 py-1 font-normal flex items-center ${colorClasses(getIpColor(product.ip))}`}>
             <IpIcon />
             {product.ip}
           </Badge>
-          <Badge variant="secondary" className={`text-sm px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getMaterialColor(product.material))}`}>
+          <Badge variant="secondary" className={`text-sm px-2.5 py-1 font-normal capitalize flex items-center ${colorClasses(getMaterialColor(product.material))}`}>
             <MaterialIcon material={product.material} />
             {product.material}
           </Badge>
@@ -149,7 +149,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
             <Badge
               key={feature}
               variant="secondary"
-              className={`text-sm px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getFeatureColor(feature))}`}
+              className={`text-sm px-2.5 py-1 font-normal capitalize flex items-center ${colorClasses(getFeatureColor(feature))}`}
             >
               <FeatureIcon feature={feature} />
               {feature.replace('_', ' ')}

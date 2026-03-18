@@ -117,17 +117,17 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                     transition={{ type: 'spring', damping: 25, stiffness: 250 }}
                     className="overflow-hidden"
                   >
-                    <div className="border-t border-border/50 px-5 py-4 max-h-[60vh] overflow-y-auto">
+                    <div className="border-t border-border/50 px-6 py-5 max-h-[60vh] overflow-y-auto">
                       <div className="overflow-x-auto">
-                        <table className="w-full min-w-[500px] border-collapse">
+                        <table className="w-full min-w-[600px] border-collapse">
                           <thead>
                             <tr>
-                              <th className="text-left p-4 !text-base !font-medium !text-muted-foreground w-44" />
+                              <th className="text-left p-4 !text-lg !font-medium !text-muted-foreground w-52" />
                               {products.map((product) => (
-                                <th key={product.id} className="p-3 text-center min-w-[180px]">
-                                  <div className="flex flex-col items-center gap-2">
+                                <th key={product.id} className="p-4 text-center min-w-[220px]">
+                                  <div className="flex flex-col items-center gap-3">
                                     {product.image && (
-                                      <div className="w-28 h-20 flex items-center justify-center">
+                                      <div className="w-36 h-28 flex items-center justify-center">
                                         <ImageWithFallback
                                           src={getProxiedImageUrl(product.image)}
                                           alt={product.series}
@@ -135,14 +135,14 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                         />
                                       </div>
                                     )}
-                                    <span className="!text-xl !font-bold">{product.series}</span>
+                                    <span className="!text-2xl !font-bold">{product.series}</span>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="!text-xs !text-muted-foreground h-6 px-2"
+                                      className="!text-sm !text-muted-foreground h-8 px-3"
                                       onClick={() => onRemove(product.id)}
                                     >
-                                      <X className="w-3 h-3 mr-1" /> Remove
+                                      <X className="w-4 h-4 mr-1" /> Remove
                                     </Button>
                                   </div>
                                 </th>
@@ -152,7 +152,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                           <tbody>
                             {COMPARE_ROWS.map((row) => (
                               <tr key={row.label} className="border-t border-border/50">
-                                <td className="p-4 !text-base !font-medium !text-muted-foreground">{row.label}</td>
+                                <td className="p-4 !text-lg !font-medium !text-muted-foreground">{row.label}</td>
                                 {products.map((product) => {
                                   const value = row.getValue(product);
                                   const color = row.getColor(product);
@@ -160,12 +160,12 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                   if (row.label === 'Features' && product.features && product.features.length > 0) {
                                     return (
                                       <td key={product.id} className="p-4 text-center">
-                                        <div className="flex flex-wrap justify-center gap-1">
+                                        <div className="flex flex-wrap justify-center gap-1.5">
                                           {product.features.map((f) => (
                                             <Badge
                                               key={f}
                                               variant="secondary"
-                                              className={`text-sm capitalize font-normal ${colorClasses(getFeatureColor(f))}`}
+                                              className={`!text-base capitalize font-normal px-3 py-1 ${colorClasses(getFeatureColor(f))}`}
                                             >
                                               {f.replace('_', ' ')}
                                             </Badge>
@@ -178,7 +178,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                     <td key={product.id} className="p-4 text-center">
                                       <Badge
                                         variant="secondary"
-                                        className={`text-sm capitalize font-normal ${color}`}
+                                        className={`!text-base capitalize font-normal px-3 py-1 ${color}`}
                                       >
                                         {value}
                                       </Badge>
@@ -189,12 +189,12 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                             ))}
                             {/* Link row */}
                             <tr className="border-t border-border/50">
-                              <td className="p-4 !text-base !font-medium !text-muted-foreground">Details</td>
+                              <td className="p-4 !text-lg !font-medium !text-muted-foreground">Details</td>
                               {products.map((product) => (
                                 <td key={product.id} className="p-4 text-center">
                                   <a href={product.link} target="_blank" rel="noopener noreferrer">
-                                    <Button size="sm" variant="outline" className="gap-1.5 !text-sm">
-                                      <ExternalLink className="w-4 h-4" /> View
+                                    <Button size="sm" variant="outline" className="gap-2 !text-base px-4">
+                                      <ExternalLink className="w-5 h-5" /> View
                                     </Button>
                                   </a>
                                 </td>

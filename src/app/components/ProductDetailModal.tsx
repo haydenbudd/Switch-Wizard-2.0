@@ -80,7 +80,7 @@ function getDatasheetUrl(series: string): string | null {
 }
 
 function MaterialIcon({ material }: { material: string }) {
-  const cls = 'w-4 h-4 !text-muted-foreground';
+  const cls = 'w-5 h-5 !text-muted-foreground';
   const m = material.toLowerCase();
   if (m.includes('cast iron')) return <Anvil className={cls} />;
   if (m.includes('stainless')) return <Sparkles className={cls} />;
@@ -92,7 +92,7 @@ function MaterialIcon({ material }: { material: string }) {
 }
 
 function TechIcon({ tech }: { tech: string }) {
-  const cls = 'w-4 h-4 !text-muted-foreground';
+  const cls = 'w-5 h-5 !text-muted-foreground';
   if (tech === 'wireless') return <Zap className={cls} />;
   if (tech === 'pneumatic') return <Wind className={cls} />;
   return <Zap className={cls} />;
@@ -162,34 +162,34 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
   const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor }[] = [
     { icon: <TechIcon tech={product.technology} />, label: 'Technology', value: product.technology, color: getTechColor(product.technology) },
-    { icon: <Gauge className="w-4 h-4 !text-muted-foreground" />, label: 'Duty Rating', value: product.duty, color: getDutyColor(product.duty) },
-    { icon: <Droplets className="w-4 h-4 !text-muted-foreground" />, label: 'IP Rating', value: product.ip, color: getIpColor(product.ip) },
+    { icon: <Gauge className="w-5 h-5 !text-muted-foreground" />, label: 'Duty Rating', value: product.duty, color: getDutyColor(product.duty) },
+    { icon: <Droplets className="w-5 h-5 !text-muted-foreground" />, label: 'IP Rating', value: product.ip, color: getIpColor(product.ip) },
     { icon: <MaterialIcon material={product.material} />, label: 'Material', value: product.material, color: getMaterialColor(product.material) },
   ];
 
   if (product.circuitry) {
-    specs.push({ icon: <Hash className="w-4 h-4 !text-muted-foreground" />, label: 'Circuits', value: product.circuitry, color: getCircuitColor(product.circuitry) });
+    specs.push({ icon: <Hash className="w-5 h-5 !text-muted-foreground" />, label: 'Circuits', value: product.circuitry, color: getCircuitColor(product.circuitry) });
   }
   if (product.connector_type) {
-    specs.push({ icon: <Cable className="w-4 h-4 !text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
+    specs.push({ icon: <Cable className="w-5 h-5 !text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
   }
   if (product.stages) {
-    specs.push({ icon: <Layers className="w-4 h-4 !text-muted-foreground" />, label: 'Stages', value: product.stages });
+    specs.push({ icon: <Layers className="w-5 h-5 !text-muted-foreground" />, label: 'Stages', value: product.stages });
   }
   if (product.pedal_count && product.pedal_count > 1) {
-    specs.push({ icon: <Layers className="w-4 h-4 !text-muted-foreground" />, label: 'Pedals', value: String(product.pedal_count) });
+    specs.push({ icon: <Layers className="w-5 h-5 !text-muted-foreground" />, label: 'Pedals', value: String(product.pedal_count) });
   }
   if (product.configuration) {
-    specs.push({ icon: <ToggleLeft className="w-4 h-4 !text-muted-foreground" />, label: 'Configuration', value: product.configuration });
+    specs.push({ icon: <ToggleLeft className="w-5 h-5 !text-muted-foreground" />, label: 'Configuration', value: product.configuration });
   }
   if (product.color) {
-    specs.push({ icon: <Palette className="w-4 h-4 !text-muted-foreground" />, label: 'Color', value: product.color });
+    specs.push({ icon: <Palette className="w-5 h-5 !text-muted-foreground" />, label: 'Color', value: product.color });
   }
   if (product.voltage) {
-    specs.push({ icon: <Zap className="w-4 h-4 !text-muted-foreground" />, label: 'Voltage', value: product.voltage });
+    specs.push({ icon: <Zap className="w-5 h-5 !text-muted-foreground" />, label: 'Voltage', value: product.voltage });
   }
   if (product.amperage) {
-    specs.push({ icon: <Gauge className="w-4 h-4 !text-muted-foreground" />, label: 'Amperage', value: product.amperage });
+    specs.push({ icon: <Gauge className="w-5 h-5 !text-muted-foreground" />, label: 'Amperage', value: product.amperage });
   }
 
   return (
@@ -228,7 +228,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
               className="absolute top-4 right-4 z-10 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-muted transition-colors"
               aria-label="Close product details"
             >
-              <X className="w-4 h-4" />
+              <X className="w-5 h-5" />
             </button>
 
             {/* Hero image */}
@@ -306,7 +306,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     {spec.icon}
                     <div className="min-w-0">
                       <div className="text-sm !text-muted-foreground uppercase tracking-wide">{spec.label}</div>
-                      <div className={`text-sm font-medium capitalize truncate ${spec.color ? spec.color.text : ''}`}>{spec.value}</div>
+                      <div className={`text-base font-medium capitalize truncate ${spec.color ? spec.color.text : ''}`}>{spec.value}</div>
                     </div>
                   </div>
                 ))}
@@ -344,8 +344,8 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                   rel="noopener noreferrer"
                   className="flex-1"
                 >
-                  <Button className="w-full gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15">
-                    <ExternalLink className="w-4 h-4" />
+                  <Button className="w-full gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15">
+                    <ExternalLink className="w-5 h-5" />
                     View Product Page
                   </Button>
                 </a>
@@ -355,8 +355,8 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <Button variant="outline" className="w-full gap-2">
-                      <FileText className="w-4 h-4" />
+                    <Button variant="outline" className="w-full gap-2 !text-base">
+                      <FileText className="w-5 h-5" />
                       Datasheet PDF
                     </Button>
                   </a>
