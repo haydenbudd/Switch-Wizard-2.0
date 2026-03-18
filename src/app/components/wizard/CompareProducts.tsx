@@ -82,7 +82,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                       >
                         {p.image ? (
                           <ImageWithFallback
-                            src={getProxiedImageUrl(p.image)}
+                            src={getProxiedImageUrl(p.image, { width: 80 })}
                             alt={p.series}
                             className="w-full h-full object-cover"
                           />
@@ -129,7 +129,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                     {product.image && (
                                       <div className="w-36 h-28 flex items-center justify-center">
                                         <ImageWithFallback
-                                          src={getProxiedImageUrl(product.image)}
+                                          src={getProxiedImageUrl(product.image, { width: 250 })}
                                           alt={product.series}
                                           className="max-w-full max-h-full object-contain"
                                         />

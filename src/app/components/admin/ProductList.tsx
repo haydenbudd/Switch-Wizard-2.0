@@ -180,7 +180,7 @@ export function ProductList({ products, loading, onEdit, onDelete }: ProductList
               <TableRow key={product.id}>
                 <TableCell>
                   <img
-                    src={getProxiedImageUrl(product.image)}
+                    src={getProxiedImageUrl(product.image, { width: 80 })}
                     alt={product.series}
                     className="w-10 h-10 object-contain rounded bg-gray-50"
                     onError={(e) => { e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect fill="%23f3f4f6" width="200" height="200"/><text x="100" y="108" text-anchor="middle" fill="%239ca3af" font-size="14" font-family="system-ui">No Image</text></svg>'; }}

@@ -243,7 +243,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
               )}
               {product.image ? (
                 <ImageWithFallback
-                  src={getProxiedImageUrl(product.image)}
+                  src={getProxiedImageUrl(product.image, { width: 800, quality: 85 })}
                   alt={product.series}
                   className="max-w-full max-h-[200px] object-contain drop-shadow-xl"
                 />

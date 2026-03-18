@@ -91,7 +91,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
 
         {product.image ? (
           <ImageWithFallback
-            src={getProxiedImageUrl(product.image)}
+            src={getProxiedImageUrl(product.image, { width: 400 })}
             alt={product.series}
             className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110 drop-shadow-xl"
             loading="lazy"
