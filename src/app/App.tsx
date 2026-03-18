@@ -279,12 +279,14 @@ function AppShell({ path, navigate }: { path: string; navigate: (to: string) => 
 
   if (path.startsWith('/admin')) {
     return (
-      <AdminErrorBoundary>
-        <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', fontFamily: 'sans-serif' }}>Loading admin panel...</div>}>
-          <AdminContainer />
-        </Suspense>
-      </AdminErrorBoundary>
+      <div key="admin">
+        <AdminErrorBoundary>
+          <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', fontFamily: 'sans-serif' }}>Loading admin panel...</div>}>
+            <AdminContainer />
+          </Suspense>
+        </AdminErrorBoundary>
+      </div>
     );
   }
-  return <WizardApp />;
+  return <div key="wizard"><WizardApp /></div>;
 }
