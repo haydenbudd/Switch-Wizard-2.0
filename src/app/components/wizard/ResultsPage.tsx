@@ -222,8 +222,8 @@ export function ResultsPage({
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex">
-              <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex h-10 w-10">
+              <ArrowLeft className="w-6 h-6" aria-hidden="true" />
             </Button>
             <h2 className="!text-3xl !font-bold !text-foreground">
               Recommended Products
@@ -233,16 +233,16 @@ export function ResultsPage({
             </h2>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={handleCopyLink} className="gap-2">
-              <Link className="w-4 h-4" aria-hidden="true" />
+            <Button variant="outline" onClick={handleCopyLink} className="gap-2 !text-base">
+              <Link className="w-5 h-5" aria-hidden="true" />
               <span className="hidden sm:inline">Copy Link</span>
             </Button>
-            <Button variant="outline" onClick={onGeneratePDF} className="gap-2">
-              <Download className="w-4 h-4" aria-hidden="true" />
+            <Button variant="outline" onClick={onGeneratePDF} className="gap-2 !text-base">
+              <Download className="w-5 h-5" aria-hidden="true" />
               <span className="hidden sm:inline">Download PDF</span>
             </Button>
-            <Button variant="ghost" onClick={onReset} className="gap-2">
-              <RefreshCw className="w-4 h-4" aria-hidden="true" />
+            <Button variant="ghost" onClick={onReset} className="gap-2 !text-base">
+              <RefreshCw className="w-5 h-5" aria-hidden="true" />
               <span className="hidden sm:inline">Reset</span>
             </Button>
           </div>
