@@ -25,7 +25,7 @@ export const FilterChip = memo(function FilterChip({ label, onRemove, className 
         className="ml-1 rounded-full p-0.5 hover:bg-red-100 dark:hover:bg-red-900/40 !text-muted-foreground group-hover:!text-red-500 transition-colors"
         aria-hidden="true"
       >
-        <X className="w-4 h-4" />
+        <X className="w-5 h-5" />
       </span>
     </button>
   );

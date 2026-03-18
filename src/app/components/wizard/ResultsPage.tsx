@@ -222,8 +222,8 @@ export function ResultsPage({
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex h-10 w-10">
-              <ArrowLeft className="w-6 h-6" aria-hidden="true" />
+            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex h-12 w-12">
+              <ArrowLeft className="w-7 h-7" aria-hidden="true" />
             </Button>
             <h2 className="!text-3xl !font-bold !text-foreground">
               Recommended Products
@@ -234,15 +234,15 @@ export function ResultsPage({
           </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleCopyLink} className="gap-2 !text-base">
-              <Link className="w-5 h-5" aria-hidden="true" />
+              <Link className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Copy Link</span>
             </Button>
             <Button variant="outline" onClick={onGeneratePDF} className="gap-2 !text-base">
-              <Download className="w-5 h-5" aria-hidden="true" />
+              <Download className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Download PDF</span>
             </Button>
             <Button variant="ghost" onClick={onReset} className="gap-2 !text-base">
-              <RefreshCw className="w-5 h-5" aria-hidden="true" />
+              <RefreshCw className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Reset</span>
             </Button>
           </div>
@@ -303,7 +303,7 @@ export function ResultsPage({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 whitespace-nowrap !text-base">
-                  <ArrowUp className="w-5 h-5" aria-hidden="true" />
+                  <ArrowUp className="w-6 h-6" aria-hidden="true" />
                   Sort: <span className="font-semibold capitalize">{sortBy}</span>
                 </Button>
               </DropdownMenuTrigger>
@@ -320,7 +320,7 @@ export function ResultsPage({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="gap-2 whitespace-nowrap !text-base">
-                  <SlidersHorizontal className="w-5 h-5" aria-hidden="true" />
+                  <SlidersHorizontal className="w-6 h-6" aria-hidden="true" />
                   More Filters
                   {(dutyFilter.length > 0 || cordedFilter !== 'all' || materialFilter.length > 0) && (
                     <span className="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true" />
@@ -411,7 +411,7 @@ export function ResultsPage({
         /* Empty State */
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700" role="status">
           <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full">
-            <Search className="w-8 h-8 !text-muted-foreground" aria-hidden="true" />
+            <Search className="w-10 h-10 !text-muted-foreground" aria-hidden="true" />
           </div>
           <div className="max-w-md">
             <h3 className="text-xl font-semibold mb-2">No exact matches found</h3>
@@ -428,7 +428,7 @@ export function ResultsPage({
                 </p>
                 <a href={`mailto:sales@linemaster.com?subject=${contactSubject}&body=${contactBody}`}>
                   <Button size="sm" className="w-full gap-2">
-                    <Mail className="w-4 h-4" /> Contact Us
+                    <Mail className="w-6 h-6" /> Contact Us
                   </Button>
                 </a>
               </GlassCard>
@@ -472,7 +472,7 @@ export function ResultsPage({
           onClick={() => setMobileDrawerOpen(true)}
           aria-label="Open actions menu"
         >
-          <Menu className="w-5 h-5" aria-hidden="true" />
+          <Menu className="w-7 h-7" aria-hidden="true" />
         </Button>
       </div>
 
@@ -485,22 +485,22 @@ export function ResultsPage({
           <div className="flex flex-col gap-2 p-4 pb-8">
             <DrawerClose asChild>
               <Button variant="outline" className="w-full gap-2 justify-start" onClick={onBack}>
-                <ArrowLeft className="w-4 h-4" /> Go Back
+                <ArrowLeft className="w-6 h-6" /> Go Back
               </Button>
             </DrawerClose>
             <DrawerClose asChild>
               <Button variant="outline" className="w-full gap-2 justify-start" onClick={handleCopyLink}>
-                <Link className="w-4 h-4" /> Copy Share Link
+                <Link className="w-6 h-6" /> Copy Share Link
               </Button>
             </DrawerClose>
             <DrawerClose asChild>
               <Button variant="outline" className="w-full gap-2 justify-start" onClick={onGeneratePDF}>
-                <Download className="w-4 h-4" /> Download PDF
+                <Download className="w-6 h-6" /> Download PDF
               </Button>
             </DrawerClose>
             <DrawerClose asChild>
               <Button variant="outline" className="w-full gap-2 justify-start !text-destructive" onClick={onReset}>
-                <RefreshCw className="w-4 h-4" /> Reset Wizard
+                <RefreshCw className="w-6 h-6" /> Reset Wizard
               </Button>
             </DrawerClose>
           </div>

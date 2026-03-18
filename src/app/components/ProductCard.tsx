@@ -10,7 +10,7 @@ import { colorClasses, getIpColor, getMaterialColor, getFeatureColor } from '@/a
 
 // Icon mapping for features - defined outside component to avoid re-creation on every render
 function FeatureIcon({ feature }: { feature: string }) {
-  const cls = "w-4 h-4 mr-1";
+  const cls = "w-6 h-6 mr-1";
   switch (feature) {
     case 'shield': return <Shield className={cls} />;
     case 'wireless': return <Zap className={cls} />;
@@ -21,12 +21,12 @@ function FeatureIcon({ feature }: { feature: string }) {
 
 // Icon for IP rating badges
 function IpIcon() {
-  return <Droplets className="w-4 h-4 mr-1 opacity-70" />;
+  return <Droplets className="w-6 h-6 mr-1 opacity-70" />;
 }
 
 // Icon mapping for material badges
 function MaterialIcon({ material }: { material: string }) {
-  const cls = "w-4 h-4 mr-1 opacity-70";
+  const cls = "w-6 h-6 mr-1 opacity-70";
   const m = material.toLowerCase();
   if (m.includes('cast iron'))     return <Anvil className={cls} />;
   if (m.includes('stainless'))     return <Sparkles className={cls} />;
@@ -69,7 +69,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
           aria-pressed={isComparing}
           title={isComparing ? 'Remove from comparison' : 'Add to comparison'}
         >
-          <GitCompareArrows className={`w-4 h-4 transition-transform duration-300 ${isComparing ? 'rotate-180' : ''}`} />
+          <GitCompareArrows className={`w-6 h-6 transition-transform duration-300 ${isComparing ? 'rotate-180' : ''}`} />
           {isComparing ? 'Comparing' : 'Compare'}
         </button>
       )}
@@ -78,7 +78,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
       {isFlagship && (
         <div className="absolute top-4 right-4 z-20">
           <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-sm tracking-wide uppercase">
-            <Star className="w-4 h-4 fill-current opacity-70" />
+            <Star className="w-6 h-6 fill-current opacity-70" />
             Top Choice
           </Badge>
         </div>
@@ -165,7 +165,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
             aria-label={`View details for ${product.series}`}
           >
             View Details
-            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
+            <ArrowRight className="w-6 h-6 ml-2 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
           </Button>
         </div>
       </div>

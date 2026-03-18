@@ -61,7 +61,7 @@ export function EnhancedSearch({
         isFocused ? "border-blue-500/50 shadow-[0_0_15px_rgba(59,130,246,0.15)] ring-1 ring-blue-500/20" : "border-white/20 dark:border-white/10 shadow-sm hover:border-white/40 dark:hover:border-white/20"
       )}>
         <Search className={cn(
-          "w-5 h-5 ml-3 transition-colors",
+          "w-6 h-6 ml-3 transition-colors",
           isFocused ? "text-blue-500" : "text-muted-foreground"
         )} />
         
@@ -84,7 +84,7 @@ export function EnhancedSearch({
             onClick={handleClear}
             aria-label="Clear search"
           >
-            <X className="w-4 h-4" aria-hidden="true" />
+            <X className="w-5 h-5" aria-hidden="true" />
           </Button>
         )}
       </div>

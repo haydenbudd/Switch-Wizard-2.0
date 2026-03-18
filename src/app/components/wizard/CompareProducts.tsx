@@ -66,7 +66,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
               >
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 text-primary">
-                    <GitCompareArrows className="w-6 h-6" />
+                    <GitCompareArrows className="w-8 h-8" />
                     <span className="!text-xl !font-semibold !text-primary">
                       Compare ({products.length})
                     </span>
@@ -101,8 +101,8 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                 <div className="flex items-center gap-2">
                   {products.length >= 2 && (
                     expanded
-                      ? <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                      : <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                      ? <ChevronDown className="w-7 h-7 text-muted-foreground" />
+                      : <ChevronUp className="w-7 h-7 text-muted-foreground" />
                   )}
                 </div>
               </button>
@@ -142,7 +142,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                       className="!text-sm !text-muted-foreground h-8 px-3"
                                       onClick={() => onRemove(product.id)}
                                     >
-                                      <X className="w-4 h-4 mr-1" /> Remove
+                                      <X className="w-5 h-5 mr-1" /> Remove
                                     </Button>
                                   </div>
                                 </th>
@@ -194,7 +194,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                 <td key={product.id} className="p-4 text-center">
                                   <a href={product.link} target="_blank" rel="noopener noreferrer">
                                     <Button size="sm" variant="outline" className="gap-2 !text-base px-4">
-                                      <ExternalLink className="w-5 h-5" /> View
+                                      <ExternalLink className="w-6 h-6" /> View
                                     </Button>
                                   </a>
                                 </td>
