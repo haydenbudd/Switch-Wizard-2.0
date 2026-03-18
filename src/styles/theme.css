@@ -443,6 +443,38 @@ body,
   font-weight: 600 !important;
 }
 
+/* Secondary text elements — subtitles, dividers, trust bar */
+#lm-product-finder .lm-subtitle {
+  font-size: 1.25rem !important;
+  line-height: 1.6 !important;
+}
+
+#lm-product-finder .lm-divider-label {
+  font-size: 0.875rem !important;
+  letter-spacing: 0.15em !important;
+}
+
+#lm-product-finder .lm-trust-label {
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+  font-weight: 500 !important;
+}
+
+#lm-product-finder .lm-trust-icon {
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+}
+
+#lm-product-finder .lm-step-subtitle {
+  font-size: 1.125rem !important;
+  line-height: 1.5 !important;
+}
+
+#lm-product-finder .lm-card-description {
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+
 /* Progress bar glow */
 .progress-glow {
   box-shadow: 0 0 8px rgba(30, 64, 175, 0.3), 0 0 2px rgba(30, 64, 175, 0.5);

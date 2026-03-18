@@ -73,7 +73,7 @@ export const OptionCard = memo(function OptionCard({
       </span>
 
       {description && (
-        <p className="text-sm text-muted-foreground leading-snug max-w-[220px]">
+        <p className="lm-card-description text-muted-foreground max-w-[280px]">
           {description}
         </p>
       )}

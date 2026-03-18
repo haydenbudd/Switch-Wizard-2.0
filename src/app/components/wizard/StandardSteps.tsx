@@ -320,7 +320,7 @@ export function StandardSteps({
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className="w-full px-2 pt-20 pb-12">
+      <div className="w-full px-6 pt-20 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -344,18 +344,18 @@ export function StandardSteps({
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
+          <p className="lm-subtitle text-muted-foreground" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
             Select your industry to begin. We'll guide you to the right foot switch.
           </p>
         </motion.div>
 
         <div className="flex items-center gap-4 w-full mb-8" aria-hidden="true">
           <div className="h-px flex-1 bg-border" />
-          <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">Choose Your Industry</span>
+          <span className="lm-divider-label font-semibold uppercase text-muted-foreground">Choose Your Industry</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto" style={{ maxWidth: '100%' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto" style={{ maxWidth: '960px' }}>
           {(categories || []).map((category, i) => (
             <motion.div
               key={category.id}
@@ -376,7 +376,7 @@ export function StandardSteps({
                     {category.icon && <category.icon className="w-8 h-8" aria-hidden="true" />}
                   </div>
                   <span className="lm-category-label block tracking-tight mb-3 w-full">{category.label}</span>
-                  <p className="text-sm text-muted-foreground leading-relaxed mt-auto">
+                  <p className="lm-card-description text-muted-foreground mt-auto">
                     {category.description}
                   </p>
                 </div>
@@ -392,17 +392,17 @@ export function StandardSteps({
           transition={{ delay: 0.6, duration: 0.8 }}
           className="flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-20 pt-10 border-t border-border/50"
         >
-          <div className="flex items-center gap-2.5 text-muted-foreground">
-            <ShieldCert className="w-5 h-5 text-primary/60" aria-hidden="true" />
-            <span className="text-sm font-medium">ISO Certified</span>
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <ShieldCert className="lm-trust-icon text-primary/60" aria-hidden="true" />
+            <span className="lm-trust-label">ISO Certified</span>
           </div>
-          <div className="flex items-center gap-2.5 text-muted-foreground">
-            <Flag className="w-5 h-5 text-primary/60" aria-hidden="true" />
-            <span className="text-sm font-medium">Made in USA</span>
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <Flag className="lm-trust-icon text-primary/60" aria-hidden="true" />
+            <span className="lm-trust-label">Made in USA</span>
           </div>
-          <div className="flex items-center gap-2.5 text-muted-foreground">
-            <Award className="w-5 h-5 text-primary/60" aria-hidden="true" />
-            <span className="text-sm font-medium">70+ Years of Excellence</span>
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <Award className="lm-trust-icon text-primary/60" aria-hidden="true" />
+            <span className="lm-trust-label">70+ Years of Excellence</span>
           </div>
         </motion.div>
 
@@ -415,7 +415,7 @@ export function StandardSteps({
   // Common wrapper for all steps after category selection
   return (
     <Fragment>
-    <div className="w-full px-2 pt-16 pb-16">
+    <div className="w-full px-6 pt-16 pb-16">
       {/* Progress Bar */}
       <div className="w-full mb-14">
         <div className="flex justify-between text-xs font-medium text-muted-foreground mb-2.5 tracking-wide">
@@ -462,7 +462,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Select Your Application</span>
-                  <p className="text-muted-foreground">Choose the specific use case for your foot switch</p>
+                  <p className="lm-step-subtitle text-muted-foreground">Choose the specific use case for your foot switch</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
                   {filteredApplications.map((app, i) => (
@@ -485,7 +485,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Select Technology</span>
-                  <p className="text-muted-foreground">Choose the switching mechanism for your application</p>
+                  <p className="lm-step-subtitle text-muted-foreground">Choose the switching mechanism for your application</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
@@ -511,7 +511,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Select Action Type</span>
-                  <p className="text-muted-foreground">How should the switch activate and deactivate?</p>
+                  <p className="lm-step-subtitle text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
@@ -537,7 +537,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Operating Environment</span>
-                  <p className="text-muted-foreground">Where will the switch be used?</p>
+                  <p className="lm-step-subtitle text-muted-foreground">Where will the switch be used?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
                   {(environments || []).map((env, i) => (
@@ -561,7 +561,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Duty Rating</span>
-                  <p className="text-muted-foreground">How heavy will the usage be?</p>
+                  <p className="lm-step-subtitle text-muted-foreground">How heavy will the usage be?</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
@@ -585,7 +585,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Connection Type</span>
-                  <p className="text-muted-foreground">How should the switch connect to your equipment?</p>
+                  <p className="lm-step-subtitle text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
                   {(connections || []).map((conn, i) => (
@@ -609,7 +609,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Circuits Controlled</span>
-                  <p className="text-muted-foreground">How many circuits do you need to control?</p>
+                  <p className="lm-step-subtitle text-muted-foreground">How many circuits do you need to control?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
                   {(circuitCounts || []).map((cc, i) => (
@@ -633,7 +633,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Safety Guard</span>
-                  <p className="text-muted-foreground">Do you need protection against accidental activation?</p>
+                  <p className="lm-step-subtitle text-muted-foreground">Do you need protection against accidental activation?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
                   <OptionCard
@@ -663,7 +663,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <span className="lm-step-title block mb-2">Additional Features</span>
-                  <p className="text-muted-foreground">Select any that apply, or skip to view results.</p>
+                  <p className="lm-step-subtitle text-muted-foreground">Select any that apply, or skip to view results.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
                   {(features || [])
