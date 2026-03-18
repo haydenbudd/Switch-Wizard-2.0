@@ -344,7 +344,7 @@ export function StandardSteps({
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed text-center">
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
             Select your industry to begin. We'll guide you to the right foot switch.
           </p>
         </motion.div>
@@ -355,7 +355,7 @@ export function StandardSteps({
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {(categories || []).map((category, i) => (
             <motion.div
               key={category.id}
@@ -375,7 +375,7 @@ export function StandardSteps({
                   <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5 shrink-0">
                     {category.icon && <category.icon className="w-8 h-8" aria-hidden="true" />}
                   </div>
-                  <h2 className="text-base md:text-lg font-semibold tracking-tight mb-3 w-full">{category.label}</h2>
+                  <span className="block font-semibold tracking-tight mb-3 w-full" style={{ fontSize: '1.125rem', lineHeight: '1.4' }}>{category.label}</span>
                   <p className="text-sm text-muted-foreground leading-relaxed mt-auto">
                     {category.description}
                   </p>
