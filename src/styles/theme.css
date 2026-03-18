@@ -445,33 +445,33 @@ body,
 
 /* Secondary text elements — subtitles, dividers, trust bar */
 #lm-product-finder .lm-subtitle {
-  font-size: 1.25rem !important;
+  font-size: 1.5rem !important;
   line-height: 1.6 !important;
 }
 
 #lm-product-finder .lm-divider-label {
-  font-size: 0.875rem !important;
+  font-size: 1.1rem !important;
   letter-spacing: 0.15em !important;
 }
 
 #lm-product-finder .lm-trust-label {
-  font-size: 1rem !important;
+  font-size: 1.25rem !important;
   line-height: 1.5 !important;
   font-weight: 500 !important;
 }
 
 #lm-product-finder .lm-trust-icon {
-  width: 1.5rem !important;
-  height: 1.5rem !important;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
 }
 
 #lm-product-finder .lm-step-subtitle {
-  font-size: 1.125rem !important;
+  font-size: 1.375rem !important;
   line-height: 1.5 !important;
 }
 
 #lm-product-finder .lm-card-description {
-  font-size: 1rem !important;
+  font-size: 1.2rem !important;
   line-height: 1.6 !important;
 }
 

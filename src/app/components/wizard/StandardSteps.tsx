@@ -320,7 +320,7 @@ export function StandardSteps({
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className="w-full px-24 pt-20 pb-12">
+      <div className="pt-20 pb-12" style={{ paddingLeft: '15%', paddingRight: '15%' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -415,7 +415,7 @@ export function StandardSteps({
   // Common wrapper for all steps after category selection
   return (
     <Fragment>
-    <div className="w-full px-24 pt-16 pb-16">
+    <div className="pt-16 pb-16" style={{ paddingLeft: '15%', paddingRight: '15%' }}>
       {/* Progress Bar */}
       <div className="mx-auto mb-14" style={{ maxWidth: '700px' }}>
         <div className="flex justify-between lm-step-subtitle font-medium text-muted-foreground mb-2.5 tracking-wide">
