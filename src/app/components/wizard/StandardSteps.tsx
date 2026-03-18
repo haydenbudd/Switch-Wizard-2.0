@@ -320,7 +320,7 @@ export function StandardSteps({
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className="container mx-auto px-4 pt-28 pb-16">
+      <div className="w-full px-2 pt-20 pb-12">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -349,7 +349,7 @@ export function StandardSteps({
           </p>
         </motion.div>
 
-        <div className="flex items-center gap-4 max-w-5xl mx-auto mb-8" aria-hidden="true">
+        <div className="flex items-center gap-4 w-full mb-8" aria-hidden="true">
           <div className="h-px flex-1 bg-border" />
           <span className="text-xs font-semibold tracking-widest uppercase text-muted-foreground">Choose Your Industry</span>
           <div className="h-px flex-1 bg-border" />
@@ -368,7 +368,7 @@ export function StandardSteps({
                 hoverEffect
                 interactive
                 aria-label={category.label}
-                className="p-6 md:p-8 h-full transition-all duration-300 group"
+                className="p-8 md:p-10 h-full transition-all duration-300 group"
                 onClick={() => onCategorySelect(category.id)}
               >
                 <div className="flex flex-col items-center text-center h-full min-w-0">
@@ -415,9 +415,9 @@ export function StandardSteps({
   // Common wrapper for all steps after category selection
   return (
     <Fragment>
-    <div className="container mx-auto px-4 pt-24 pb-20">
+    <div className="w-full px-2 pt-16 pb-16">
       {/* Progress Bar */}
-      <div className="max-w-6xl mx-auto mb-14">
+      <div className="w-full mb-14">
         <div className="flex justify-between text-xs font-medium text-muted-foreground mb-2.5 tracking-wide">
           <span className="uppercase">Step {getDisplayStep(wizardState.step)} of {totalSteps}</span>
           <span className="tabular-nums">{progressPercent}%</span>
@@ -437,7 +437,7 @@ export function StandardSteps({
         {stepAnnouncement}
       </div>
 
-      <div className="max-w-6xl mx-auto" ref={stepContentRef} tabIndex={-1} style={{ outline: 'none' }}>
+      <div className="w-full" ref={stepContentRef} tabIndex={-1} style={{ outline: 'none' }}>
         <div className="flex items-center justify-between mb-8">
           <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
@@ -464,7 +464,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Select Your Application</span>
                   <p className="text-muted-foreground">Choose the specific use case for your foot switch</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
                   {filteredApplications.map((app, i) => (
                     <OptionCard
                       key={app.id}
@@ -487,7 +487,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Select Technology</span>
                   <p className="text-muted-foreground">Choose the switching mechanism for your application</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto" role="radiogroup" aria-label="Select technology">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
                     .filter((t) => t.availableFor?.includes(wizardState.selectedApplication))
                     .map((tech, i) => (
@@ -513,7 +513,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Select Action Type</span>
                   <p className="text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto" role="radiogroup" aria-label="Select action type">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
                     .map((action, i) => (
@@ -539,7 +539,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Operating Environment</span>
                   <p className="text-muted-foreground">Where will the switch be used?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto" role="radiogroup" aria-label="Select operating environment">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
                   {(environments || []).map((env, i) => (
                     <OptionCard
                       key={env.id}
@@ -563,7 +563,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Duty Rating</span>
                   <p className="text-muted-foreground">How heavy will the usage be?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto" role="radiogroup" aria-label="Select duty rating">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
                       key={duty.id}
@@ -587,7 +587,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Connection Type</span>
                   <p className="text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto" role="radiogroup" aria-label="Select connection type">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
                   {(connections || []).map((conn, i) => (
                     <OptionCard
                       key={conn.id}
@@ -611,7 +611,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Circuits Controlled</span>
                   <p className="text-muted-foreground">How many circuits do you need to control?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-5xl mx-auto" role="radiogroup" aria-label="Select circuit count">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
                   {(circuitCounts || []).map((cc, i) => (
                     <OptionCard
                       key={cc.id}
@@ -635,7 +635,7 @@ export function StandardSteps({
                   <span className="lm-step-title block mb-2">Safety Guard</span>
                   <p className="text-muted-foreground">Do you need protection against accidental activation?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto" role="radiogroup" aria-label="Select safety guard option">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
                   <OptionCard
                     label="Yes, Add Guard"
                     description="Safety guard prevents accidental activation."

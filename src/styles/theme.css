@@ -403,14 +403,14 @@ body,
 
 /* Category card heading */
 .lm-category-label {
-  font-size: 1.5rem !important;
-  line-height: 1.3 !important;
+  font-size: 1.75rem !important;
+  line-height: 1.2 !important;
   font-weight: 600 !important;
 }
 
 /* Step titles */
 .lm-step-title {
-  font-size: 1.875rem !important;
+  font-size: 2.25rem !important;
   line-height: 1.2 !important;
   font-weight: 700 !important;
   letter-spacing: -0.025em !important;
@@ -418,8 +418,8 @@ body,
 
 /* Option card label */
 .lm-option-label {
-  font-size: 1.125rem !important;
-  line-height: 1.4 !important;
+  font-size: 1.375rem !important;
+  line-height: 1.3 !important;
   font-weight: 600 !important;
 }
 
