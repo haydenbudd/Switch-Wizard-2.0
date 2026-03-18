@@ -65,12 +65,12 @@ export const OptionCard = memo(function OptionCard({
         {Icon ? <Icon className="w-7 h-7" aria-hidden="true" /> : <div className="w-7 h-7" />}
       </div>
 
-      <h3 className={cn(
-        "font-semibold text-lg mb-1.5 transition-colors",
+      <span className={cn(
+        "lm-option-label block mb-1.5 transition-colors",
         selected ? "text-primary dark:text-primary" : "text-foreground"
       )}>
         {label}
-      </h3>
+      </span>
 
       {description && (
         <p className="text-sm text-muted-foreground leading-snug max-w-[220px]">
