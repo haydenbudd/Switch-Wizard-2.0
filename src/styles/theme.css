@@ -533,6 +533,27 @@ body,
   padding: 0.5rem 1rem !important;
 }
 
+/* View Details button — force white text */
+#lm-product-finder button[class*="from-primary"] {
+  color: #ffffff !important;
+}
+
+/* Compare panel */
+#lm-product-finder table th,
+#lm-product-finder table td {
+  font-size: 1.05rem !important;
+  padding: 0.875rem !important;
+}
+
+#lm-product-finder table th span[class*="font-bold"] {
+  font-size: 1.2rem !important;
+}
+
+#lm-product-finder table td span[class*="text-sm"],
+#lm-product-finder table td span[class*="text-xs"] {
+  font-size: 1rem !important;
+}
+
 /* Progress bar glow */
 .progress-glow {
   box-shadow: 0 0 8px rgba(30, 64, 175, 0.3), 0 0 2px rgba(30, 64, 175, 0.5);

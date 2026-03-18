@@ -52,7 +52,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
           className="fixed bottom-0 left-0 right-0 z-50"
         >
-          <div className="mx-auto max-w-5xl px-4 pb-4">
+          <div className="mx-auto max-w-7xl px-4 pb-4">
             <div className="rounded-2xl border border-border/60 bg-background/95 backdrop-blur-xl shadow-2xl shadow-black/20 overflow-hidden">
 
               {/* Collapsed bar — always visible */}
@@ -67,7 +67,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5 text-primary">
                     <GitCompareArrows className="w-5 h-5" />
-                    <span className="font-semibold text-base">
+                    <span className="font-semibold" style={{ fontSize: '1.2rem' }}>
                       Compare ({products.length})
                     </span>
                   </div>
@@ -122,7 +122,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                         <table className="w-full min-w-[500px] border-collapse">
                           <thead>
                             <tr>
-                              <th className="text-left p-3 text-sm font-medium text-muted-foreground w-36" />
+                              <th className="text-left p-4 font-medium text-muted-foreground w-44" style={{ fontSize: '1.05rem' }} />
                               {products.map((product) => (
                                 <th key={product.id} className="p-3 text-center min-w-[180px]">
                                   <div className="flex flex-col items-center gap-2">
@@ -135,7 +135,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                         />
                                       </div>
                                     )}
-                                    <span className="font-bold text-base">{product.series}</span>
+                                    <span className="font-bold" style={{ fontSize: '1.25rem' }}>{product.series}</span>
                                     <Button
                                       variant="ghost"
                                       size="sm"
@@ -152,14 +152,14 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                           <tbody>
                             {COMPARE_ROWS.map((row) => (
                               <tr key={row.label} className="border-t border-border/50">
-                                <td className="p-3 text-sm font-medium text-muted-foreground">{row.label}</td>
+                                <td className="p-4 font-medium text-muted-foreground" style={{ fontSize: '1.05rem' }}>{row.label}</td>
                                 {products.map((product) => {
                                   const value = row.getValue(product);
                                   const color = row.getColor(product);
                                   // For the Features row, render individual colored badges
                                   if (row.label === 'Features' && product.features && product.features.length > 0) {
                                     return (
-                                      <td key={product.id} className="p-3 text-center">
+                                      <td key={product.id} className="p-4 text-center">
                                         <div className="flex flex-wrap justify-center gap-1">
                                           {product.features.map((f) => (
                                             <Badge
@@ -175,7 +175,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                     );
                                   }
                                   return (
-                                    <td key={product.id} className="p-3 text-center">
+                                    <td key={product.id} className="p-4 text-center">
                                       <Badge
                                         variant="secondary"
                                         className={`text-xs capitalize font-normal ${color}`}
@@ -189,9 +189,9 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                             ))}
                             {/* Link row */}
                             <tr className="border-t border-border/50">
-                              <td className="p-3 text-sm font-medium text-muted-foreground">Details</td>
+                              <td className="p-4 font-medium text-muted-foreground" style={{ fontSize: '1.05rem' }}>Details</td>
                               {products.map((product) => (
-                                <td key={product.id} className="p-3 text-center">
+                                <td key={product.id} className="p-4 text-center">
                                   <a href={product.link} target="_blank" rel="noopener noreferrer">
                                     <Button size="sm" variant="outline" className="gap-1">
                                       <ExternalLink className="w-3 h-3" /> View
