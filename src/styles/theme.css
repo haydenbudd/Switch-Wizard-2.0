@@ -386,6 +386,26 @@ body,
   }
 }
 
+/* Responsive scaling — larger screens get a bigger wizard */
+#lm-product-finder {
+  zoom: 1;
+}
+@media (min-width: 1200px) {
+  #lm-product-finder {
+    zoom: 1.1;
+  }
+}
+@media (min-width: 1800px) {
+  #lm-product-finder {
+    zoom: 1.2;
+  }
+}
+@media (min-width: 2400px) {
+  #lm-product-finder {
+    zoom: 1.25;
+  }
+}
+
 /* WordPress theme reset — prevent WP from overriding wizard typography */
 #lm-product-finder h1,
 #lm-product-finder h2,
