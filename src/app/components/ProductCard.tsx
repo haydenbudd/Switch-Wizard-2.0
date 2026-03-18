@@ -44,9 +44,11 @@ interface ProductCardProps {
   isComparing?: boolean;
   onCompareToggle?: (id: string) => void;
   onViewDetails?: (product: Product) => void;
+  /** First few cards get eager loading + fetchpriority high */
+  priority?: boolean;
 }
 
-export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle, onViewDetails }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle, onViewDetails, priority }: ProductCardProps) {
   if (!product) return null;
   const isFlagship = product.flagship;
 
@@ -94,7 +96,8 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
             src={getProxiedImageUrl(product.image, { width: 400 })}
             alt={product.series}
             className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110 drop-shadow-xl"
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "auto"}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center relative z-10">

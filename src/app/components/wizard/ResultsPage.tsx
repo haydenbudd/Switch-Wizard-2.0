@@ -27,8 +27,9 @@ import {
   DrawerDescription,
   DrawerClose,
 } from '@/app/components/ui/drawer';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { getProcessedProducts } from '@/app/utils/productFilters';
+import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 
 const MAX_COMPARE = 3;
 
@@ -135,6 +136,23 @@ export function ResultsPage({
   const compareProducts = useMemo(() => {
     return compareIds.map(id => finalResults.find(p => p.id === id) || products.find(p => p.id === id)).filter(Boolean) as Product[];
   }, [compareIds, finalResults, products]);
+
+  // Preload first 4 product images (above-the-fold)
+  useEffect(() => {
+    const toPreload = finalResults.slice(0, 4);
+    const links: HTMLLinkElement[] = [];
+    toPreload.forEach(p => {
+      if (!p.image) return;
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.type = 'image/webp';
+      link.href = getProxiedImageUrl(p.image, { width: 400 });
+      document.head.appendChild(link);
+      links.push(link);
+    });
+    return () => links.forEach(l => l.remove());
+  }, [finalResults]);
 
   // Alternatives if no results
   const alternatives = useMemo(() => {
@@ -397,13 +415,14 @@ export function ResultsPage({
       {/* Results Grid */}
       {finalResults.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          {finalResults.map((product) => (
+          {finalResults.map((product, i) => (
             <ProductCard
               key={product.id}
               product={product}
               isComparing={compareIds.includes(product.id)}
               onCompareToggle={handleCompareToggle}
               onViewDetails={setDetailProduct}
+              priority={i < 4}
             />
           ))}
         </div>
