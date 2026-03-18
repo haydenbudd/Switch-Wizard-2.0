@@ -482,6 +482,57 @@ body,
   padding: 0.5rem 1rem !important;
 }
 
+/* Results page — buttons, inputs, pills, badges */
+#lm-product-finder button {
+  font-size: 1rem !important;
+  padding: 0.625rem 1.25rem !important;
+}
+
+#lm-product-finder button[class*="size-icon"],
+#lm-product-finder button[class*="w-8"],
+#lm-product-finder button[class*="h-8"] {
+  padding: 0.5rem !important;
+}
+
+#lm-product-finder input {
+  font-size: 1.125rem !important;
+  height: 3.25rem !important;
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+
+#lm-product-finder .glass-card p,
+#lm-product-finder .glass-card span {
+  font-size: inherit !important;
+}
+
+/* Filter chips */
+#lm-product-finder [class*="FilterChip"],
+#lm-product-finder .glass-card > .flex > span[class*="text-sm"] {
+  font-size: 1rem !important;
+}
+
+/* Product card text */
+#lm-product-finder h3 {
+  font-size: 1.5rem !important;
+  line-height: 1.3 !important;
+}
+
+/* Badge/pill text */
+#lm-product-finder [class*="badge"],
+#lm-product-finder [class*="Badge"],
+#lm-product-finder [class*="text-\\[10px\\]"] {
+  font-size: 0.8125rem !important;
+  padding: 0.25rem 0.625rem !important;
+  height: auto !important;
+}
+
+/* Sort/filter pill buttons */
+#lm-product-finder [class*="whitespace-nowrap"] {
+  font-size: 1rem !important;
+  padding: 0.5rem 1rem !important;
+}
+
 /* Progress bar glow */
 .progress-glow {
   box-shadow: 0 0 8px rgba(30, 64, 175, 0.3), 0 0 2px rgba(30, 64, 175, 0.5);

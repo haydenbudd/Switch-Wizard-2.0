@@ -212,7 +212,7 @@ export function ResultsPage({
   );
 
   return (
-    <div className="container mx-auto px-4 py-8 pb-32">
+    <div className="w-full py-8 pb-32" style={{ paddingLeft: '5%', paddingRight: '5%' }}>
       {/* Screen reader announcement for result count changes */}
       <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
         {finalResults.length} {finalResults.length === 1 ? 'product' : 'products'} found
