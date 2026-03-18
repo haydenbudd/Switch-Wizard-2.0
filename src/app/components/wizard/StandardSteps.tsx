@@ -355,7 +355,7 @@ export function StandardSteps({
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mx-auto" style={{ maxWidth: '100%' }}>
           {(categories || []).map((category, i) => (
             <motion.div
               key={category.id}
@@ -375,7 +375,7 @@ export function StandardSteps({
                   <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5 shrink-0">
                     {category.icon && <category.icon className="w-8 h-8" aria-hidden="true" />}
                   </div>
-                  <span className="block font-semibold tracking-tight mb-3 w-full" style={{ fontSize: '1.125rem', lineHeight: '1.4' }}>{category.label}</span>
+                  <span className="lm-category-label block tracking-tight mb-3 w-full">{category.label}</span>
                   <p className="text-sm text-muted-foreground leading-relaxed mt-auto">
                     {category.description}
                   </p>
