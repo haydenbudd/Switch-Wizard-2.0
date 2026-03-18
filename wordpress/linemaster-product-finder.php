@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Linemaster Product Finder
  * Plugin URI:  https://linemaster.com
- * Description: Interactive product-finder wizard that helps customers select the right Linemaster foot pedal switch.
- * Version:     2.0.0
+ * Description: Interactive product-finder wizard that helps customers select the right Linemaster foot pedal switch. Assets served from GitHub Pages.
+ * Version:     2.1.0
  * Author:      Linemaster
  * Author URI:  https://linemaster.com
  * License:     Proprietary
@@ -14,9 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LM_FINDER_VERSION', '2.0.0' );
-define( 'LM_FINDER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'LM_FINDER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'LM_FINDER_VERSION', '2.1.0' );
+
+// GitHub Pages base URL — assets are served from here.
+// Updates deploy automatically when you push to the main branch.
+define( 'LM_FINDER_ASSETS_URL', 'https://haydenbudd.github.io/Switch-Wizard-2.0/assets/' );
 
 /**
  * Register the [switch-wizard] shortcode.
@@ -49,7 +51,7 @@ function lm_finder_shortcode( $atts ) {
 add_shortcode( 'switch-wizard', 'lm_finder_shortcode' );
 
 /**
- * Enqueue the built React application assets.
+ * Enqueue the built React application assets from GitHub Pages.
  */
 function lm_finder_enqueue_assets() {
 	static $enqueued = false;
@@ -58,7 +60,7 @@ function lm_finder_enqueue_assets() {
 	}
 	$enqueued = true;
 
-	$base = LM_FINDER_PLUGIN_URL . 'assets/';
+	$base = LM_FINDER_ASSETS_URL;
 
 	// Google Fonts used by the wizard (DM Sans + Outfit)
 	wp_enqueue_style(
@@ -106,7 +108,7 @@ function lm_finder_enqueue_assets() {
  */
 function lm_finder_add_module_type( $tag, $handle, $src ) {
 	if ( strpos( $handle, 'lm-finder-' ) === 0 ) {
-		$tag = str_replace( ' src=', ' type="module" src=', $tag );
+		$tag = str_replace( ' src=', ' type="module" crossorigin src=', $tag );
 	}
 	return $tag;
 }

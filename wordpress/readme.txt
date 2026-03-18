@@ -4,7 +4,7 @@ Tags: product finder, wizard, foot switch, linemaster
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: Proprietary
 
 Interactive product-finder wizard for Linemaster foot pedal switches.
@@ -12,9 +12,8 @@ Interactive product-finder wizard for Linemaster foot pedal switches.
 == Description ==
 
 The Linemaster Product Finder is a guided wizard that helps customers navigate
-the full range of Linemaster foot pedal switches. Users answer questions about
-their application, technology requirements, environment, and features to receive
-a tailored list of matching products.
+the full range of Linemaster foot pedal switches. Assets are served from GitHub
+Pages so updates deploy automatically when you push to the main branch.
 
 = Features =
 
@@ -32,6 +31,8 @@ a tailored list of matching products.
 2. Activate the plugin through the **Plugins** menu in WordPress.
 3. Add the `[switch-wizard]` shortcode to any page or post.
 
+Updates are automatic — just push to the GitHub repo.
+
 == Usage ==
 
 **Basic:**
@@ -47,6 +48,11 @@ a tailored list of matching products.
     [switch-wizard class="my-section"]
 
 == Changelog ==
+
+= 2.1.0 =
+* Assets now served from GitHub Pages — no re-upload needed for updates.
+* Fix card overflow on industry selection step.
+* Add trust badges bar.
 
 = 2.0.0 =
 * Initial WordPress plugin release.
