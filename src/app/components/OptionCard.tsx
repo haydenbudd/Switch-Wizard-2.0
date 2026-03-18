@@ -79,12 +79,12 @@ export const OptionCard = memo(function OptionCard({
       )}
 
       {count !== undefined && count > 0 && (
-        <span className="mt-3 font-medium text-muted-foreground bg-secondary px-3 py-1.5 rounded-full tabular-nums" style={{ fontSize: '0.9375rem' }}>
+        <span className="lm-product-count mt-3 text-muted-foreground bg-secondary rounded-full tabular-nums">
           {count} {count === 1 ? 'product' : 'products'}
         </span>
       )}
       {count === 0 && (
-        <span className="mt-3 font-medium text-red-400 dark:text-red-500 bg-red-50 dark:bg-red-950/30 px-3 py-1.5 rounded-full" style={{ fontSize: '0.9375rem' }}>
+        <span className="lm-product-count mt-3 text-red-400 dark:text-red-500 bg-red-50 dark:bg-red-950/30 rounded-full">
           No products available
         </span>
       )}
