@@ -375,7 +375,7 @@ export function StandardSteps({
                   <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5 shrink-0">
                     {category.icon && <category.icon className="w-8 h-8" aria-hidden="true" />}
                   </div>
-                  <h2 className="text-xl font-semibold tracking-tight mb-3 break-words w-full">{category.label}</h2>
+                  <h2 className="text-base md:text-lg font-semibold tracking-tight mb-3 w-full">{category.label}</h2>
                   <p className="text-sm text-muted-foreground leading-relaxed mt-auto">
                     {category.description}
                   </p>
