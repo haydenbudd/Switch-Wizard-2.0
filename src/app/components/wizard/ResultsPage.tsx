@@ -291,14 +291,14 @@ export function ResultsPage({
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-row gap-4 items-center justify-between sticky top-16 z-30 glass-card p-4 rounded-2xl">
+        <div className="flex flex-row flex-nowrap gap-4 items-center sticky top-16 z-30 glass-card p-4 rounded-2xl">
           <EnhancedSearch
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
-            className="flex-1 min-w-0 max-w-lg"
+            className="w-full max-w-md"
           />
 
-          <div className="flex items-center gap-2 shrink-0 overflow-x-auto">
+          <div className="flex items-center gap-2 shrink-0 ml-auto">
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

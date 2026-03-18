@@ -17,7 +17,10 @@ import { ResultsPage } from '@/app/components/wizard/ResultsPage';
 const AdminContainer = lazy(() =>
   import('@/app/components/admin/AdminContainer')
     .then(module => ({ default: module.AdminContainer }))
-    .catch(() => ({ default: () => null }))
+    .catch((err) => {
+      console.error('Failed to load AdminContainer:', err);
+      return { default: () => <div style={{ padding: 40, textAlign: 'center' }}>Failed to load admin panel. Check console for details.</div> };
+    })
 );
 
 function WizardApp() {
