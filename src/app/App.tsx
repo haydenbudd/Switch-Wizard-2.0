@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Suspense, lazy } from 'react';
+import { useState, useEffect, useCallback, Suspense, lazy, Component, type ReactNode, type ErrorInfo } from 'react';
 import { Router } from '@/app/components/Router';
 import { Header } from '@/app/components/Header';
 import { OrbBackground } from '@/app/components/OrbBackground';
@@ -242,6 +242,25 @@ export default function App() {
   );
 }
 
+class AdminErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  componentDidCatch(error: Error, info: ErrorInfo) { console.error('Admin panel crashed:', error, info); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: 40, textAlign: 'center', fontFamily: 'sans-serif' }}>
+          <h2 style={{ color: '#dc2626', marginBottom: 16 }}>Admin Panel Error</h2>
+          <pre style={{ background: '#fee2e2', padding: 16, borderRadius: 8, textAlign: 'left', overflow: 'auto', maxWidth: 600, margin: '0 auto' }}>
+            {this.state.error.message}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function AppShell({ path, navigate }: { path: string; navigate: (to: string) => void }) {
   const toggle = useCallback(() => {
     navigate(path.startsWith('/admin') ? '/' : '/admin');
@@ -260,9 +279,11 @@ function AppShell({ path, navigate }: { path: string; navigate: (to: string) => 
 
   if (path.startsWith('/admin')) {
     return (
-      <Suspense fallback={<div>Loading...</div>}>
-        <AdminContainer />
-      </Suspense>
+      <AdminErrorBoundary>
+        <Suspense fallback={<div style={{ padding: 40, textAlign: 'center', fontFamily: 'sans-serif' }}>Loading admin panel...</div>}>
+          <AdminContainer />
+        </Suspense>
+      </AdminErrorBoundary>
     );
   }
   return <WizardApp />;
