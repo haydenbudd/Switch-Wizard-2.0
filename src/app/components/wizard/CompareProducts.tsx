@@ -67,7 +67,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1.5 text-primary">
                     <GitCompareArrows className="w-5 h-5" />
-                    <span className="font-semibold" style={{ fontSize: '1.2rem' }}>
+                    <span className="!text-xl !font-semibold !text-primary">
                       Compare ({products.length})
                     </span>
                   </div>
@@ -87,14 +87,14 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <span className="text-[10px] font-bold text-muted-foreground">{p.series.slice(0, 2)}</span>
+                          <span className="text-sm font-bold text-muted-foreground">{p.series.slice(0, 2)}</span>
                         )}
                       </div>
                     ))}
                   </div>
 
                   {products.length < 2 && (
-                    <span className="text-sm text-muted-foreground">Add {2 - products.length} more to compare</span>
+                    <span className="!text-base !text-muted-foreground">Add {2 - products.length} more to compare</span>
                   )}
                 </div>
 
@@ -122,7 +122,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                         <table className="w-full min-w-[500px] border-collapse">
                           <thead>
                             <tr>
-                              <th className="text-left p-4 font-medium text-muted-foreground w-44" style={{ fontSize: '1.05rem' }} />
+                              <th className="text-left p-4 !text-base !font-medium !text-muted-foreground w-44" />
                               {products.map((product) => (
                                 <th key={product.id} className="p-3 text-center min-w-[180px]">
                                   <div className="flex flex-col items-center gap-2">
@@ -135,14 +135,14 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                         />
                                       </div>
                                     )}
-                                    <span className="font-bold" style={{ fontSize: '1.25rem' }}>{product.series}</span>
+                                    <span className="!text-xl !font-bold">{product.series}</span>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="text-xs text-muted-foreground h-6"
+                                      className="text-sm !text-muted-foreground"
                                       onClick={() => onRemove(product.id)}
                                     >
-                                      <X className="w-3 h-3 mr-1" /> Remove
+                                      <X className="w-4 h-4 mr-1" /> Remove
                                     </Button>
                                   </div>
                                 </th>
@@ -152,7 +152,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                           <tbody>
                             {COMPARE_ROWS.map((row) => (
                               <tr key={row.label} className="border-t border-border/50">
-                                <td className="p-4 font-medium text-muted-foreground" style={{ fontSize: '1.05rem' }}>{row.label}</td>
+                                <td className="p-4 !text-base !font-medium !text-muted-foreground">{row.label}</td>
                                 {products.map((product) => {
                                   const value = row.getValue(product);
                                   const color = row.getColor(product);
@@ -165,7 +165,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                             <Badge
                                               key={f}
                                               variant="secondary"
-                                              className={`text-xs capitalize font-normal ${colorClasses(getFeatureColor(f))}`}
+                                              className={`text-sm capitalize font-normal ${colorClasses(getFeatureColor(f))}`}
                                             >
                                               {f.replace('_', ' ')}
                                             </Badge>
@@ -178,7 +178,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                     <td key={product.id} className="p-4 text-center">
                                       <Badge
                                         variant="secondary"
-                                        className={`text-xs capitalize font-normal ${color}`}
+                                        className={`text-sm capitalize font-normal ${color}`}
                                       >
                                         {value}
                                       </Badge>
@@ -189,7 +189,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                             ))}
                             {/* Link row */}
                             <tr className="border-t border-border/50">
-                              <td className="p-4 font-medium text-muted-foreground" style={{ fontSize: '1.05rem' }}>Details</td>
+                              <td className="p-4 !text-base !font-medium !text-muted-foreground">Details</td>
                               {products.map((product) => (
                                 <td key={product.id} className="p-4 text-center">
                                   <a href={product.link} target="_blank" rel="noopener noreferrer">

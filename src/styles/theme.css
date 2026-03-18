@@ -406,152 +406,30 @@ body,
   }
 }
 
-/* WordPress theme reset — prevent WP from overriding wizard typography */
-#lm-product-finder h1,
-#lm-product-finder h2,
-#lm-product-finder h3,
-#lm-product-finder h4,
-#lm-product-finder h5,
-#lm-product-finder h6,
-#lm-product-finder p,
-#lm-product-finder span {
-  font-size: inherit !important;
-  line-height: inherit !important;
-  margin: 0 !important;
-  padding: 0 !important;
+/* ============================================================
+ * WordPress Theme Isolation
+ * :where() gives zero inner specificity so:
+ *   - This at (1,0,0) beats WP's (0,N,N) selectors
+ *   - Tailwind utilities at (1,1,0) beat this for font-size
+ *   - color/font-family use !important (use Tailwind ! prefix to override)
+ * ============================================================ */
+
+/* Color & font-family: !important to beat WP themes */
+#lm-product-finder :where(h1,h2,h3,h4,h5,h6,p,span,a,li,td,th,
+  div,small,strong,em,b,i,blockquote,figcaption,
+  button,input,select,textarea,label) {
+  color: inherit !important;
+  font-family: inherit !important;
 }
 
-/* Category card heading */
-.lm-category-label {
-  font-size: 1.75rem !important;
-  line-height: 1.2 !important;
-  font-weight: 600 !important;
-}
-
-/* Step titles */
-.lm-step-title {
-  font-size: 2.25rem !important;
-  line-height: 1.2 !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.025em !important;
-}
-
-/* Option card label */
-.lm-option-label {
-  font-size: 1.375rem !important;
-  line-height: 1.3 !important;
-  font-weight: 600 !important;
-}
-
-/* Secondary text elements — subtitles, dividers, trust bar */
-#lm-product-finder .lm-subtitle {
-  font-size: 1.5rem !important;
-  line-height: 1.6 !important;
-}
-
-#lm-product-finder .lm-divider-label {
-  font-size: 1.1rem !important;
-  letter-spacing: 0.15em !important;
-}
-
-#lm-product-finder .lm-trust-label {
-  font-size: 1.25rem !important;
-  line-height: 1.5 !important;
-  font-weight: 500 !important;
-}
-
-#lm-product-finder .lm-trust-icon {
-  width: 1.75rem !important;
-  height: 1.75rem !important;
-}
-
-#lm-product-finder .lm-step-subtitle {
-  font-size: 1.375rem !important;
-  line-height: 1.5 !important;
-}
-
-#lm-product-finder .lm-card-description {
-  font-size: 1.2rem !important;
-  line-height: 1.6 !important;
-}
-
-#lm-product-finder .lm-product-count {
-  font-size: 1.1rem !important;
-  line-height: 1.4 !important;
-  font-weight: 500 !important;
-  padding: 0.5rem 1rem !important;
-}
-
-/* Results page — buttons, inputs, pills, badges */
-#lm-product-finder button {
-  font-size: 1rem !important;
-  padding: 0.625rem 1.25rem !important;
-}
-
-#lm-product-finder button[class*="size-icon"],
-#lm-product-finder button[class*="w-8"],
-#lm-product-finder button[class*="h-8"] {
-  padding: 0.5rem !important;
-}
-
-#lm-product-finder input {
-  font-size: 1.125rem !important;
-  height: 3.25rem !important;
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-
-#lm-product-finder .glass-card p,
-#lm-product-finder .glass-card span {
-  font-size: inherit !important;
-}
-
-/* Filter chips */
-#lm-product-finder [class*="FilterChip"],
-#lm-product-finder .glass-card > .flex > span[class*="text-sm"] {
-  font-size: 1rem !important;
-}
-
-/* Product card text */
-#lm-product-finder h3 {
-  font-size: 1.5rem !important;
-  line-height: 1.3 !important;
-}
-
-/* Badge/pill text */
-#lm-product-finder [class*="badge"],
-#lm-product-finder [class*="Badge"],
-#lm-product-finder [class*="text-\\[10px\\]"] {
-  font-size: 0.8125rem !important;
-  padding: 0.25rem 0.625rem !important;
-  height: auto !important;
-}
-
-/* Sort/filter pill buttons */
-#lm-product-finder [class*="whitespace-nowrap"] {
-  font-size: 1rem !important;
-  padding: 0.5rem 1rem !important;
-}
-
-/* View Details button — force white text */
-#lm-product-finder button[class*="from-primary"] {
-  color: #ffffff !important;
-}
-
-/* Compare panel */
-#lm-product-finder table th,
-#lm-product-finder table td {
-  font-size: 1.05rem !important;
-  padding: 0.875rem !important;
-}
-
-#lm-product-finder table th span[class*="font-bold"] {
-  font-size: 1.2rem !important;
-}
-
-#lm-product-finder table td span[class*="text-sm"],
-#lm-product-finder table td span[class*="text-xs"] {
-  font-size: 1rem !important;
+/* Font-size, line-height, spacing: NO !important so Tailwind classes win */
+#lm-product-finder :where(h1,h2,h3,h4,h5,h6,p,span,a,li,td,th,
+  div,small,strong,em,b,i,blockquote,figcaption) {
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  margin: 0;
+  padding: 0;
 }
 
 /* Progress bar glow */

@@ -344,14 +344,14 @@ export function StandardSteps({
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>
-          <p className="lm-subtitle text-muted-foreground" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
+          <p className="!text-xl !text-muted-foreground" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
             Select your industry to begin. We'll guide you to the right foot switch.
           </p>
         </motion.div>
 
         <div className="flex items-center gap-4 w-full mb-8" aria-hidden="true">
           <div className="h-px flex-1 bg-border" />
-          <span className="lm-divider-label font-semibold uppercase text-muted-foreground">Choose Your Industry</span>
+          <span className="!text-base font-semibold uppercase tracking-widest !text-muted-foreground">Choose Your Industry</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
@@ -375,8 +375,8 @@ export function StandardSteps({
                   <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5 shrink-0">
                     {category.icon && <category.icon className="w-8 h-8" aria-hidden="true" />}
                   </div>
-                  <span className="lm-category-label block tracking-tight mb-3 w-full">{category.label}</span>
-                  <p className="lm-card-description text-muted-foreground mt-auto">
+                  <span className="!text-2xl !font-semibold tracking-tight mb-3 w-full">{category.label}</span>
+                  <p className="!text-base !text-muted-foreground mt-auto">
                     {category.description}
                   </p>
                 </div>
@@ -393,16 +393,16 @@ export function StandardSteps({
           className="flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-20 pt-10 border-t border-border/50"
         >
           <div className="flex items-center gap-3 text-muted-foreground">
-            <ShieldCert className="lm-trust-icon text-primary/60" aria-hidden="true" />
-            <span className="lm-trust-label">ISO Certified</span>
+            <ShieldCert className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
+            <span className="!text-lg !font-medium">ISO Certified</span>
           </div>
           <div className="flex items-center gap-3 text-muted-foreground">
-            <Flag className="lm-trust-icon text-primary/60" aria-hidden="true" />
-            <span className="lm-trust-label">Made in USA</span>
+            <Flag className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
+            <span className="!text-lg !font-medium">Made in USA</span>
           </div>
           <div className="flex items-center gap-3 text-muted-foreground">
-            <Award className="lm-trust-icon text-primary/60" aria-hidden="true" />
-            <span className="lm-trust-label">70+ Years of Excellence</span>
+            <Award className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
+            <span className="!text-lg !font-medium">70+ Years of Excellence</span>
           </div>
         </motion.div>
 
@@ -418,7 +418,7 @@ export function StandardSteps({
     <div className="pt-16 pb-16" style={{ paddingLeft: '15%', paddingRight: '15%' }}>
       {/* Progress Bar */}
       <div className="mx-auto mb-14" style={{ maxWidth: '700px' }}>
-        <div className="flex justify-between lm-step-subtitle font-medium text-muted-foreground mb-2.5 tracking-wide">
+        <div className="flex justify-between !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
           <span className="uppercase">Step {getDisplayStep(wizardState.step)} of {totalSteps}</span>
           <span className="tabular-nums">{progressPercent}%</span>
         </div>
@@ -461,8 +461,8 @@ export function StandardSteps({
             {wizardState.step === 0 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Select Your Application</span>
-                  <p className="lm-step-subtitle text-muted-foreground">Choose the specific use case for your foot switch</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</span>
+                  <p className="!text-lg !text-muted-foreground">Choose the specific use case for your foot switch</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
                   {filteredApplications.map((app, i) => (
@@ -484,8 +484,8 @@ export function StandardSteps({
             {wizardState.step === 1 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Select Technology</span>
-                  <p className="lm-step-subtitle text-muted-foreground">Choose the switching mechanism for your application</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Technology</span>
+                  <p className="!text-lg !text-muted-foreground">Choose the switching mechanism for your application</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
@@ -510,8 +510,8 @@ export function StandardSteps({
             {wizardState.step === 2 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Select Action Type</span>
-                  <p className="lm-step-subtitle text-muted-foreground">How should the switch activate and deactivate?</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</span>
+                  <p className="!text-lg !text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
@@ -536,8 +536,8 @@ export function StandardSteps({
             {wizardState.step === 3 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Operating Environment</span>
-                  <p className="lm-step-subtitle text-muted-foreground">Where will the switch be used?</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</span>
+                  <p className="!text-lg !text-muted-foreground">Where will the switch be used?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
                   {(environments || []).map((env, i) => (
@@ -560,8 +560,8 @@ export function StandardSteps({
             {wizardState.step === 4 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Duty Rating</span>
-                  <p className="lm-step-subtitle text-muted-foreground">How heavy will the usage be?</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</span>
+                  <p className="!text-lg !text-muted-foreground">How heavy will the usage be?</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
@@ -584,8 +584,8 @@ export function StandardSteps({
             {wizardState.step === 5 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Connection Type</span>
-                  <p className="lm-step-subtitle text-muted-foreground">How should the switch connect to your equipment?</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Connection Type</span>
+                  <p className="!text-lg !text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
                   {(connections || []).map((conn, i) => (
@@ -608,8 +608,8 @@ export function StandardSteps({
             {wizardState.step === 6 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Circuits Controlled</span>
-                  <p className="lm-step-subtitle text-muted-foreground">How many circuits do you need to control?</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</span>
+                  <p className="!text-lg !text-muted-foreground">How many circuits do you need to control?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
                   {(circuitCounts || []).map((cc, i) => (
@@ -632,8 +632,8 @@ export function StandardSteps({
             {wizardState.step === 7 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Safety Guard</span>
-                  <p className="lm-step-subtitle text-muted-foreground">Do you need protection against accidental activation?</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</span>
+                  <p className="!text-lg !text-muted-foreground">Do you need protection against accidental activation?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
                   <OptionCard
@@ -662,8 +662,8 @@ export function StandardSteps({
             {wizardState.step === 8 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="lm-step-title block mb-2">Additional Features</span>
-                  <p className="lm-step-subtitle text-muted-foreground">Select any that apply, or skip to view results.</p>
+                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Additional Features</span>
+                  <p className="!text-lg !text-muted-foreground">Select any that apply, or skip to view results.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
                   {(features || [])
@@ -694,7 +694,7 @@ export function StandardSteps({
                               <Check className="w-4.5 h-4.5" />
                             </div>
                             <div>
-                              <span className="lm-option-label block mb-0.5">{feat.label}</span>
+                              <span className="!text-xl !font-semibold block mb-0.5">{feat.label}</span>
                               <p className="text-sm text-muted-foreground leading-snug">{feat.description}</p>
                               {(feat.id === 'custom_cable' || feat.id === 'custom_connector') && (
                                 <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">Requires custom solution quote</p>

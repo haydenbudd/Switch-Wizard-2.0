@@ -225,9 +225,9 @@ export function ResultsPage({
             <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex">
               <ArrowLeft className="w-5 h-5" aria-hidden="true" />
             </Button>
-            <h2 className="text-3xl font-bold text-foreground">
+            <h2 className="!text-3xl !font-bold !text-foreground">
               Recommended Products
-              <span className="text-lg font-normal text-muted-foreground ml-3">
+              <span className="!text-lg font-normal !text-muted-foreground ml-3">
                 ({finalResults.length})
               </span>
             </h2>
@@ -250,7 +250,7 @@ export function ResultsPage({
 
         {/* Active Filters Display */}
         <div className="flex flex-wrap gap-2 items-center glass-card p-3 rounded-xl">
-          <span className="text-sm font-medium text-muted-foreground mr-2">Filters:</span>
+          <span className="text-base !font-medium !text-muted-foreground mr-2">Filters:</span>
 
           {wizardState.selectedApplication && (
             <FilterChip
@@ -278,15 +278,15 @@ export function ResultsPage({
           )}
 
           {searchTerm && (
-            <FilterChip label={`Search: "${searchTerm}"`} onRemove={() => setSearchTerm('')} className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" />
+            <FilterChip label={`Search: "${searchTerm}"`} onRemove={() => setSearchTerm('')} className="bg-blue-100 !text-blue-800 dark:bg-blue-900/30 dark:!text-blue-300" />
           )}
 
           {dutyFilter.length > 0 && (
-            <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" />
+            <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 !text-orange-800 dark:bg-orange-900/30 dark:!text-orange-300" />
           )}
 
           {materialFilter.length > 0 && (
-            <FilterChip label={`Material: ${materialFilter.join(', ')}`} onRemove={() => setMaterialFilter([])} className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300" />
+            <FilterChip label={`Material: ${materialFilter.join(', ')}`} onRemove={() => setMaterialFilter([])} className="bg-emerald-100 !text-emerald-800 dark:bg-emerald-900/30 dark:!text-emerald-300" />
           )}
         </div>
 
@@ -355,7 +355,7 @@ export function ResultsPage({
                       }
                     }}
                   >
-                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${dutyFilter.includes(duty) ? 'bg-primary border-primary text-white' : ''}`} aria-hidden="true">
+                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${dutyFilter.includes(duty) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
                       {dutyFilter.includes(duty) && <Check className="w-3 h-3" />}
                     </div>
                     <span className="capitalize text-sm">{duty}</span>
@@ -382,7 +382,7 @@ export function ResultsPage({
                       }
                     }}
                   >
-                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${materialFilter.includes(mat) ? 'bg-primary border-primary text-white' : ''}`} aria-hidden="true">
+                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${materialFilter.includes(mat) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
                       {materialFilter.includes(mat) && <Check className="w-3 h-3" />}
                     </div>
                     <span className="text-sm">{mat}</span>
@@ -411,19 +411,19 @@ export function ResultsPage({
         /* Empty State */
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700" role="status">
           <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-full">
-            <Search className="w-8 h-8 text-muted-foreground" aria-hidden="true" />
+            <Search className="w-8 h-8 !text-muted-foreground" aria-hidden="true" />
           </div>
           <div className="max-w-md">
             <h3 className="text-xl font-semibold mb-2">No exact matches found</h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="!text-muted-foreground mb-6">
               We couldn't find any products matching all your criteria. Try removing some filters or viewing our full catalog.
             </p>
 
             {/* Custom Solution CTA */}
             {needsCustomSolution && (
               <GlassCard className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 mb-6 text-left">
-                <h4 className="font-semibold text-blue-800 dark:text-blue-300 mb-1">Need a Custom Solution?</h4>
-                <p className="text-sm text-blue-600/80 dark:text-blue-400/80 mb-3">
+                <h4 className="font-semibold !text-blue-800 dark:!text-blue-300 mb-1">Need a Custom Solution?</h4>
+                <p className="text-sm !text-blue-600/80 dark:!text-blue-400/80 mb-3">
                   Your requirements for {wizardState.selectedFeatures.join(', ')} might require a custom build.
                 </p>
                 <a href={`mailto:sales@linemaster.com?subject=${contactSubject}&body=${contactBody}`}>
@@ -436,7 +436,7 @@ export function ResultsPage({
 
             {alternatives && (
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm !text-muted-foreground">
                   {alternatives.products.length} {alternatives.products.length === 1 ? 'product' : 'products'} available if you adjust your filters
                 </p>
                 <Button variant="outline" onClick={() => removeWizardFilter(alternatives.relaxed as FilterType)}>
@@ -499,7 +499,7 @@ export function ResultsPage({
               </Button>
             </DrawerClose>
             <DrawerClose asChild>
-              <Button variant="outline" className="w-full gap-2 justify-start text-destructive" onClick={onReset}>
+              <Button variant="outline" className="w-full gap-2 justify-start !text-destructive" onClick={onReset}>
                 <RefreshCw className="w-4 h-4" /> Reset Wizard
               </Button>
             </DrawerClose>

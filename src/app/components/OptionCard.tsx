@@ -59,32 +59,32 @@ export const OptionCard = memo(function OptionCard({
       <div className={cn(
         "w-16 h-16 flex items-center justify-center rounded-2xl mb-4 transition-all duration-300",
         selected
-          ? "bg-primary text-white shadow-lg shadow-primary/25 scale-110"
-          : "bg-secondary text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary dark:group-hover:bg-primary/15 dark:group-hover:text-primary"
+          ? "bg-primary !text-white shadow-lg shadow-primary/25 scale-110"
+          : "bg-secondary !text-muted-foreground group-hover:bg-primary/10 group-hover:!text-primary dark:group-hover:bg-primary/15 dark:group-hover:!text-primary"
       )}>
         {Icon ? <Icon className="w-7 h-7" aria-hidden="true" /> : <div className="w-7 h-7" />}
       </div>
 
       <span className={cn(
-        "lm-option-label block mb-1.5 transition-colors",
-        selected ? "text-primary dark:text-primary" : "text-foreground"
+        "!text-xl !font-semibold block mb-1.5 transition-colors",
+        selected ? "!text-primary dark:!text-primary" : "!text-foreground"
       )}>
         {label}
       </span>
 
       {description && (
-        <p className="lm-card-description text-muted-foreground max-w-[280px]">
+        <p className="!text-base !text-muted-foreground max-w-[280px]">
           {description}
         </p>
       )}
 
       {count !== undefined && count > 0 && (
-        <span className="lm-product-count mt-3 text-muted-foreground bg-secondary rounded-full tabular-nums">
+        <span className="!text-base !font-medium mt-3 !text-muted-foreground bg-secondary rounded-full tabular-nums">
           {count} {count === 1 ? 'product' : 'products'}
         </span>
       )}
       {count === 0 && (
-        <span className="lm-product-count mt-3 text-red-400 dark:text-red-500 bg-red-50 dark:bg-red-950/30 rounded-full">
+        <span className="!text-base !font-medium mt-3 !text-red-400 dark:!text-red-500 bg-red-50 dark:bg-red-950/30 rounded-full">
           No products available
         </span>
       )}

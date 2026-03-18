@@ -80,7 +80,7 @@ function getDatasheetUrl(series: string): string | null {
 }
 
 function MaterialIcon({ material }: { material: string }) {
-  const cls = 'w-4 h-4 text-muted-foreground';
+  const cls = 'w-4 h-4 !text-muted-foreground';
   const m = material.toLowerCase();
   if (m.includes('cast iron')) return <Anvil className={cls} />;
   if (m.includes('stainless')) return <Sparkles className={cls} />;
@@ -92,7 +92,7 @@ function MaterialIcon({ material }: { material: string }) {
 }
 
 function TechIcon({ tech }: { tech: string }) {
-  const cls = 'w-4 h-4 text-muted-foreground';
+  const cls = 'w-4 h-4 !text-muted-foreground';
   if (tech === 'wireless') return <Zap className={cls} />;
   if (tech === 'pneumatic') return <Wind className={cls} />;
   return <Zap className={cls} />;
@@ -116,19 +116,19 @@ function DetailedSpecs({ specs }: { specs: Record<string, string> }) {
 
   return (
     <div className="mb-6">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Specifications</h3>
+      <h3 className="text-sm font-semibold uppercase tracking-wide !text-muted-foreground mb-2">Specifications</h3>
       <div className="rounded-xl border border-border/40 divide-y divide-border/30">
         {visibleEntries.map(([key, value]) => (
-          <div key={key} className="flex flex-col sm:flex-row sm:gap-4 gap-0.5 px-4 py-2.5 text-sm">
-            <span className="text-muted-foreground whitespace-nowrap sm:min-w-[140px]">{key}</span>
-            <span className="font-medium text-foreground">{value}</span>
+          <div key={key} className="flex flex-col sm:flex-row sm:gap-4 gap-0.5 px-4 py-2.5 text-base">
+            <span className="!text-muted-foreground whitespace-nowrap sm:min-w-[140px]">{key}</span>
+            <span className="font-medium !text-foreground">{value}</span>
           </div>
         ))}
       </div>
       {hasMore && (
         <button
           onClick={() => setSpecsExpanded((prev) => !prev)}
-          className="mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-1 py-0.5"
+          className="mt-2 text-sm !text-muted-foreground hover:!text-foreground transition-colors px-1 py-0.5"
         >
           {specsExpanded ? 'Show less' : `Show all ${entries.length} specs`}
         </button>
@@ -162,34 +162,34 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
   const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor }[] = [
     { icon: <TechIcon tech={product.technology} />, label: 'Technology', value: product.technology, color: getTechColor(product.technology) },
-    { icon: <Gauge className="w-4 h-4 text-muted-foreground" />, label: 'Duty Rating', value: product.duty, color: getDutyColor(product.duty) },
-    { icon: <Droplets className="w-4 h-4 text-muted-foreground" />, label: 'IP Rating', value: product.ip, color: getIpColor(product.ip) },
+    { icon: <Gauge className="w-4 h-4 !text-muted-foreground" />, label: 'Duty Rating', value: product.duty, color: getDutyColor(product.duty) },
+    { icon: <Droplets className="w-4 h-4 !text-muted-foreground" />, label: 'IP Rating', value: product.ip, color: getIpColor(product.ip) },
     { icon: <MaterialIcon material={product.material} />, label: 'Material', value: product.material, color: getMaterialColor(product.material) },
   ];
 
   if (product.circuitry) {
-    specs.push({ icon: <Hash className="w-4 h-4 text-muted-foreground" />, label: 'Circuits', value: product.circuitry, color: getCircuitColor(product.circuitry) });
+    specs.push({ icon: <Hash className="w-4 h-4 !text-muted-foreground" />, label: 'Circuits', value: product.circuitry, color: getCircuitColor(product.circuitry) });
   }
   if (product.connector_type) {
-    specs.push({ icon: <Cable className="w-4 h-4 text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
+    specs.push({ icon: <Cable className="w-4 h-4 !text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
   }
   if (product.stages) {
-    specs.push({ icon: <Layers className="w-4 h-4 text-muted-foreground" />, label: 'Stages', value: product.stages });
+    specs.push({ icon: <Layers className="w-4 h-4 !text-muted-foreground" />, label: 'Stages', value: product.stages });
   }
   if (product.pedal_count && product.pedal_count > 1) {
-    specs.push({ icon: <Layers className="w-4 h-4 text-muted-foreground" />, label: 'Pedals', value: String(product.pedal_count) });
+    specs.push({ icon: <Layers className="w-4 h-4 !text-muted-foreground" />, label: 'Pedals', value: String(product.pedal_count) });
   }
   if (product.configuration) {
-    specs.push({ icon: <ToggleLeft className="w-4 h-4 text-muted-foreground" />, label: 'Configuration', value: product.configuration });
+    specs.push({ icon: <ToggleLeft className="w-4 h-4 !text-muted-foreground" />, label: 'Configuration', value: product.configuration });
   }
   if (product.color) {
-    specs.push({ icon: <Palette className="w-4 h-4 text-muted-foreground" />, label: 'Color', value: product.color });
+    specs.push({ icon: <Palette className="w-4 h-4 !text-muted-foreground" />, label: 'Color', value: product.color });
   }
   if (product.voltage) {
-    specs.push({ icon: <Zap className="w-4 h-4 text-muted-foreground" />, label: 'Voltage', value: product.voltage });
+    specs.push({ icon: <Zap className="w-4 h-4 !text-muted-foreground" />, label: 'Voltage', value: product.voltage });
   }
   if (product.amperage) {
-    specs.push({ icon: <Gauge className="w-4 h-4 text-muted-foreground" />, label: 'Amperage', value: product.amperage });
+    specs.push({ icon: <Gauge className="w-4 h-4 !text-muted-foreground" />, label: 'Amperage', value: product.amperage });
   }
 
   return (
@@ -235,8 +235,8 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
             <div className="relative bg-gradient-to-b from-secondary/80 to-transparent p-8 pb-6 flex items-center justify-center min-h-[220px]">
               {product.flagship && (
                 <div className="absolute top-4 left-4">
-                  <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent flex items-center gap-1 text-xs">
-                    <Star className="w-3 h-3 fill-current" />
+                  <Badge className="bg-[var(--accent-warm)] !text-[var(--accent-warm-foreground)] border-transparent flex items-center gap-1 text-sm">
+                    <Star className="w-4 h-4 fill-current" />
                     Top Choice
                   </Badge>
                 </div>
@@ -248,7 +248,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                   className="max-w-full max-h-[200px] object-contain drop-shadow-xl"
                 />
               ) : (
-                <div className="text-center text-muted-foreground/40">
+                <div className="text-center !text-muted-foreground/40">
                   <Component className="w-16 h-16 mx-auto mb-2" />
                 </div>
               )}
@@ -259,36 +259,36 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
               {/* Header */}
               <div className="flex items-start justify-between gap-4 mb-1">
                 <div>
-                  <h2 className="text-2xl font-bold text-foreground">{product.series}</h2>
+                  <h2 className="text-2xl font-bold !text-foreground">{product.series}</h2>
                   {product.part_number && (
-                    <span className="text-sm text-muted-foreground font-mono">#{product.part_number}</span>
+                    <span className="text-base !text-muted-foreground font-mono">#{product.part_number}</span>
                   )}
                 </div>
               </div>
 
               {/* Quick badges */}
               <div className="flex flex-wrap items-center gap-2 mb-4 mt-2">
-                <Badge variant="outline" className={`capitalize text-xs ${colorClasses(getTechColor(product.technology))}`}>
+                <Badge variant="outline" className={`capitalize text-sm ${colorClasses(getTechColor(product.technology))}`}>
                   {product.technology}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className={`capitalize text-xs ${colorClasses(getDutyColor(product.duty))}`}
+                  className={`capitalize text-sm ${colorClasses(getDutyColor(product.duty))}`}
                 >
                   {product.duty} Duty
                 </Badge>
-                <Badge variant="outline" className={`text-xs ${colorClasses(getIpColor(product.ip))}`}>
+                <Badge variant="outline" className={`text-sm ${colorClasses(getIpColor(product.ip))}`}>
                   {product.ip}
                 </Badge>
                 {product.actions?.map((action) => (
-                  <Badge key={action} variant="secondary" className="capitalize text-xs">
+                  <Badge key={action} variant="secondary" className="capitalize text-sm">
                     {action}
                   </Badge>
                 ))}
               </div>
 
               {/* Description */}
-              <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+              <p className="text-base !text-muted-foreground leading-relaxed mb-6">
                 {product.description}
               </p>
 
@@ -305,7 +305,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                   >
                     {spec.icon}
                     <div className="min-w-0">
-                      <div className="text-[11px] text-muted-foreground uppercase tracking-wide">{spec.label}</div>
+                      <div className="text-sm !text-muted-foreground uppercase tracking-wide">{spec.label}</div>
                       <div className={`text-sm font-medium capitalize truncate ${spec.color ? spec.color.text : ''}`}>{spec.value}</div>
                     </div>
                   </div>
@@ -315,15 +315,15 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
               {/* Features */}
               {product.features && product.features.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Features</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wide !text-muted-foreground mb-2">Features</h3>
                   <div className="flex flex-wrap gap-2">
                     {product.features.map((feature) => (
-                      <Badge key={feature} variant="secondary" className={`capitalize text-xs gap-1.5 px-3 py-1 ${colorClasses(getFeatureColor(feature))}`}>
-                        {feature === 'shield' && <Shield className="w-3 h-3" />}
-                        {feature === 'gated' && <Shield className="w-3 h-3" />}
-                        {feature === 'multi_stage' && <Layers className="w-3 h-3" />}
-                        {feature === 'twin' && <Layers className="w-3 h-3" />}
-                        {!['shield', 'gated', 'multi_stage', 'twin'].includes(feature) && <CheckCircle2 className="w-3 h-3" />}
+                      <Badge key={feature} variant="secondary" className={`capitalize text-sm gap-1.5 px-3 py-1 ${colorClasses(getFeatureColor(feature))}`}>
+                        {feature === 'shield' && <Shield className="w-4 h-4" />}
+                        {feature === 'gated' && <Shield className="w-4 h-4" />}
+                        {feature === 'multi_stage' && <Layers className="w-4 h-4" />}
+                        {feature === 'twin' && <Layers className="w-4 h-4" />}
+                        {!['shield', 'gated', 'multi_stage', 'twin'].includes(feature) && <CheckCircle2 className="w-4 h-4" />}
                         {feature.replace(/_/g, ' ')}
                       </Badge>
                     ))}

@@ -10,7 +10,7 @@ import { colorClasses, getIpColor, getMaterialColor, getFeatureColor } from '@/a
 
 // Icon mapping for features - defined outside component to avoid re-creation on every render
 function FeatureIcon({ feature }: { feature: string }) {
-  const cls = "w-3 h-3 mr-1";
+  const cls = "w-4 h-4 mr-1";
   switch (feature) {
     case 'shield': return <Shield className={cls} />;
     case 'wireless': return <Zap className={cls} />;
@@ -21,12 +21,12 @@ function FeatureIcon({ feature }: { feature: string }) {
 
 // Icon for IP rating badges
 function IpIcon() {
-  return <Droplets className="w-3 h-3 mr-1 opacity-70" />;
+  return <Droplets className="w-4 h-4 mr-1 opacity-70" />;
 }
 
 // Icon mapping for material badges
 function MaterialIcon({ material }: { material: string }) {
-  const cls = "w-3 h-3 mr-1 opacity-70";
+  const cls = "w-4 h-4 mr-1 opacity-70";
   const m = material.toLowerCase();
   if (m.includes('cast iron'))     return <Anvil className={cls} />;
   if (m.includes('stainless'))     return <Sparkles className={cls} />;
@@ -59,17 +59,17 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
       {/* Compare checkbox */}
       {onCompareToggle && (
         <button
-          className={`absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 text-xs font-semibold transition-all duration-300 ${
+          className={`absolute top-3 left-3 z-20 flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 text-sm font-semibold transition-all duration-300 ${
             isComparing
               ? 'bg-primary border-primary text-white shadow-lg shadow-primary/40 scale-105'
-              : 'border-primary/40 bg-background/95 backdrop-blur-md hover:border-primary hover:bg-primary/10 text-primary hover:text-primary shadow-md hover:shadow-lg hover:scale-105'
+              : 'border-primary/40 bg-background/95 backdrop-blur-md hover:border-primary hover:bg-primary/10 !text-primary hover:!text-primary shadow-md hover:shadow-lg hover:scale-105'
           }`}
           onClick={(e) => { e.stopPropagation(); onCompareToggle(product.id); }}
           aria-label={`${isComparing ? 'Remove from' : 'Add to'} comparison: ${product.series}`}
           aria-pressed={isComparing}
           title={isComparing ? 'Remove from comparison' : 'Add to comparison'}
         >
-          <GitCompareArrows className={`w-3.5 h-3.5 transition-transform duration-300 ${isComparing ? 'rotate-180' : ''}`} />
+          <GitCompareArrows className={`w-4 h-4 transition-transform duration-300 ${isComparing ? 'rotate-180' : ''}`} />
           {isComparing ? 'Comparing' : 'Compare'}
         </button>
       )}
@@ -77,8 +77,8 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
       {/* Featured/Flagship Badge */}
       {isFlagship && (
         <div className="absolute top-4 right-4 z-20">
-          <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-[11px] tracking-wide uppercase">
-            <Star className="w-3 h-3 fill-current opacity-70" />
+          <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-sm tracking-wide uppercase">
+            <Star className="w-4 h-4 fill-current opacity-70" />
             Top Choice
           </Badge>
         </div>
@@ -98,7 +98,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center relative z-10">
-            <div className="text-center text-muted-foreground/40">
+            <div className="text-center !text-muted-foreground/40">
               <Package className="w-12 h-12 mx-auto mb-2" />
               <span className="text-xs font-medium">{product.series}</span>
             </div>
@@ -111,16 +111,16 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
       <div className="flex flex-col flex-1">
         <div className="mb-2">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-xl text-foreground group-hover:text-primary transition-colors">
+            <h3 className="!font-bold !text-xl !text-foreground group-hover:!text-primary transition-colors">
               {product.series}
             </h3>
             {product.part_number && (
-              <span className="text-xs text-muted-foreground font-mono bg-muted/50 px-1.5 py-0.5 rounded">
+              <span className="text-sm !text-muted-foreground font-mono bg-muted/50 px-1.5 py-0.5 rounded">
                 #{product.part_number}
               </span>
             )}
           </div>
-          <div className="text-sm text-primary/80 font-medium mb-1 capitalize flex items-center gap-2">
+          <div className="text-base !text-primary/80 font-medium mb-1 capitalize flex items-center gap-2">
             {product.technology}
             <span className="w-1 h-1 rounded-full bg-current opacity-50" aria-hidden="true" />
             <span className={product.duty === 'heavy' ? 'text-[var(--accent-warm)]' : ''}>
@@ -129,7 +129,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
           </div>
         </div>
 
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
+        <p className="text-base !text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
           {product.description.startsWith(product.series)
             ? product.description.slice(product.series.length).replace(/^\s*[–\-—:]\s*/, '').trim() || product.description
             : product.description}
@@ -137,11 +137,11 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
 
         {/* Specs & Features */}
         <div className="flex flex-wrap gap-1.5 mb-6">
-          <Badge variant="secondary" className={`text-[10px] px-2 py-0.5 h-5 font-normal flex items-center ${colorClasses(getIpColor(product.ip))}`}>
+          <Badge variant="secondary" className={`text-sm px-2 py-0.5 h-5 font-normal flex items-center ${colorClasses(getIpColor(product.ip))}`}>
             <IpIcon />
             {product.ip}
           </Badge>
-          <Badge variant="secondary" className={`text-[10px] px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getMaterialColor(product.material))}`}>
+          <Badge variant="secondary" className={`text-sm px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getMaterialColor(product.material))}`}>
             <MaterialIcon material={product.material} />
             {product.material}
           </Badge>
@@ -149,7 +149,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
             <Badge
               key={feature}
               variant="secondary"
-              className={`text-[10px] px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getFeatureColor(feature))}`}
+              className={`text-sm px-2 py-0.5 h-5 font-normal capitalize flex items-center ${colorClasses(getFeatureColor(feature))}`}
             >
               <FeatureIcon feature={feature} />
               {feature.replace('_', ' ')}
@@ -160,7 +160,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
         {/* Footer Actions */}
         <div className="mt-auto pt-4 flex items-center gap-2 border-t border-border/50">
           <Button
-            className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 text-primary-foreground border-0 transition-all duration-300"
+            className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 !text-white text-primary-foreground border-0 transition-all duration-300"
             onClick={(e) => { e.stopPropagation(); onViewDetails?.(product); }}
             aria-label={`View details for ${product.series}`}
           >
