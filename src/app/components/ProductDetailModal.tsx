@@ -343,15 +343,17 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  asChild
-                  className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
-                >
-                  <a href={product.link} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="w-6 h-6" />
-                    View Product Page
-                  </a>
-                </Button>
+                {product.link && (
+                  <Button
+                    asChild
+                    className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
+                  >
+                    <a href={product.link} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-6 h-6" />
+                      View Product Page
+                    </a>
+                  </Button>
+                )}
                 {datasheetUrl && (
                   <Button asChild variant="outline" className="flex-1 gap-2 !text-base">
                     <a href={datasheetUrl} target="_blank" rel="noopener noreferrer">
