@@ -113,7 +113,7 @@ export function ResultsPage({
   }, []);
 
   // Primary filtered list based on wizard state
-  const wizardMatches = filterProducts();
+  const wizardMatches = useMemo(() => filterProducts(), [filterProducts]);
 
   // Derive available materials from wizard-filtered products
   const availableMaterials = useMemo(() => {
@@ -134,7 +134,9 @@ export function ResultsPage({
 
   // Products selected for comparison
   const compareProducts = useMemo(() => {
-    return compareIds.map(id => finalResults.find(p => p.id === id) || products.find(p => p.id === id)).filter(Boolean) as Product[];
+    return compareIds
+      .map(id => finalResults.find(p => p.id === id) ?? products.find(p => p.id === id))
+      .filter((p): p is Product => p !== undefined);
   }, [compareIds, finalResults, products]);
 
   // Preload first 4 product images (above-the-fold)
@@ -209,6 +211,16 @@ export function ResultsPage({
         break;
     }
   };
+
+  // Generic toggle for multi-value filter arrays (duty, material, etc.)
+  const makeToggleHandler = useCallback(
+    <T extends string>(setter: React.Dispatch<React.SetStateAction<T[]>>, value: T) =>
+      (e: React.SyntheticEvent) => {
+        e.preventDefault();
+        setter(prev => prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]);
+      },
+    []
+  );
 
   const handleCopyLink = () => {
     const url = buildShareUrl(wizardState);
@@ -356,22 +368,14 @@ export function ResultsPage({
                 <DropdownMenuSeparator />
 
                 <DropdownMenuLabel>Duty Rating</DropdownMenuLabel>
-                {['light', 'medium', 'heavy'].map(duty => (
+                {(['light', 'medium', 'heavy'] as const).map(duty => (
                   <div key={duty} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
                     role="checkbox"
                     aria-checked={dutyFilter.includes(duty)}
                     aria-label={`${duty} duty`}
                     tabIndex={0}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setDutyFilter(prev => prev.includes(duty) ? prev.filter(d => d !== duty) : [...prev, duty]);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        setDutyFilter(prev => prev.includes(duty) ? prev.filter(d => d !== duty) : [...prev, duty]);
-                      }
-                    }}
+                    onClick={makeToggleHandler(setDutyFilter, duty)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') makeToggleHandler(setDutyFilter, duty)(e); }}
                   >
                     <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${dutyFilter.includes(duty) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
                       {dutyFilter.includes(duty) && <Check className="w-3 h-3" />}
@@ -389,15 +393,9 @@ export function ResultsPage({
                     aria-checked={materialFilter.includes(mat)}
                     aria-label={mat}
                     tabIndex={0}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setMaterialFilter(prev => prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat]);
-                    }}
+                    onClick={makeToggleHandler(setMaterialFilter, mat)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        setMaterialFilter(prev => prev.includes(mat) ? prev.filter(m => m !== mat) : [...prev, mat]);
-                      }
+                      if (e.key === 'Enter' || e.key === ' ') makeToggleHandler(setMaterialFilter, mat)(e);
                     }}
                   >
                     <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${materialFilter.includes(mat) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">

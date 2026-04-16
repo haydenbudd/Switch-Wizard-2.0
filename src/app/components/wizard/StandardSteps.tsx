@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, Fragment } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, ShieldCheck as ShieldCert } from 'lucide-react';
+import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
@@ -393,7 +393,7 @@ export function StandardSteps({
           className="flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-20 pt-10 border-t border-border/50"
         >
           <div className="flex items-center gap-3 text-muted-foreground">
-            <ShieldCert className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
+            <ShieldCheck className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
             <span className="!text-lg !font-medium">ISO Certified</span>
           </div>
           <div className="flex items-center gap-3 text-muted-foreground">
