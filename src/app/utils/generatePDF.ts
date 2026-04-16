@@ -200,7 +200,9 @@ export async function generatePDF(opts: GeneratePDFOptions) {
       rows.push(['Duty Class', dutyLabel]);
     }
     if (wizardState.selectedMaterial) rows.push(['Material', wizardState.selectedMaterial]);
-    if (wizardState.selectedConnection) rows.push(['Connection', wizardState.selectedConnection]);
+    if (wizardState.selectedConnection && wizardState.selectedConnection !== 'no_preference') {
+      rows.push(['Connection', wizardState.selectedConnection]);
+    }
     if (wizardState.selectedGuard) rows.push(['Safety Guard', wizardState.selectedGuard === 'yes' ? 'Required' : 'Not needed']);
     if (wizardState.selectedFeatures.length > 0) {
       const featureLabels = wizardState.selectedFeatures

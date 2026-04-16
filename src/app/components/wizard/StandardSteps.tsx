@@ -587,7 +587,7 @@ export function StandardSteps({
                   <span className="!text-4xl !font-bold tracking-tight block mb-2">Connection Type</span>
                   <p className="!text-lg !text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
                   {(connections || []).map((conn, i) => (
                     <OptionCard
                       key={conn.id}
@@ -595,7 +595,7 @@ export function StandardSteps({
                       description={conn.description}
                       icon={conn.icon}
                       selected={wizardState.selectedConnection === conn.id}
-                      count={getProductCount(5, conn.id)}
+                      count={conn.id === 'no_preference' ? undefined : getProductCount(5, conn.id)}
                       onClick={() => handleSingleSelect(conn.id, wizardState.setSelectedConnection, 5)}
                       index={i}
                     />

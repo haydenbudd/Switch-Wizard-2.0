@@ -18,7 +18,12 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       if (state.selectedAction && !product.actions.includes(state.selectedAction)) return false;
       if (!matchesEnvironment(state.selectedEnvironment, product.ip)) return false;
       if (state.selectedDuty && product.duty !== state.selectedDuty) return false;
-      if (state.selectedTechnology !== 'pneumatic' && state.selectedConnection && product.connector_type !== state.selectedConnection) return false;
+      if (
+        state.selectedTechnology !== 'pneumatic' &&
+        state.selectedConnection &&
+        state.selectedConnection !== 'no_preference' &&
+        product.connector_type !== state.selectedConnection
+      ) return false;
       if (state.selectedCircuitCount && state.selectedCircuitCount !== 'no_preference' && product.circuitry !== state.selectedCircuitCount) return false;
       if (state.selectedGuard === 'yes' && !(product.features || []).includes('shield')) return false;
 
@@ -83,8 +88,10 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       if (p.connector_type) {
         counts.set(key(5, p.connector_type), (counts.get(key(5, p.connector_type)) || 0) + 1);
       }
+      // "no_preference" matches everything at this filtering level
+      counts.set(key(5, 'no_preference'), (counts.get(key(5, 'no_preference')) || 0) + 1);
 
-      const matchesConnection = wizardState.selectedTechnology === 'pneumatic' || !wizardState.selectedConnection || p.connector_type === wizardState.selectedConnection;
+      const matchesConnection = wizardState.selectedTechnology === 'pneumatic' || !wizardState.selectedConnection || wizardState.selectedConnection === 'no_preference' || p.connector_type === wizardState.selectedConnection;
       if (!matchesConnection) continue;
 
       // Step 6: Circuit Count

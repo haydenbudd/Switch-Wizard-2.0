@@ -152,7 +152,7 @@ export function useProductData(): ProductData {
     const metaMap = new Map(staticOptionData.connections.map(c => [c.id, c]));
 
     const seen = new Set<string>();
-    return products
+    const derived = products
       .filter(p => p.connector_type && p.connector_type !== 'undefined')
       .filter(p => {
         if (seen.has(p.connector_type!)) return false;
@@ -171,6 +171,21 @@ export function useProductData(): ProductData {
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
+
+    // Always append "No Preference" option
+    const noPreference = metaMap.get('no_preference');
+    if (noPreference) {
+      derived.push({
+        id: 'no_preference',
+        category: 'connection',
+        label: noPreference.label,
+        description: noPreference.description,
+        icon: noPreference.icon,
+        sortOrder: noPreference.sortOrder ?? 99,
+      });
+    }
+
+    return derived;
   }, [products]);
 
   // Derive unique duty ratings with user-friendly descriptions
