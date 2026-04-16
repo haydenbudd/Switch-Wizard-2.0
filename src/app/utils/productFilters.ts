@@ -75,7 +75,7 @@ export const filterProductsByConnection = (products: Product[], cordedFilter: 'a
   });
 };
 
-export const isProductEnvironmentMatch = (product: Product, selectedEnvironment?: string) => {
+export const isProductEnvironmentMatch = (product: Product, selectedEnvironment?: string): boolean => {
   if (!selectedEnvironment) return false;
   if (selectedEnvironment === 'any') return true; // No preference — all products match
   if (selectedEnvironment === 'dry') return true; // Dry: any IP rating is sufficient
@@ -137,4 +137,3 @@ export const getProcessedProducts = (products: Product[], options: FilterOptions
   filtered = sortProducts(filtered, options.sortBy, options.selectedEnvironment);
   return filtered;
 };
-

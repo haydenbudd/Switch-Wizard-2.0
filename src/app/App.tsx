@@ -70,27 +70,31 @@ function WizardApp() {
     needsCustomSolution,
   } = useProductFiltering({ wizardState, products });
 
-  // Restore wizard state from URL share params on mount
+  // Restore wizard state from URL share params on mount.
+  // State setters are stable (never change), so we capture them via ref to
+  // avoid adding them as deps of this one-shot effect.
   const [shareRestored, setShareRestored] = useState(false);
+  const wizardSettersRef = useRef(wizardState);
+  wizardSettersRef.current = wizardState;
   useEffect(() => {
     const shared = parseShareParams(window.location.search);
     if (!shared) return;
 
-    if (shared.selectedApplication) wizardState.setSelectedApplication(shared.selectedApplication);
-    if (shared.selectedTechnology) wizardState.setSelectedTechnology(shared.selectedTechnology);
-    if (shared.selectedAction) wizardState.setSelectedAction(shared.selectedAction);
-    if (shared.selectedEnvironment) wizardState.setSelectedEnvironment(shared.selectedEnvironment);
-    if (shared.selectedDuty) wizardState.setSelectedDuty(shared.selectedDuty);
-    if (shared.selectedMaterial) wizardState.setSelectedMaterial(shared.selectedMaterial);
-    if (shared.selectedConnection) wizardState.setSelectedConnection(shared.selectedConnection);
-    if (shared.selectedCircuitCount) wizardState.setSelectedCircuitCount(shared.selectedCircuitCount);
-    if (shared.selectedGuard) wizardState.setSelectedGuard(shared.selectedGuard);
-    if (shared.selectedFeatures) wizardState.setSelectedFeatures(shared.selectedFeatures);
-    if (shared.flow) wizardState.setFlow(shared.flow as 'standard' | 'medical');
+    const s = wizardSettersRef.current;
+    if (shared.selectedApplication) s.setSelectedApplication(shared.selectedApplication);
+    if (shared.selectedTechnology) s.setSelectedTechnology(shared.selectedTechnology);
+    if (shared.selectedAction) s.setSelectedAction(shared.selectedAction);
+    if (shared.selectedEnvironment) s.setSelectedEnvironment(shared.selectedEnvironment);
+    if (shared.selectedDuty) s.setSelectedDuty(shared.selectedDuty);
+    if (shared.selectedMaterial) s.setSelectedMaterial(shared.selectedMaterial);
+    if (shared.selectedConnection) s.setSelectedConnection(shared.selectedConnection);
+    if (shared.selectedCircuitCount) s.setSelectedCircuitCount(shared.selectedCircuitCount);
+    if (shared.selectedGuard) s.setSelectedGuard(shared.selectedGuard);
+    if (shared.selectedFeatures) s.setSelectedFeatures(shared.selectedFeatures);
+    if (shared.flow) s.setFlow(shared.flow as 'standard' | 'medical');
 
-    wizardState.setStep(9);
+    s.setStep(9);
     setShareRestored(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update URL bar when viewing results; clear when navigating away

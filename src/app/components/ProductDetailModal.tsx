@@ -71,12 +71,17 @@ const SERIES_DATASHEETS: Record<string, string> = {
 };
 
 function getDatasheetUrl(series: string): string | null {
-  const s = series.toLowerCase();
+  const s = series.trim().toLowerCase();
+  if (!s) return null;
   if (SERIES_DATASHEETS[s]) return SERIES_DATASHEETS[s];
-  for (const [key, url] of Object.entries(SERIES_DATASHEETS)) {
-    if (s.includes(key)) return url;
+  // Prefer the longest matching key so e.g. "hercules anti-trip" wins over "hercules"
+  let bestKey = '';
+  for (const key of Object.keys(SERIES_DATASHEETS)) {
+    if (s.includes(key) && key.length > bestKey.length) {
+      bestKey = key;
+    }
   }
-  return null;
+  return bestKey ? SERIES_DATASHEETS[bestKey] : null;
 }
 
 function MaterialIcon({ material }: { material: string }) {
@@ -338,28 +343,24 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <a
-                  href={product.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1"
-                >
-                  <Button className="w-full gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15">
-                    <ExternalLink className="w-6 h-6" />
-                    View Product Page
-                  </Button>
-                </a>
-                {datasheetUrl && (
-                  <a
-                    href={datasheetUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {product.link && (
+                  <Button
+                    asChild
+                    className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
                   >
-                    <Button variant="outline" className="w-full gap-2 !text-base">
+                    <a href={product.link} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-6 h-6" />
+                      View Product Page
+                    </a>
+                  </Button>
+                )}
+                {datasheetUrl && (
+                  <Button asChild variant="outline" className="flex-1 gap-2 !text-base">
+                    <a href={datasheetUrl} target="_blank" rel="noopener noreferrer">
                       <FileText className="w-6 h-6" />
                       Datasheet PDF
-                    </Button>
-                  </a>
+                    </a>
+                  </Button>
                 )}
               </div>
             </div>

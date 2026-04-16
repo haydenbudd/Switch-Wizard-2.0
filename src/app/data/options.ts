@@ -520,6 +520,13 @@ export const connections: Option[] = [
     description: 'Factory-attached cable ready for direct connection.',
     sortOrder: 2
   },
+  {
+    id: 'no_preference',
+    label: 'No Preference',
+    icon: Ban,
+    description: 'Show all connection types.',
+    sortOrder: 99,
+  },
 ];
 
 // ── Custom Switch Builder Options ──────────────────────────────
