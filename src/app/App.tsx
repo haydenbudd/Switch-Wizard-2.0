@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, Suspense, lazy, Component, type ReactNode, type ErrorInfo } from 'react';
+import { useState, useEffect, useRef, useCallback, Suspense, lazy, Component, type ReactNode, type ErrorInfo } from 'react';
 import { Router } from '@/app/components/Router';
 import { Header } from '@/app/components/Header';
 import { OrbBackground } from '@/app/components/OrbBackground';
