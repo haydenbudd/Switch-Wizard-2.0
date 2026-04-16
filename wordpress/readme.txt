@@ -4,7 +4,7 @@ Tags: product finder, wizard, foot switch, linemaster
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: Proprietary
 
 Interactive product-finder wizard for Linemaster foot pedal switches.
@@ -48,6 +48,10 @@ Updates are automatic — just push to the GitHub repo.
     [switch-wizard class="my-section"]
 
 == Changelog ==
+
+= 2.1.1 =
+* Bust asset cache so browsers fetch the fixed JS bundle (resolves "useRef is not defined" runtime crash on the embed).
+* Wizard cleanup pass: fix datasheet PDF link, add "No Preference" option to Connection Type step.
 
 = 2.1.0 =
 * Assets now served from GitHub Pages — no re-upload needed for updates.
