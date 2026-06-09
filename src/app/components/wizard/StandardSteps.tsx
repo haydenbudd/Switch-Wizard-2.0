@@ -464,7 +464,7 @@ export function StandardSteps({
             {wizardState.step === 0 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</h2>
                   <p className="!text-lg !text-muted-foreground">Choose the specific use case for your foot switch</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
@@ -487,7 +487,7 @@ export function StandardSteps({
             {wizardState.step === 1 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Technology</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Technology</h2>
                   <p className="!text-lg !text-muted-foreground">Choose the switching mechanism for your application</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
@@ -513,7 +513,7 @@ export function StandardSteps({
             {wizardState.step === 2 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</h2>
                   <p className="!text-lg !text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select action type">
@@ -539,7 +539,7 @@ export function StandardSteps({
             {wizardState.step === 3 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</h2>
                   <p className="!text-lg !text-muted-foreground">Where will the switch be used?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
@@ -563,7 +563,7 @@ export function StandardSteps({
             {wizardState.step === 4 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</h2>
                   <p className="!text-lg !text-muted-foreground">How heavy will the usage be?</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
@@ -587,7 +587,7 @@ export function StandardSteps({
             {wizardState.step === 5 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Connection Type</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Connection Type</h2>
                   <p className="!text-lg !text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
@@ -611,7 +611,7 @@ export function StandardSteps({
             {wizardState.step === 6 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</h2>
                   <p className="!text-lg !text-muted-foreground">How many circuits do you need to control?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
@@ -635,7 +635,7 @@ export function StandardSteps({
             {wizardState.step === 7 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</h2>
                   <p className="!text-lg !text-muted-foreground">Do you need protection against accidental activation?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
@@ -665,7 +665,7 @@ export function StandardSteps({
             {wizardState.step === 8 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Additional Features</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Additional Features</h2>
                   <p className="!text-lg !text-muted-foreground">Select any that apply, or skip to view results.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">

@@ -201,7 +201,16 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     }
     if (wizardState.selectedMaterial) rows.push(['Material', wizardState.selectedMaterial]);
     if (wizardState.selectedConnection && wizardState.selectedConnection !== 'no_preference') {
-      rows.push(['Connection', wizardState.selectedConnection]);
+      // Stored as an id like "screw-terminal" — print it human-readable
+      const connLabel = wizardState.selectedConnection
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+      rows.push(['Connection', connLabel]);
+    }
+    if (wizardState.selectedCircuitCount && wizardState.selectedCircuitCount !== 'no_preference') {
+      const n = wizardState.selectedCircuitCount;
+      rows.push(['Circuits Controlled', `${n} ${n === '1' ? 'circuit' : 'circuits'}`]);
     }
     if (wizardState.selectedGuard) rows.push(['Safety Guard', wizardState.selectedGuard === 'yes' ? 'Required' : 'Not needed']);
     if (wizardState.selectedFeatures.length > 0) {

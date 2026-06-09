@@ -33,6 +33,17 @@ import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 
 const MAX_COMPARE = 3;
 
+// Friendly names for the internal filter keys shown in the no-results
+// "remove this filter" recovery button
+const RELAXED_FILTER_LABELS: Record<string, string> = {
+  features: 'extra features',
+  guard: 'safety guard',
+  duty: 'duty rating',
+  environment: 'environment',
+  action: 'action type',
+  technology: 'technology',
+};
+
 interface ResultsPageProps {
   wizardState: WizardState;
   products: Product[];
@@ -237,6 +248,18 @@ export function ResultsPage({
     });
   };
 
+  // Only show the filter-chip bar when there's at least one chip to display —
+  // an empty bar reading just "Filters:" is confusing.
+  const hasActiveFilters = Boolean(
+    wizardState.selectedApplication ||
+    wizardState.selectedTechnology ||
+    wizardState.selectedAction ||
+    (wizardState.selectedEnvironment && wizardState.selectedEnvironment !== 'any') ||
+    searchTerm ||
+    dutyFilter.length > 0 ||
+    materialFilter.length > 0
+  );
+
   // Build mailto for custom solution / contact engineering
   const contactSubject = encodeURIComponent('Custom Foot Switch Inquiry');
   const contactBody = encodeURIComponent(
@@ -269,15 +292,16 @@ export function ResultsPage({
             </h2>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={handleCopyLink} className="gap-2 !text-base">
+            {/* aria-labels needed: the text spans are display:none on mobile */}
+            <Button variant="outline" onClick={handleCopyLink} className="gap-2 !text-base" aria-label="Copy share link">
               <Link className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Copy Link</span>
             </Button>
-            <Button variant="outline" onClick={onGeneratePDF} className="gap-2 !text-base">
+            <Button variant="outline" onClick={onGeneratePDF} className="gap-2 !text-base" aria-label="Download results as PDF">
               <Download className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Download PDF</span>
             </Button>
-            <Button variant="ghost" onClick={onReset} className="gap-2 !text-base">
+            <Button variant="ghost" onClick={onReset} className="gap-2 !text-base" aria-label="Reset wizard and start over">
               <RefreshCw className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Reset</span>
             </Button>
@@ -285,6 +309,7 @@ export function ResultsPage({
         </div>
 
         {/* Active Filters Display */}
+        {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 items-center glass-card p-3 rounded-xl">
           <span className="text-base !font-medium !text-muted-foreground mr-2">Filters:</span>
 
@@ -325,6 +350,7 @@ export function ResultsPage({
             <FilterChip label={`Material: ${materialFilter.join(', ')}`} onRemove={() => setMaterialFilter([])} className="bg-emerald-100 !text-emerald-800 dark:bg-emerald-900/30 dark:!text-emerald-300" />
           )}
         </div>
+        )}
 
         {/* Toolbar */}
         <div className="!flex !flex-row !flex-nowrap gap-4 items-center sticky top-16 z-30 glass-card p-4 rounded-2xl" style={{ display: 'flex', flexWrap: 'nowrap' }}>
@@ -364,11 +390,13 @@ export function ResultsPage({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Connection Type</DropdownMenuLabel>
+                {/* Labeled "Wiring" (not "Connection Type") to avoid clashing
+                    with the wizard step of that name, which means terminals */}
+                <DropdownMenuLabel>Wiring</DropdownMenuLabel>
                 <DropdownMenuRadioGroup value={cordedFilter} onValueChange={(v) => setCordedFilter(v as 'all' | 'corded' | 'cordless')}>
                   <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="corded">Pre-wired / Plug</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="cordless">Terminals (User wired)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="corded">Cord included (pre-wired)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="cordless">You wire it (terminals)</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
 
                 <DropdownMenuSeparator />
@@ -463,7 +491,9 @@ export function ResultsPage({
                   {alternatives.products.length} {alternatives.products.length === 1 ? 'product' : 'products'} available if you adjust your filters
                 </p>
                 <Button variant="outline" onClick={() => removeWizardFilter(alternatives.relaxed as FilterType)}>
-                  Remove {alternatives.relaxed === 'all' ? 'all filters' : `"${alternatives.relaxed}" filter`} ({alternatives.products.length} results)
+                  {alternatives.relaxed === 'all'
+                    ? `Remove all filters (${alternatives.products.length} results)`
+                    : `Remove the ${RELAXED_FILTER_LABELS[alternatives.relaxed] ?? alternatives.relaxed} filter (${alternatives.products.length} results)`}
                 </Button>
                 <Button variant="link" onClick={onReset}>Start over</Button>
               </div>
