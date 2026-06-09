@@ -18,18 +18,52 @@ interface LoginAttempt {
   lockedUntil?: number;
 }
 
+// localStorage can throw in privacy-restricted browsers (e.g. storage access
+// blocked on the embedding WordPress page) — never let that crash the app.
+function safeGetItem(key: string): string | null {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSetItem(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    // Storage unavailable — rate limiting / session tracking degrade gracefully
+  }
+}
+
+function safeRemoveItem(key: string) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // Storage unavailable
+  }
+}
+
 function getLoginAttempts(): LoginAttempt {
-  const stored = localStorage.getItem('login_attempts');
+  const stored = safeGetItem('login_attempts');
   if (!stored) return { count: 0, lastAttempt: 0 };
-  return JSON.parse(stored);
+  try {
+    const parsed = JSON.parse(stored);
+    if (typeof parsed === 'object' && parsed !== null && typeof parsed.count === 'number') {
+      return parsed;
+    }
+  } catch {
+    // Corrupted value — fall through to a clean slate
+  }
+  return { count: 0, lastAttempt: 0 };
 }
 
 function saveLoginAttempts(attempts: LoginAttempt) {
-  localStorage.setItem('login_attempts', JSON.stringify(attempts));
+  safeSetItem('login_attempts', JSON.stringify(attempts));
 }
 
 function clearLoginAttempts() {
-  localStorage.removeItem('login_attempts');
+  safeRemoveItem('login_attempts');
 }
 
 export function checkAccountLocked(): { locked: boolean; remainingTime?: number } {
@@ -61,15 +95,17 @@ export function recordSuccessfulLogin() {
 
 // Session activity tracking
 export function updateLastActivity() {
-  localStorage.setItem('last_activity', Date.now().toString());
+  safeSetItem('last_activity', Date.now().toString());
 }
 
 export function checkSessionTimeout(): boolean {
-  const lastActivity = localStorage.getItem('last_activity');
+  const lastActivity = safeGetItem('last_activity');
   if (!lastActivity) return true;
-  
-  const timeSinceActivity = Date.now() - parseInt(lastActivity);
-  return timeSinceActivity > SESSION_TIMEOUT;
+
+  const lastActivityTime = parseInt(lastActivity, 10);
+  if (Number.isNaN(lastActivityTime)) return true; // corrupted value — treat as expired
+
+  return Date.now() - lastActivityTime > SESSION_TIMEOUT;
 }
 
 // Auth helpers
@@ -96,7 +132,7 @@ export async function signInWithPassword(email: string, password: string) {
 
 export async function signOut() {
   clearLoginAttempts();
-  localStorage.removeItem('last_activity');
+  safeRemoveItem('last_activity');
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.error('Sign out error:', error);
@@ -140,7 +176,7 @@ export async function getCurrentUser() {
 export function onAuthStateChange(callback: (session: unknown) => void) {
   return supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
-      localStorage.removeItem('last_activity');
+      safeRemoveItem('last_activity');
     }
     callback(session);
   });

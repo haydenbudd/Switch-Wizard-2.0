@@ -224,6 +224,12 @@ export function ResultsPage({
 
   const handleCopyLink = () => {
     const url = buildShareUrl(wizardState);
+    // navigator.clipboard is undefined on non-secure (http) pages — calling
+    // .writeText on it would throw synchronously, bypassing the .catch below
+    if (!navigator.clipboard?.writeText) {
+      toast.error('Copying requires a secure (https) connection');
+      return;
+    }
     navigator.clipboard.writeText(url).then(() => {
       toast.success('Link copied to clipboard');
     }).catch(() => {

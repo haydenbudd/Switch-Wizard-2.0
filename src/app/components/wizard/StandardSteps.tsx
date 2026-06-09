@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, Fragment } from 'react';
 import { createPortal } from 'react-dom';
+import { getPortalContainer } from '@/app/utils/portalContainer';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
@@ -313,7 +314,7 @@ export function StandardSteps({
         </motion.div>
       )}
     </AnimatePresence>,
-    document.body
+    getPortalContainer()
   );
 
   // Step 0: Category Selection
