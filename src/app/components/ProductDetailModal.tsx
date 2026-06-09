@@ -2,7 +2,7 @@ import { Product } from '@/app/lib/api';
 import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
-import { getProxiedImageUrl } from '@/app/utils/imageProxy';
+import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -252,6 +252,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
               {product.image ? (
                 <ImageWithFallback
                   src={getProxiedImageUrl(product.image, { width: 800, quality: 85 })}
+                  srcSet={getProxiedImageSrcSet(product.image, 800, 85)}
                   alt={product.series}
                   className="max-w-full max-h-[200px] object-contain drop-shadow-xl"
                 />
@@ -357,13 +358,21 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     </a>
                   </Button>
                 )}
-                {datasheetUrl && (
+                {datasheetUrl ? (
                   <Button asChild variant="outline" className="flex-1 gap-2 !text-base">
                     <a href={datasheetUrl} target="_blank" rel="noopener noreferrer">
                       <FileText className="w-6 h-6" />
                       Datasheet PDF
                     </a>
                   </Button>
+                ) : (
+                  <div
+                    className="flex-1 flex items-center justify-center gap-2 !text-base !text-muted-foreground border border-dashed border-border/60 rounded-md px-4 py-2 cursor-not-allowed"
+                    title="No PDF datasheet is published for this series yet"
+                  >
+                    <FileText className="w-6 h-6 opacity-60" />
+                    Datasheet unavailable
+                  </div>
                 )}
               </div>
             </div>

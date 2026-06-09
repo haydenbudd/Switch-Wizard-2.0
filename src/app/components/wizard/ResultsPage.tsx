@@ -364,9 +364,15 @@ export function ResultsPage({
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 whitespace-nowrap !text-base">
+                <Button
+                  variant="outline"
+                  className="gap-2 whitespace-nowrap !text-base"
+                  aria-label={`Sort by ${sortBy}`}
+                >
                   <ArrowUp className="w-6 h-6" aria-hidden="true" />
-                  Sort: <span className="font-semibold capitalize">{sortBy}</span>
+                  <span className="hidden sm:inline">
+                    Sort: <span className="font-semibold capitalize">{sortBy}</span>
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -381,9 +387,13 @@ export function ResultsPage({
             {/* Filter Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-2 whitespace-nowrap !text-base">
+                <Button
+                  variant="outline"
+                  className="gap-2 whitespace-nowrap !text-base"
+                  aria-label="More filters"
+                >
                   <SlidersHorizontal className="w-6 h-6" aria-hidden="true" />
-                  More Filters
+                  <span className="hidden sm:inline">More Filters</span>
                   {(dutyFilter.length > 0 || cordedFilter !== 'all' || materialFilter.length > 0) && (
                     <span className="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true" />
                   )}

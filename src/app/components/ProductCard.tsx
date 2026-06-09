@@ -5,7 +5,7 @@ import { Badge } from '@/app/components/ui/badge';
 import { Product } from '@/app/lib/api';
 import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package, Droplets, Anvil, Sparkles, Hexagon, Feather, Gem, Component, GitCompareArrows } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
-import { getProxiedImageUrl } from '@/app/utils/imageProxy';
+import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { colorClasses, getIpColor, getMaterialColor, getFeatureColor } from '@/app/lib/attributeColors';
 
 // Icon mapping for features - defined outside component to avoid re-creation on every render
@@ -94,6 +94,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
         {product.image ? (
           <ImageWithFallback
             src={getProxiedImageUrl(product.image, { width: 400 })}
+            srcSet={getProxiedImageSrcSet(product.image, 400)}
             alt={product.series}
             className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-110 drop-shadow-xl"
             loading={priority ? "eager" : "lazy"}

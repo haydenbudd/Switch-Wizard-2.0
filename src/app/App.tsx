@@ -142,13 +142,18 @@ function WizardApp() {
   }, [filterProducts, wizardState.step]);
 
   const handleGeneratePDF = useCallback(async () => {
-    const { generatePDF } = await import('@/app/utils/generatePDF');
-    await generatePDF({
-      wizardState,
-      matchedProducts: filterProducts(),
-      applications, technologies, actions, environments, features, duties,
-      consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories,
-    });
+    try {
+      const { generatePDF } = await import('@/app/utils/generatePDF');
+      await generatePDF({
+        wizardState,
+        matchedProducts: filterProducts(),
+        applications, technologies, actions, environments, features, duties,
+        consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories,
+      });
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      toast.error('PDF generation failed — please try again');
+    }
   }, [wizardState, filterProducts, applications, technologies, actions, environments, features, duties, consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories]);
 
   // Medical flow

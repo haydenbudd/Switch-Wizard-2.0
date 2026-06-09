@@ -109,6 +109,9 @@ export function useProductData(): ProductData {
       if (signal?.aborted) return;
       console.warn('API fetch failed, using static fallback data:', err);
       setProducts(staticProducts as Product[]);
+      // Surface the error so App.tsx can show the "live data unavailable"
+      // toast — otherwise the user sees stale fallback data with no warning.
+      setError(err instanceof Error ? err.message : 'fetch failed');
     } finally {
       if (!signal?.aborted) {
         setLoading(false);
