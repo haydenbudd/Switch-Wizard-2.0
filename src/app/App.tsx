@@ -7,7 +7,10 @@ import { useWizardState } from '@/app/hooks/useWizardState';
 import { useWizardNavigation } from '@/app/hooks/useWizardNavigation';
 import { useProductFiltering } from '@/app/hooks/useProductFiltering';
 import { trackNoResults } from '@/app/utils/analytics';
-import { parseShareParams, updateUrlWithState, clearShareParams } from '@/app/utils/shareUrl';
+import {
+  parseShareParams, updateUrlWithState, clearShareParams,
+  saveWizardStateToLocal, loadWizardStateFromLocal, clearWizardStateFromLocal,
+} from '@/app/utils/shareUrl';
 import { Toaster, toast } from 'sonner';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
@@ -71,32 +74,85 @@ function WizardApp() {
     needsCustomSolution,
   } = useProductFiltering({ wizardState, products });
 
-  // Restore wizard state from URL share params on mount.
+  // Restore wizard state on mount.
+  // Priority: share URL > localStorage > defaults.
+  //   - Share URL always lands the user on the results page (it's the
+  //     output of buildShareUrl, which is only invoked from results).
+  //   - localStorage restores to the exact step the user last left off on.
   // State setters are stable (never change), so we capture them via ref to
   // avoid adding them as deps of this one-shot effect.
   const [shareRestored, setShareRestored] = useState(false);
   const wizardSettersRef = useRef(wizardState);
   wizardSettersRef.current = wizardState;
   useEffect(() => {
-    const shared = parseShareParams(window.location.search);
-    if (!shared) return;
-
     const s = wizardSettersRef.current;
-    if (shared.selectedApplication) s.setSelectedApplication(shared.selectedApplication);
-    if (shared.selectedTechnology) s.setSelectedTechnology(shared.selectedTechnology);
-    if (shared.selectedAction) s.setSelectedAction(shared.selectedAction);
-    if (shared.selectedEnvironment) s.setSelectedEnvironment(shared.selectedEnvironment);
-    if (shared.selectedDuty) s.setSelectedDuty(shared.selectedDuty);
-    if (shared.selectedMaterial) s.setSelectedMaterial(shared.selectedMaterial);
-    if (shared.selectedConnection) s.setSelectedConnection(shared.selectedConnection);
-    if (shared.selectedCircuitCount) s.setSelectedCircuitCount(shared.selectedCircuitCount);
-    if (shared.selectedGuard) s.setSelectedGuard(shared.selectedGuard);
-    if (shared.selectedFeatures) s.setSelectedFeatures(shared.selectedFeatures);
-    if (shared.flow) s.setFlow(shared.flow as 'standard' | 'medical');
+    const shared = parseShareParams(window.location.search);
+    if (shared) {
+      if (shared.selectedApplication) s.setSelectedApplication(shared.selectedApplication);
+      if (shared.selectedTechnology) s.setSelectedTechnology(shared.selectedTechnology);
+      if (shared.selectedAction) s.setSelectedAction(shared.selectedAction);
+      if (shared.selectedEnvironment) s.setSelectedEnvironment(shared.selectedEnvironment);
+      if (shared.selectedDuty) s.setSelectedDuty(shared.selectedDuty);
+      if (shared.selectedMaterial) s.setSelectedMaterial(shared.selectedMaterial);
+      if (shared.selectedConnection) s.setSelectedConnection(shared.selectedConnection);
+      if (shared.selectedCircuitCount) s.setSelectedCircuitCount(shared.selectedCircuitCount);
+      if (shared.selectedGuard) s.setSelectedGuard(shared.selectedGuard);
+      if (shared.selectedFeatures) s.setSelectedFeatures(shared.selectedFeatures);
+      if (shared.flow) s.setFlow(shared.flow as 'standard' | 'medical');
+      s.setStep(9);
+      setShareRestored(true);
+      return;
+    }
 
-    s.setStep(9);
-    setShareRestored(true);
+    // No share URL — try localStorage
+    const persisted = loadWizardStateFromLocal();
+    if (!persisted) return;
+    if (persisted.selectedCategory) s.setSelectedCategory(persisted.selectedCategory);
+    if (persisted.selectedApplication) s.setSelectedApplication(persisted.selectedApplication);
+    if (persisted.selectedTechnology) s.setSelectedTechnology(persisted.selectedTechnology);
+    if (persisted.selectedAction) s.setSelectedAction(persisted.selectedAction);
+    if (persisted.selectedEnvironment) s.setSelectedEnvironment(persisted.selectedEnvironment);
+    if (persisted.selectedDuty) s.setSelectedDuty(persisted.selectedDuty);
+    if (persisted.selectedMaterial) s.setSelectedMaterial(persisted.selectedMaterial);
+    if (persisted.selectedConnection) s.setSelectedConnection(persisted.selectedConnection);
+    if (persisted.selectedCircuitCount) s.setSelectedCircuitCount(persisted.selectedCircuitCount);
+    if (persisted.selectedGuard) s.setSelectedGuard(persisted.selectedGuard);
+    if (persisted.selectedFeatures?.length) s.setSelectedFeatures(persisted.selectedFeatures);
+    if (persisted.flow) s.setFlow(persisted.flow);
+    if (persisted.step) s.setStep(persisted.step);
   }, []);
+
+  // Auto-save wizard state to localStorage whenever it meaningfully changes.
+  // Skip when the wizard is in its pristine state to avoid writing empty
+  // payloads on every visitor's first paint.
+  useEffect(() => {
+    const hasAnyInput =
+      wizardState.step > 0 ||
+      wizardState.selectedCategory ||
+      wizardState.selectedApplication;
+    if (!hasAnyInput) return;
+    saveWizardStateToLocal({
+      step: wizardState.step,
+      selectedCategory: wizardState.selectedCategory,
+      selectedApplication: wizardState.selectedApplication,
+      selectedTechnology: wizardState.selectedTechnology,
+      selectedAction: wizardState.selectedAction,
+      selectedEnvironment: wizardState.selectedEnvironment,
+      selectedDuty: wizardState.selectedDuty,
+      selectedMaterial: wizardState.selectedMaterial,
+      selectedConnection: wizardState.selectedConnection,
+      selectedCircuitCount: wizardState.selectedCircuitCount,
+      selectedGuard: wizardState.selectedGuard,
+      selectedFeatures: wizardState.selectedFeatures,
+      flow: wizardState.flow,
+    });
+  }, [
+    wizardState.step, wizardState.selectedCategory, wizardState.selectedApplication,
+    wizardState.selectedTechnology, wizardState.selectedAction, wizardState.selectedEnvironment,
+    wizardState.selectedDuty, wizardState.selectedMaterial, wizardState.selectedConnection,
+    wizardState.selectedCircuitCount, wizardState.selectedGuard, wizardState.selectedFeatures,
+    wizardState.flow,
+  ]);
 
   // Update URL bar when viewing results; clear when navigating away
   useEffect(() => {
@@ -124,6 +180,7 @@ function WizardApp() {
     setDutyFilter([]);
     setCordedFilter('all');
     setMaterialFilter([]);
+    clearWizardStateFromLocal();
   }, [wizardState.resetWizard]);
 
   // Track no-results as a side effect

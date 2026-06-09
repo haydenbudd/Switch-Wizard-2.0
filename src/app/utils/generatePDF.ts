@@ -185,7 +185,9 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     // Standard flow
     const appLabel = applications.find(a => a.id === wizardState.selectedApplication)?.label || wizardState.selectedApplication;
     const techLabel = technologies.find(t => t.id === wizardState.selectedTechnology)?.label || wizardState.selectedTechnology;
-    const actionLabel = actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction;
+    const actionLabel = wizardState.selectedAction && wizardState.selectedAction !== 'no_preference'
+      ? actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction
+      : 'Any';
     const envLabel = environments.find(e => e.id === wizardState.selectedEnvironment)?.label || wizardState.selectedEnvironment;
 
     const rows: [string, string][] = [
@@ -195,7 +197,7 @@ export async function generatePDF(opts: GeneratePDFOptions) {
       ['Environment', envLabel],
     ];
 
-    if (wizardState.selectedDuty) {
+    if (wizardState.selectedDuty && wizardState.selectedDuty !== 'no_preference') {
       const dutyLabel = duties.find(d => d.id === wizardState.selectedDuty)?.label || wizardState.selectedDuty;
       rows.push(['Duty Class', dutyLabel]);
     }

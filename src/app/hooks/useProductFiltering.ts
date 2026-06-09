@@ -16,9 +16,17 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
     return (products || []).filter((product) => {
       if (state.selectedApplication && !product.applications.includes(state.selectedApplication)) return false;
       if (state.selectedTechnology && product.technology !== state.selectedTechnology) return false;
-      if (state.selectedAction && !product.actions.includes(state.selectedAction)) return false;
+      if (
+        state.selectedAction &&
+        state.selectedAction !== 'no_preference' &&
+        !product.actions.includes(state.selectedAction)
+      ) return false;
       if (!matchesEnvironment(state.selectedEnvironment, product.ip)) return false;
-      if (state.selectedDuty && product.duty !== state.selectedDuty) return false;
+      if (
+        state.selectedDuty &&
+        state.selectedDuty !== 'no_preference' &&
+        product.duty !== state.selectedDuty
+      ) return false;
       if (
         state.selectedTechnology !== 'pneumatic' &&
         state.selectedConnection &&
@@ -65,8 +73,13 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       for (const action of p.actions) {
         counts.set(key(2, action), (counts.get(key(2, action)) || 0) + 1);
       }
+      // "no_preference" matches everything at this filtering level
+      counts.set(key(2, 'no_preference'), (counts.get(key(2, 'no_preference')) || 0) + 1);
 
-      const matchesAction = p.actions.includes(wizardState.selectedAction);
+      const matchesAction =
+        !wizardState.selectedAction ||
+        wizardState.selectedAction === 'no_preference' ||
+        p.actions.includes(wizardState.selectedAction);
       if (!matchesAction) continue;
 
       // Step 3: Environment — check each env option against this product's IP
@@ -81,8 +94,13 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
 
       // Step 4: Duty
       counts.set(key(4, p.duty), (counts.get(key(4, p.duty)) || 0) + 1);
+      // "no_preference" matches everything at this filtering level
+      counts.set(key(4, 'no_preference'), (counts.get(key(4, 'no_preference')) || 0) + 1);
 
-      const matchesDuty = !wizardState.selectedDuty || p.duty === wizardState.selectedDuty;
+      const matchesDuty =
+        !wizardState.selectedDuty ||
+        wizardState.selectedDuty === 'no_preference' ||
+        p.duty === wizardState.selectedDuty;
       if (!matchesDuty) continue;
 
       // Step 5: Connection Type

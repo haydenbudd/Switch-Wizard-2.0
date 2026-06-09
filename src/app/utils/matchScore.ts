@@ -85,7 +85,7 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
   }
 
   // Duty (weight 2 exact, 1 adjacent tier)
-  if (state.selectedDuty) {
+  if (state.selectedDuty && state.selectedDuty !== 'no_preference') {
     totalSelected += 1;
     maxScore += 2;
     if (product.duty === state.selectedDuty) {
@@ -194,7 +194,11 @@ export function scoreAndSplit(products: Product[], state: WizardState): SplitRes
 
   const passesHardFilter = (p: Product) => {
     if (state.selectedTechnology && p.technology !== state.selectedTechnology) return false;
-    if (state.selectedAction && !p.actions.includes(state.selectedAction)) return false;
+    if (
+      state.selectedAction &&
+      state.selectedAction !== 'no_preference' &&
+      !p.actions.includes(state.selectedAction)
+    ) return false;
     return true;
   };
 

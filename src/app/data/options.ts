@@ -239,6 +239,14 @@ export const actions: Option[] = [
     description: 'Speed varies with pressure.',
     availableFor: ['electrical', 'pneumatic'],
   },
+  {
+    id: 'no_preference',
+    label: 'No Preference',
+    icon: Ban,
+    description: 'Show all action types.',
+    availableFor: ['electrical', 'pneumatic', 'wireless'],
+    sortOrder: 99,
+  },
 ];
 
 export const environments: Option[] = [
@@ -405,6 +413,13 @@ export const duties: Option[] = [
     icon: Anvil,
     description: 'Maximum stability. Cast metal construction stays firmly in place. Best for machinery and high-force applications.',
     sortOrder: 2
+  },
+  {
+    id: 'no_preference',
+    label: 'No Preference',
+    icon: Ban,
+    description: 'Show all duty ratings.',
+    sortOrder: 99,
   },
 ];
 

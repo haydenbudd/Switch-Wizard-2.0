@@ -75,3 +75,57 @@ export function clearShareParams() {
   const base = window.location.origin + window.location.pathname;
   window.history.replaceState(null, '', base);
 }
+
+// ──────────────────────────────────────────────────────────────────────
+// Mid-wizard persistence — survives accidental refresh
+//
+// Different from share URLs: share URLs always restore to the results page
+// (step 9), localStorage restores to wherever the user left off.
+// ──────────────────────────────────────────────────────────────────────
+
+const LOCAL_KEY = 'lm-wizard-state-v1';
+
+interface PersistedState {
+  step: number;
+  selectedCategory: string;
+  selectedApplication: string;
+  selectedTechnology: string;
+  selectedAction: string;
+  selectedEnvironment: string;
+  selectedDuty: string;
+  selectedMaterial: string;
+  selectedConnection: string;
+  selectedCircuitCount: string;
+  selectedGuard: string;
+  selectedFeatures: string[];
+  flow: 'standard' | 'medical';
+}
+
+export function saveWizardStateToLocal(state: PersistedState) {
+  try {
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(state));
+  } catch {
+    // Private mode / storage disabled — silently degrade
+  }
+}
+
+export function loadWizardStateFromLocal(): PersistedState | null {
+  try {
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (typeof parsed !== 'object' || parsed === null) return null;
+    if (typeof parsed.step !== 'number') return null;
+    return parsed as PersistedState;
+  } catch {
+    return null;
+  }
+}
+
+export function clearWizardStateFromLocal() {
+  try {
+    localStorage.removeItem(LOCAL_KEY);
+  } catch {
+    // Storage unavailable
+  }
+}

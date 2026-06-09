@@ -7,6 +7,7 @@ import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { Button } from '@/app/components/ui/button';
+import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import { motion, AnimatePresence } from 'motion/react';
 
 // Magic wand cursor as inline SVG data URI
@@ -435,6 +436,20 @@ export function StandardSteps({
         </div>
       </div>
 
+      {/* Clickable breadcrumb of prior answers — tap any chip to jump back */}
+      <WizardBreadcrumb
+        wizardState={wizardState}
+        applications={applications}
+        technologies={technologies}
+        actions={actions}
+        environments={environments}
+        duties={duties}
+        connections={connections}
+        circuitCounts={circuitCounts}
+        features={features}
+        onJumpToStep={wizardState.setStep}
+      />
+
       {/* Screen reader announcements for step changes */}
       <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
         {stepAnnouncement}
@@ -489,6 +504,9 @@ export function StandardSteps({
                 <div className="text-center mb-10">
                   <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Technology</h2>
                   <p className="!text-lg !text-muted-foreground">Choose the switching mechanism for your application</p>
+                  <p className="!text-sm !text-muted-foreground/80 mt-3 italic">
+                    Pneumatic and Wireless skip the wiring and circuit questions — 2 fewer steps.
+                  </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
@@ -516,7 +534,7 @@ export function StandardSteps({
                   <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</h2>
                   <p className="!text-lg !text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select action type">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
                     .map((action, i) => (
@@ -526,7 +544,7 @@ export function StandardSteps({
                         description={action.description}
                         icon={action.icon}
                         selected={wizardState.selectedAction === action.id}
-                        count={getProductCount(2, action.id)}
+                        count={action.id === 'no_preference' ? undefined : getProductCount(2, action.id)}
                         onClick={() => handleSingleSelect(action.id, wizardState.setSelectedAction, 2)}
                         index={i}
                       />
@@ -566,7 +584,7 @@ export function StandardSteps({
                   <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</h2>
                   <p className="!text-lg !text-muted-foreground">How heavy will the usage be?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
                       key={duty.id}
@@ -574,7 +592,7 @@ export function StandardSteps({
                       description={duty.description}
                       icon={duty.icon}
                       selected={wizardState.selectedDuty === duty.id}
-                      count={getProductCount(4, duty.id)}
+                      count={duty.id === 'no_preference' ? undefined : getProductCount(4, duty.id)}
                       onClick={() => handleSingleSelect(duty.id, wizardState.setSelectedDuty, 4)}
                       index={i}
                     />
