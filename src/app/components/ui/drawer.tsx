@@ -2,6 +2,7 @@ import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@/app/components/ui/utils"
+import { getPortalContainer } from "@/app/utils/portalContainer"
 
 const Drawer = ({
   shouldScaleBackground = true,
@@ -36,11 +37,8 @@ const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
 >(({ className, children, ...props }, ref) => {
-  const container = typeof document !== 'undefined'
-    ? document.getElementById('lm-product-finder') ?? document.body
-    : undefined;
   return (
-  <DrawerPortal container={container}>
+  <DrawerPortal container={getPortalContainer()}>
     <DrawerOverlay />
     <DrawerPrimitive.Content
       ref={ref}
