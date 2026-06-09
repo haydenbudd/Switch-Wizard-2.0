@@ -151,13 +151,16 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
   );
 
   useEffect(() => {
-    if (open) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
+    if (!open) return;
+    document.addEventListener('keydown', handleKeyDown);
+    // Lock the wizard wrapper, not document.body — locking body freezes the
+    // parent WordPress page's scroll. Fall back to body for standalone.
+    const lockTarget = document.getElementById('lm-product-finder') ?? document.body;
+    const prevOverflow = lockTarget.style.overflow;
+    lockTarget.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      lockTarget.style.overflow = prevOverflow;
     };
   }, [open, handleKeyDown]);
 

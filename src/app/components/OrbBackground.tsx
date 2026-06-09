@@ -63,6 +63,12 @@ export function OrbBackground() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Respect user's reduced-motion preference — draw a single static frame
+    // and don't burn CPU on the animation loop.
+    const prefersReducedMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     let width = window.innerWidth;
     let height = window.innerHeight;
 
@@ -89,7 +95,9 @@ export function OrbBackground() {
       mouseY = e.clientY;
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    if (!prefersReducedMotion) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    }
 
     // Animated orbs: large, gentle movement
     const orbs: Orb[] = [
@@ -143,11 +151,29 @@ export function OrbBackground() {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    animate();
+    // Pause animation when tab is hidden — saves CPU/battery and prevents a
+    // burst of catch-up frames when the user returns.
+    const handleVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameId);
+      } else if (!prefersReducedMotion) {
+        animate();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    if (prefersReducedMotion) {
+      // One static frame, no rAF loop.
+      animate();
+      cancelAnimationFrame(animationFrameId);
+    } else {
+      animate();
+    }
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('visibilitychange', handleVisibility);
       cancelAnimationFrame(animationFrameId);
     };
   }, [mounted, resolvedTheme]);

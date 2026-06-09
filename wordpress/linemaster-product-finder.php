@@ -101,6 +101,19 @@ function lm_finder_enqueue_assets() {
 
 	// Vite outputs ES modules
 	add_filter( 'script_loader_tag', 'lm_finder_add_module_type', 10, 3 );
+
+	// Preconnect to image proxy + asset host for faster image / chunk loads
+	add_action( 'wp_head', 'lm_finder_add_resource_hints', 1 );
+}
+
+/**
+ * Emit preconnect hints so the browser opens TLS connections to wsrv.nl
+ * (image proxy) and the GitHub Pages asset host in parallel with HTML parse.
+ */
+function lm_finder_add_resource_hints() {
+	echo "\n<link rel='preconnect' href='https://wsrv.nl' crossorigin>\n";
+	echo "<link rel='preconnect' href='https://haydenbudd.github.io' crossorigin>\n";
+	echo "<link rel='dns-prefetch' href='https://linemaster.com'>\n";
 }
 
 /**

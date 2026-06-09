@@ -48,7 +48,7 @@ export const OptionCard = memo(function OptionCard({
         isDisabled && "opacity-50 cursor-not-allowed grayscale",
         className
       )}
-      style={{ animationDelay: `${index * 60}ms` } as React.CSSProperties}
+      style={{ animationDelay: `${index * 25}ms` } as React.CSSProperties}
     >
       {selected && (
         <div className="absolute top-3 right-3 h-5 w-5 bg-primary rounded-full flex items-center justify-center text-white shadow-sm shadow-primary/30 animate-in zoom-in duration-150" aria-hidden="true">

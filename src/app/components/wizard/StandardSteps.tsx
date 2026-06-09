@@ -200,7 +200,9 @@ export function StandardSteps({
   // Guard against undefined props in environments like Figma Make
   if (!wizardState || !categories) return null;
 
-  // Helper to handle single-select progression
+  // Helper to handle single-select progression. No artificial delay — the
+  // AnimatePresence exit animation already gives a visual handoff to the
+  // next step, and a setTimeout here just made every click feel laggy.
   const handleSingleSelect = (
     value: string,
     setter: (val: string) => void,
@@ -208,7 +210,7 @@ export function StandardSteps({
   ) => {
     setter(value);
     clearDownstreamSelections(stepIndex);
-    setTimeout(onContinue, 150);
+    onContinue();
   };
 
   // Helper to handle multi-select toggle
@@ -453,10 +455,10 @@ export function StandardSteps({
         <AnimatePresence mode="wait">
           <motion.div
             key={wizardState.step}
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Step 0 Phase 2: Application Selection */}
             {wizardState.step === 0 && (
