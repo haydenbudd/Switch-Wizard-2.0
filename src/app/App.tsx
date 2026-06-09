@@ -65,6 +65,7 @@ function WizardApp() {
 
   const {
     filterProducts,
+    scoredProducts,
     getProductCount,
     getAlternativeProducts,
     needsCustomSolution,
@@ -218,6 +219,7 @@ function WizardApp() {
           features={features}
           duties={duties}
           filterProducts={filterProducts}
+          scoredProducts={scoredProducts}
           getAlternativeProducts={getAlternativeProducts}
           needsCustomSolution={needsCustomSolution}
           onBack={handleBack}

@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { matchesEnvironment } from '@/app/utils/productFilters';
+import { scoreAndSplit, type SplitResults } from '@/app/utils/matchScore';
 
 interface UseProductFilteringOptions {
   wizardState: WizardState;
@@ -167,10 +168,21 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       wizardState.selectedFeatures.includes('custom_connector');
   }, [wizardState.selectedFeatures]);
 
+  /**
+   * Smart-match split: perfect matches (every soft criterion satisfied) and
+   * close matches (partial fit). Hard filter is technology + action only —
+   * everything else is a weighted preference. See utils/matchScore.ts.
+   */
+  const scoredProducts = useCallback((overrides: Partial<WizardState> = {}): SplitResults => {
+    const state = { ...wizardState, ...overrides };
+    return scoreAndSplit(products || [], state);
+  }, [products, wizardState]);
+
   return {
     filterProducts,
     getProductCount,
     getAlternativeProducts,
     needsCustomSolution,
+    scoredProducts,
   };
 }

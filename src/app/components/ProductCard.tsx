@@ -46,9 +46,11 @@ interface ProductCardProps {
   onViewDetails?: (product: Product) => void;
   /** First few cards get eager loading + fetchpriority high */
   priority?: boolean;
+  /** When this is a close match (not perfect), names of criteria it falls short on */
+  differsOn?: string[];
 }
 
-export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle, onViewDetails, priority }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle, onViewDetails, priority, differsOn }: ProductCardProps) {
   if (!product) return null;
   const isFlagship = product.flagship;
 
@@ -76,12 +78,26 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
         </button>
       )}
 
-      {/* Featured/Flagship Badge */}
-      {isFlagship && (
+      {/* Featured/Flagship Badge — hidden for close matches so the "Differs on"
+          context is the first thing the user reads on a non-perfect card. */}
+      {isFlagship && !differsOn?.length && (
         <div className="absolute top-4 right-4 z-20">
           <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-sm tracking-wide uppercase">
             <Star className="w-6 h-6 fill-current opacity-70" />
             Top Choice
+          </Badge>
+        </div>
+      )}
+
+      {/* Close-match "Differs on" pill */}
+      {differsOn && differsOn.length > 0 && (
+        <div className="absolute top-4 right-4 z-20 max-w-[60%]">
+          <Badge
+            variant="outline"
+            className="bg-amber-50 dark:bg-amber-900/20 !text-amber-800 dark:!text-amber-300 border-amber-200 dark:border-amber-700/50 text-xs tracking-wide normal-case shadow-sm"
+            title={`Doesn't fully match: ${differsOn.join(', ')}`}
+          >
+            Differs on: {differsOn.join(', ')}
           </Badge>
         </div>
       )}

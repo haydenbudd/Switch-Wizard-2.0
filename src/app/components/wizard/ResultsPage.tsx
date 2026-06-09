@@ -54,6 +54,7 @@ interface ResultsPageProps {
   features: Option[];
   duties: Option[];
   filterProducts: (overrides?: Partial<WizardState>) => Product[];
+  scoredProducts: (overrides?: Partial<WizardState>) => import('@/app/utils/matchScore').SplitResults;
   getAlternativeProducts: () => { products: Product[]; relaxed: string };
   needsCustomSolution: boolean;
   onBack: () => void;
@@ -82,6 +83,7 @@ export function ResultsPage({
   features,
   duties,
   filterProducts,
+  scoredProducts,
   getAlternativeProducts,
   needsCustomSolution,
   onBack,
@@ -123,25 +125,47 @@ export function ResultsPage({
     });
   }, []);
 
-  // Primary filtered list based on wizard state
-  const wizardMatches = useMemo(() => filterProducts(), [filterProducts]);
+  // Smart-match: split into perfect (every soft preference satisfied) and
+  // close (partial fit). Hard filter is technology + action; everything else
+  // is soft-scored. See utils/matchScore.ts.
+  const split = useMemo(() => scoredProducts(), [scoredProducts]);
 
-  // Derive available materials from wizard-filtered products
-  const availableMaterials = useMemo(() => {
-    const mats = new Set(wizardMatches.map(p => p.material).filter(Boolean));
-    return Array.from(mats).sort();
-  }, [wizardMatches]);
+  // Build a quick lookup of which criteria each product falls short on, so
+  // the secondary-filter pipeline can still operate on plain Product arrays
+  // and the ProductCards can render their "Differs on" pill.
+  const differsOnMap = useMemo(() => {
+    const m = new Map<string, string[]>();
+    for (const sp of split.close) m.set(sp.product.id, sp.match.missing);
+    return m;
+  }, [split.close]);
 
-  // Secondary filtering based on Results Page controls (search, sort, etc)
-  const finalResults = useMemo(() => {
-    return getProcessedProducts(wizardMatches, {
-      searchTerm,
-      dutyFilter,
-      materialFilter,
-      cordedFilter,
-      sortBy,
+  // Apply secondary filters (search/duty/material/wiring/sort) to each half
+  // independently. Sort by relevance preserves the score order from split;
+  // sort by duty/ip uses the existing sorter inside each half.
+  const perfectProducts = useMemo(() => split.perfect.map(sp => sp.product), [split.perfect]);
+  const closeProducts = useMemo(() => split.close.map(sp => sp.product), [split.close]);
+
+  const finalPerfect = useMemo(() => {
+    return getProcessedProducts(perfectProducts, {
+      searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy,
     });
-  }, [wizardMatches, searchTerm, dutyFilter, cordedFilter, materialFilter, sortBy]);
+  }, [perfectProducts, searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy]);
+
+  const finalClose = useMemo(() => {
+    return getProcessedProducts(closeProducts, {
+      searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy,
+    });
+  }, [closeProducts, searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy]);
+
+  // Single combined list used by share-link badges and image preloading
+  const finalResults = useMemo(() => [...finalPerfect, ...finalClose], [finalPerfect, finalClose]);
+
+  // Derive available materials across both halves so the filter dropdown
+  // can offer materials present in close matches too
+  const availableMaterials = useMemo(() => {
+    const mats = new Set(finalResults.map(p => p.material).filter(Boolean));
+    return Array.from(mats).sort();
+  }, [finalResults]);
 
   // Products selected for comparison
   const compareProducts = useMemo(() => {
@@ -167,13 +191,15 @@ export function ResultsPage({
     return () => links.forEach(l => l.remove());
   }, [finalResults]);
 
-  // Alternatives if no results
+  // Alternatives only when both perfect and close are empty — soft scoring
+  // already covers partial matches, so the wizard-relaxation fallback is
+  // the last resort for an entirely empty results page.
   const alternatives = useMemo(() => {
-    if (finalResults.length === 0) {
+    if (finalPerfect.length === 0 && finalClose.length === 0) {
       return getAlternativeProducts();
     }
     return null;
-  }, [finalResults.length, getAlternativeProducts]);
+  }, [finalPerfect.length, finalClose.length, getAlternativeProducts]);
 
   // Handler for clearing specific wizard filters
   type FilterType = 'application' | 'technology' | 'action' | 'environment' | 'duty' | 'material' | 'feature' | 'guard' | 'features' | 'all';
@@ -287,7 +313,10 @@ export function ResultsPage({
             <h2 className="!text-3xl !font-bold !text-foreground">
               Recommended Products
               <span className="!text-lg font-normal !text-muted-foreground ml-3">
-                ({finalResults.length})
+                ({finalResults.length}
+                {finalPerfect.length > 0 && finalClose.length > 0 && (
+                  <> · {finalPerfect.length} perfect, {finalClose.length} close</>
+                )})
               </span>
             </h2>
           </div>
@@ -454,20 +483,65 @@ export function ResultsPage({
         </div>
       </div>
 
-      {/* Results Grid */}
+      {/* Results — Perfect Matches + Close Matches */}
       {finalResults.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          {finalResults.map((product, i) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              isComparing={compareIds.includes(product.id)}
-              onCompareToggle={handleCompareToggle}
-              onViewDetails={setDetailProduct}
-              priority={i < 4}
-            />
-          ))}
-        </div>
+        <>
+          {/* Perfect-match section: only show the explicit header when there
+              are ALSO close matches below it; otherwise the heading is just
+              noise above the only set of cards on the page. */}
+          {finalPerfect.length > 0 && (
+            <>
+              {finalClose.length > 0 && (
+                <div className="flex items-center gap-3 mb-4">
+                  <h3 className="!text-2xl !font-bold !text-foreground">Perfect Matches</h3>
+                  <span className="!text-base !text-muted-foreground tabular-nums">({finalPerfect.length})</span>
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {finalPerfect.map((product, i) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    isComparing={compareIds.includes(product.id)}
+                    onCompareToggle={handleCompareToggle}
+                    onViewDetails={setDetailProduct}
+                    priority={i < 4}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Close-match section */}
+          {finalClose.length > 0 && (
+            <div className={finalPerfect.length > 0 ? 'mt-12' : ''}>
+              <div className="flex flex-col gap-1 mb-4">
+                <div className="flex items-center gap-3">
+                  <h3 className="!text-2xl !font-bold !text-foreground">Close Matches</h3>
+                  <span className="!text-base !text-muted-foreground tabular-nums">({finalClose.length})</span>
+                </div>
+                <p className="!text-base !text-muted-foreground">
+                  {finalPerfect.length > 0
+                    ? 'These differ slightly from your preferences but might still fit.'
+                    : 'No products match every preference exactly — here are the closest options.'}
+                </p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                {finalClose.map((product, i) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    isComparing={compareIds.includes(product.id)}
+                    onCompareToggle={handleCompareToggle}
+                    onViewDetails={setDetailProduct}
+                    priority={finalPerfect.length === 0 && i < 4}
+                    differsOn={differsOnMap.get(product.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         /* Empty State */
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700" role="status">
