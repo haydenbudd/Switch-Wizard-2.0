@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';

@@ -94,6 +94,7 @@ export interface Option {
   label: string;
   icon?: ElementType;
   description: string;
+  category?: string;
   isMedical?: boolean;
   availableFor?: string[];
   hideFor?: string[];

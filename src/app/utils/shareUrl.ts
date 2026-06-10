@@ -35,7 +35,7 @@ export function buildShareUrl(state: WizardState): string {
   }
 
   for (const [param, field] of Object.entries(PARAM_MAP) as [ParamKey, string][]) {
-    const value = (state as Record<string, unknown>)[field];
+    const value = (state as unknown as Record<string, unknown>)[field];
     if (!value) continue;
     if (Array.isArray(value) && value.length === 0) continue;
     params.set(param, Array.isArray(value) ? value.join(',') : String(value));

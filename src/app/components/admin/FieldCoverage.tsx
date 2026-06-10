@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 
 interface FieldCoverageProps {
   products: Product[];

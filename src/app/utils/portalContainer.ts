@@ -14,10 +14,17 @@ const PORTAL_ROOT_ID = 'lm-product-finder-portals';
 const APP_ROOT_ID = 'lm-product-finder';
 
 let observer: MutationObserver | null = null;
+// The element the observer is currently attached to. PJAX/Turbo-style host
+// pages can replace the app wrapper DOM node between calls — comparing
+// against the live element lets us detect that and re-attach.
+let observedAppRoot: HTMLElement | null = null;
 
-function syncDarkClass(portalRoot: HTMLElement) {
+// Resolve both roots by id at call time rather than closing over elements:
+// stale references to detached nodes would silently stop the dark sync.
+function syncDarkClass() {
   const appRoot = document.getElementById(APP_ROOT_ID);
-  if (!appRoot) return;
+  const portalRoot = document.getElementById(PORTAL_ROOT_ID);
+  if (!appRoot || !portalRoot) return;
   portalRoot.classList.toggle('lm-dark', appRoot.classList.contains('lm-dark'));
 }
 
@@ -31,13 +38,13 @@ export function getPortalContainer(): HTMLElement {
 
   // Mirror the app wrapper's .lm-dark class so dark-mode styles apply to
   // portaled content too (Header toggles the class on the wrapper only).
-  syncDarkClass(portalRoot);
-  if (!observer) {
-    const appRoot = document.getElementById(APP_ROOT_ID);
-    if (appRoot) {
-      observer = new MutationObserver(() => syncDarkClass(portalRoot!));
-      observer.observe(appRoot, { attributes: true, attributeFilter: ['class'] });
-    }
+  syncDarkClass();
+  const appRoot = document.getElementById(APP_ROOT_ID);
+  if (appRoot && appRoot !== observedAppRoot) {
+    observer?.disconnect();
+    observer = new MutationObserver(syncDarkClass);
+    observer.observe(appRoot, { attributes: true, attributeFilter: ['class'] });
+    observedAppRoot = appRoot;
   }
 
   return portalRoot;

@@ -1,4 +1,4 @@
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';

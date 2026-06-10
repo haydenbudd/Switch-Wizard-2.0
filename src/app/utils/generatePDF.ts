@@ -1,24 +1,27 @@
 import jsPDF from 'jspdf';
-import { Product, Option } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { trackPDFDownload } from '@/app/utils/analytics';
 import { getLogoBase64 } from '@/app/utils/logoBase64';
 import { BUILDER_STEP_CONFIGS, optionLabel } from '@/app/data/options';
 import { hasPreference } from '@/app/utils/preference';
 
+// Only id/label are read — callers can pass options whose icon is a React
+// component (useProductData's OptionWithIcon) or a string (api Option).
+interface PDFOption {
+  id: string;
+  label: string;
+}
+
 export interface GeneratePDFOptions {
   wizardState: WizardState;
   matchedProducts: Product[];
-  applications: Option[];
-  technologies: Option[];
-  actions: Option[];
-  environments: Option[];
-  features: Option[];
-  duties: Option[];
-  consoleStyles: Option[];
-  pedalCounts: Option[];
-  medicalTechnicalFeatures: Option[];
-  accessories: Option[];
+  applications: PDFOption[];
+  technologies: PDFOption[];
+  actions: PDFOption[];
+  environments: PDFOption[];
+  features: PDFOption[];
+  duties: PDFOption[];
 }
 
 // Wrap long text and return how many lines were used

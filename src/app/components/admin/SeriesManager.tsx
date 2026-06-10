@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight, AlertTriangle, Wrench, Loader2 } from 'lucide-react';
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { toast } from 'sonner';
 
 interface SeriesManagerProps {

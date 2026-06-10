@@ -1,4 +1,4 @@
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 
 export interface FilterOptions {
   searchTerm: string;

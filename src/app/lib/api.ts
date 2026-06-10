@@ -16,33 +16,37 @@ async function fetchAPI(endpoint: string, options: RequestInit = {}) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120000);
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      cache: 'no-store',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
-        ...options.headers,
-      },
-      signal: controller.signal,
-    });
+    // finally (not just the happy path) so a failed fetch doesn't leave a
+    // 120s timer armed that later aborts an already-dead controller
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        cache: 'no-store',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          ...options.headers,
+        },
+        signal: controller.signal,
+      });
 
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let error;
-      try {
-        error = JSON.parse(errorText);
-      } catch {
-        error = { error: errorText || 'Unknown error' };
+      if (!response.ok) {
+        const errorText = await response.text();
+        let error;
+        try {
+          error = JSON.parse(errorText);
+        } catch {
+          error = { error: errorText || 'Unknown error' };
+        }
+        throw new Error(error.error || `HTTP ${response.status}: ${errorText}`);
       }
-      throw new Error(error.error || `HTTP ${response.status}: ${errorText}`);
-    }
 
-    return await response.json();
+      return await response.json();
+    } finally {
+      clearTimeout(timeoutId);
+    }
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {

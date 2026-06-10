@@ -4,7 +4,8 @@ import { Input } from '@/app/components/ui/input';
 import { Label } from '@/app/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { fetchProducts, createOrUpdateProducts, Product } from '@/app/lib/api';
+import { fetchProducts, createOrUpdateProducts } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { toast } from 'sonner';
 import { Search, Save, RefreshCw } from 'lucide-react';
 
