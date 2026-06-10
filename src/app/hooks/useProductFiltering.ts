@@ -3,6 +3,7 @@ import { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { matchesEnvironment } from '@/app/utils/productFilters';
 import { scoreAndSplit, type SplitResults } from '@/app/utils/matchScore';
+import { hasPreference, NO_PREFERENCE } from '@/app/utils/preference';
 
 interface UseProductFilteringOptions {
   wizardState: WizardState;
@@ -16,24 +17,15 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
     return (products || []).filter((product) => {
       if (state.selectedApplication && !product.applications.includes(state.selectedApplication)) return false;
       if (state.selectedTechnology && product.technology !== state.selectedTechnology) return false;
-      if (
-        state.selectedAction &&
-        state.selectedAction !== 'no_preference' &&
-        !product.actions.includes(state.selectedAction)
-      ) return false;
+      if (hasPreference(state.selectedAction) && !product.actions.includes(state.selectedAction)) return false;
       if (!matchesEnvironment(state.selectedEnvironment, product.ip)) return false;
-      if (
-        state.selectedDuty &&
-        state.selectedDuty !== 'no_preference' &&
-        product.duty !== state.selectedDuty
-      ) return false;
+      if (hasPreference(state.selectedDuty) && product.duty !== state.selectedDuty) return false;
       if (
         state.selectedTechnology !== 'pneumatic' &&
-        state.selectedConnection &&
-        state.selectedConnection !== 'no_preference' &&
+        hasPreference(state.selectedConnection) &&
         product.connector_type !== state.selectedConnection
       ) return false;
-      if (state.selectedCircuitCount && state.selectedCircuitCount !== 'no_preference' && product.circuitry !== state.selectedCircuitCount) return false;
+      if (hasPreference(state.selectedCircuitCount) && product.circuitry !== state.selectedCircuitCount) return false;
       if (state.selectedGuard === 'yes' && !(product.features || []).includes('shield')) return false;
 
       if (state.selectedFeatures.length > 0) {
@@ -74,11 +66,10 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
         counts.set(key(2, action), (counts.get(key(2, action)) || 0) + 1);
       }
       // "no_preference" matches everything at this filtering level
-      counts.set(key(2, 'no_preference'), (counts.get(key(2, 'no_preference')) || 0) + 1);
+      counts.set(key(2, NO_PREFERENCE), (counts.get(key(2, NO_PREFERENCE)) || 0) + 1);
 
       const matchesAction =
-        !wizardState.selectedAction ||
-        wizardState.selectedAction === 'no_preference' ||
+        !hasPreference(wizardState.selectedAction) ||
         p.actions.includes(wizardState.selectedAction);
       if (!matchesAction) continue;
 
@@ -95,11 +86,10 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       // Step 4: Duty
       counts.set(key(4, p.duty), (counts.get(key(4, p.duty)) || 0) + 1);
       // "no_preference" matches everything at this filtering level
-      counts.set(key(4, 'no_preference'), (counts.get(key(4, 'no_preference')) || 0) + 1);
+      counts.set(key(4, NO_PREFERENCE), (counts.get(key(4, NO_PREFERENCE)) || 0) + 1);
 
       const matchesDuty =
-        !wizardState.selectedDuty ||
-        wizardState.selectedDuty === 'no_preference' ||
+        !hasPreference(wizardState.selectedDuty) ||
         p.duty === wizardState.selectedDuty;
       if (!matchesDuty) continue;
 
@@ -108,9 +98,9 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
         counts.set(key(5, p.connector_type), (counts.get(key(5, p.connector_type)) || 0) + 1);
       }
       // "no_preference" matches everything at this filtering level
-      counts.set(key(5, 'no_preference'), (counts.get(key(5, 'no_preference')) || 0) + 1);
+      counts.set(key(5, NO_PREFERENCE), (counts.get(key(5, NO_PREFERENCE)) || 0) + 1);
 
-      const matchesConnection = wizardState.selectedTechnology === 'pneumatic' || !wizardState.selectedConnection || wizardState.selectedConnection === 'no_preference' || p.connector_type === wizardState.selectedConnection;
+      const matchesConnection = wizardState.selectedTechnology === 'pneumatic' || !hasPreference(wizardState.selectedConnection) || p.connector_type === wizardState.selectedConnection;
       if (!matchesConnection) continue;
 
       // Step 6: Circuit Count
@@ -118,9 +108,9 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
         counts.set(key(6, p.circuitry), (counts.get(key(6, p.circuitry)) || 0) + 1);
       }
       // "no_preference" matches everything at this filtering level
-      counts.set(key(6, 'no_preference'), (counts.get(key(6, 'no_preference')) || 0) + 1);
+      counts.set(key(6, NO_PREFERENCE), (counts.get(key(6, NO_PREFERENCE)) || 0) + 1);
 
-      const matchesCircuit = !wizardState.selectedCircuitCount || wizardState.selectedCircuitCount === 'no_preference' || p.circuitry === wizardState.selectedCircuitCount;
+      const matchesCircuit = !hasPreference(wizardState.selectedCircuitCount) || p.circuitry === wizardState.selectedCircuitCount;
       if (!matchesCircuit) continue;
 
       // Step 7: Guard
@@ -144,8 +134,8 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
     // "no_preference" never constrains results, so relaxing it is a no-op —
     // treat it like an unset value when deciding which criterion to relax
     // and when re-filtering by action below.
-    const hasAction = wizardState.selectedAction && wizardState.selectedAction !== 'no_preference';
-    const hasDuty = wizardState.selectedDuty && wizardState.selectedDuty !== 'no_preference';
+    const hasAction = hasPreference(wizardState.selectedAction);
+    const hasDuty = hasPreference(wizardState.selectedDuty);
 
     if (wizardState.selectedFeatures.length > 0) {
       const withoutFeatures = filterProducts({ selectedFeatures: [] });

@@ -3,7 +3,7 @@ import { Router } from '@/app/components/Router';
 import { Header } from '@/app/components/Header';
 import { OrbBackground } from '@/app/components/OrbBackground';
 import { useProductData } from '@/app/hooks/useProductData';
-import { useWizardState } from '@/app/hooks/useWizardState';
+import { useWizardState, takeSnapshot, type WizardSnapshot } from '@/app/hooks/useWizardState';
 import { useWizardNavigation } from '@/app/hooks/useWizardNavigation';
 import { useProductFiltering } from '@/app/hooks/useProductFiltering';
 import { trackNoResults } from '@/app/utils/analytics';
@@ -87,105 +87,31 @@ function WizardApp() {
     const s = wizardSettersRef.current;
     const shared = parseShareParams(window.location.search);
     if (shared) {
-      if (shared.selectedApplication) s.setSelectedApplication(shared.selectedApplication);
-      if (shared.selectedTechnology) s.setSelectedTechnology(shared.selectedTechnology);
-      if (shared.selectedAction) s.setSelectedAction(shared.selectedAction);
-      if (shared.selectedEnvironment) s.setSelectedEnvironment(shared.selectedEnvironment);
-      if (shared.selectedDuty) s.setSelectedDuty(shared.selectedDuty);
-      if (shared.selectedMaterial) s.setSelectedMaterial(shared.selectedMaterial);
-      if (shared.selectedConnection) s.setSelectedConnection(shared.selectedConnection);
-      if (shared.selectedCircuitCount) s.setSelectedCircuitCount(shared.selectedCircuitCount);
-      if (shared.selectedGuard) s.setSelectedGuard(shared.selectedGuard);
-      if (shared.selectedFeatures) s.setSelectedFeatures(shared.selectedFeatures);
-      if (shared.flow) s.setFlow(shared.flow as 'standard' | 'medical');
-      s.setStep(9);
+      // Share URLs always land on the results page
+      s.applyPartial({ ...shared, step: 9 } as Partial<WizardSnapshot>);
       return;
     }
 
-    // No share URL — try localStorage
+    // No share URL — try localStorage (resumes at the exact step)
     const persisted = loadWizardStateFromLocal();
-    if (!persisted) return;
-    if (persisted.selectedCategory) s.setSelectedCategory(persisted.selectedCategory);
-    if (persisted.selectedApplication) s.setSelectedApplication(persisted.selectedApplication);
-    if (persisted.selectedTechnology) s.setSelectedTechnology(persisted.selectedTechnology);
-    if (persisted.selectedAction) s.setSelectedAction(persisted.selectedAction);
-    if (persisted.selectedEnvironment) s.setSelectedEnvironment(persisted.selectedEnvironment);
-    if (persisted.selectedDuty) s.setSelectedDuty(persisted.selectedDuty);
-    if (persisted.selectedMaterial) s.setSelectedMaterial(persisted.selectedMaterial);
-    if (persisted.selectedConnection) s.setSelectedConnection(persisted.selectedConnection);
-    if (persisted.selectedCircuitCount) s.setSelectedCircuitCount(persisted.selectedCircuitCount);
-    if (persisted.selectedGuard) s.setSelectedGuard(persisted.selectedGuard);
-    if (persisted.selectedFeatures?.length) s.setSelectedFeatures(persisted.selectedFeatures);
-    // Medical flow + custom builder
-    if (persisted.selectedMedicalPath) s.setSelectedMedicalPath(persisted.selectedMedicalPath);
-    if (persisted.selectedConsoleStyle) s.setSelectedConsoleStyle(persisted.selectedConsoleStyle);
-    if (persisted.selectedPedalCount) s.setSelectedPedalCount(persisted.selectedPedalCount);
-    if (persisted.selectedMedicalFeatures?.length) s.setSelectedMedicalFeatures(persisted.selectedMedicalFeatures);
-    if (persisted.selectedAccessories?.length) s.setSelectedAccessories(persisted.selectedAccessories);
-    if (persisted.selectedChannel) s.setSelectedChannel(persisted.selectedChannel);
-    if (persisted.selectedPedalDesign) s.setSelectedPedalDesign(persisted.selectedPedalDesign);
-    if (persisted.selectedButtonCount) s.setSelectedButtonCount(persisted.selectedButtonCount);
-    if (persisted.selectedOutputType) s.setSelectedOutputType(persisted.selectedOutputType);
-    if (persisted.selectedWiredWireless) s.setSelectedWiredWireless(persisted.selectedWiredWireless);
-    if (persisted.selectedToeLoop) s.setSelectedToeLoop(persisted.selectedToeLoop);
-    if (persisted.selectedTreadleType) s.setSelectedTreadleType(persisted.selectedTreadleType);
-    if (persisted.selectedCustomLabeling) s.setSelectedCustomLabeling(persisted.selectedCustomLabeling);
-    if (persisted.selectedLEDs) s.setSelectedLEDs(persisted.selectedLEDs);
-    if (persisted.flow) s.setFlow(persisted.flow);
-    // step 0 is a legitimate persisted value — don't let the falsy check eat it
-    if (typeof persisted.step === 'number') s.setStep(persisted.step);
+    if (persisted) s.applyPartial(persisted);
   }, []);
 
   // Auto-save wizard state to localStorage whenever it meaningfully changes.
-  // Skip when the wizard is in its pristine state to avoid writing empty
-  // payloads on every visitor's first paint.
+  // The serialized snapshot doubles as the change detector — the effect only
+  // re-runs when a persisted field actually changed, and writes are skipped
+  // while the wizard is pristine.
+  const snapshot = takeSnapshot(wizardState);
+  const snapshotJson = JSON.stringify(snapshot);
   useEffect(() => {
     const hasAnyInput =
-      wizardState.step > 0 ||
-      wizardState.selectedCategory ||
-      wizardState.selectedApplication;
+      snapshot.step > 0 ||
+      snapshot.selectedCategory ||
+      snapshot.selectedApplication;
     if (!hasAnyInput) return;
-    saveWizardStateToLocal({
-      step: wizardState.step,
-      selectedCategory: wizardState.selectedCategory,
-      selectedApplication: wizardState.selectedApplication,
-      selectedTechnology: wizardState.selectedTechnology,
-      selectedAction: wizardState.selectedAction,
-      selectedEnvironment: wizardState.selectedEnvironment,
-      selectedDuty: wizardState.selectedDuty,
-      selectedMaterial: wizardState.selectedMaterial,
-      selectedConnection: wizardState.selectedConnection,
-      selectedCircuitCount: wizardState.selectedCircuitCount,
-      selectedGuard: wizardState.selectedGuard,
-      selectedFeatures: wizardState.selectedFeatures,
-      selectedMedicalPath: wizardState.selectedMedicalPath,
-      selectedConsoleStyle: wizardState.selectedConsoleStyle,
-      selectedPedalCount: wizardState.selectedPedalCount,
-      selectedMedicalFeatures: wizardState.selectedMedicalFeatures,
-      selectedAccessories: wizardState.selectedAccessories,
-      selectedChannel: wizardState.selectedChannel,
-      selectedPedalDesign: wizardState.selectedPedalDesign,
-      selectedButtonCount: wizardState.selectedButtonCount,
-      selectedOutputType: wizardState.selectedOutputType,
-      selectedWiredWireless: wizardState.selectedWiredWireless,
-      selectedToeLoop: wizardState.selectedToeLoop,
-      selectedTreadleType: wizardState.selectedTreadleType,
-      selectedCustomLabeling: wizardState.selectedCustomLabeling,
-      selectedLEDs: wizardState.selectedLEDs,
-      flow: wizardState.flow,
-    });
-  }, [
-    wizardState.step, wizardState.selectedCategory, wizardState.selectedApplication,
-    wizardState.selectedTechnology, wizardState.selectedAction, wizardState.selectedEnvironment,
-    wizardState.selectedDuty, wizardState.selectedMaterial, wizardState.selectedConnection,
-    wizardState.selectedCircuitCount, wizardState.selectedGuard, wizardState.selectedFeatures,
-    wizardState.selectedMedicalPath, wizardState.selectedConsoleStyle, wizardState.selectedPedalCount,
-    wizardState.selectedMedicalFeatures, wizardState.selectedAccessories, wizardState.selectedChannel,
-    wizardState.selectedPedalDesign, wizardState.selectedButtonCount, wizardState.selectedOutputType,
-    wizardState.selectedWiredWireless, wizardState.selectedToeLoop, wizardState.selectedTreadleType,
-    wizardState.selectedCustomLabeling, wizardState.selectedLEDs,
-    wizardState.flow,
-  ]);
+    saveWizardStateToLocal(snapshot);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snapshotJson]);
 
   // Update URL bar when viewing results; clear our params when navigating
   // away. clearShareParams only touches the wizard's own query keys (and

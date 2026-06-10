@@ -1,6 +1,6 @@
 // Encode/decode wizard state to/from URL query parameters for shareable results links
 
-import type { WizardState } from '@/app/hooks/useWizardState';
+import type { WizardState, WizardSnapshot } from '@/app/hooks/useWizardState';
 
 // Short param keys to keep URLs compact
 const PARAM_MAP = {
@@ -106,39 +106,7 @@ export function clearShareParams() {
 
 const LOCAL_KEY = 'lm-wizard-state-v1';
 
-interface PersistedState {
-  step: number;
-  selectedCategory: string;
-  selectedApplication: string;
-  selectedTechnology: string;
-  selectedAction: string;
-  selectedEnvironment: string;
-  selectedDuty: string;
-  selectedMaterial: string;
-  selectedConnection: string;
-  selectedCircuitCount: string;
-  selectedGuard: string;
-  selectedFeatures: string[];
-  // Medical flow + custom builder — without these, a refresh mid-medical-flow
-  // restores the step number but none of the upstream answers it depends on
-  selectedMedicalPath: string;
-  selectedConsoleStyle: string;
-  selectedPedalCount: string;
-  selectedMedicalFeatures: string[];
-  selectedAccessories: string[];
-  selectedChannel: string;
-  selectedPedalDesign: string;
-  selectedButtonCount: string;
-  selectedOutputType: string;
-  selectedWiredWireless: string;
-  selectedToeLoop: string;
-  selectedTreadleType: string;
-  selectedCustomLabeling: string;
-  selectedLEDs: string;
-  flow: 'standard' | 'medical';
-}
-
-export function saveWizardStateToLocal(state: PersistedState) {
+export function saveWizardStateToLocal(state: WizardSnapshot) {
   try {
     localStorage.setItem(LOCAL_KEY, JSON.stringify(state));
   } catch {
@@ -146,14 +114,48 @@ export function saveWizardStateToLocal(state: PersistedState) {
   }
 }
 
-export function loadWizardStateFromLocal(): PersistedState | null {
+const isStringArray = (v: unknown): v is string[] =>
+  Array.isArray(v) && v.every(x => typeof x === 'string');
+
+/**
+ * Load and shape-validate the persisted snapshot. Field-level validation:
+ * wrong-typed fields are dropped (rather than rejecting the whole payload),
+ * so a corrupted or older-schema value degrades to a partial restore
+ * instead of feeding garbage into the wizard setters.
+ */
+export function loadWizardStateFromLocal(): Partial<WizardSnapshot> | null {
   try {
     const raw = localStorage.getItem(LOCAL_KEY);
     if (!raw) return null;
-    const parsed = JSON.parse(raw);
+    const parsed: unknown = JSON.parse(raw);
     if (typeof parsed !== 'object' || parsed === null) return null;
-    if (typeof parsed.step !== 'number') return null;
-    return parsed as PersistedState;
+
+    const src = parsed as Record<string, unknown>;
+    const out: Partial<WizardSnapshot> = {};
+
+    if (typeof src.step === 'number' && Number.isFinite(src.step)) out.step = src.step;
+    if (src.flow === 'standard' || src.flow === 'medical') out.flow = src.flow;
+
+    const stringFields = [
+      'selectedCategory', 'selectedApplication', 'selectedTechnology', 'selectedAction',
+      'selectedEnvironment', 'selectedDuty', 'selectedMaterial', 'selectedConnection',
+      'selectedCircuitCount', 'selectedGuard', 'selectedMedicalPath', 'selectedConsoleStyle',
+      'selectedPedalCount', 'selectedChannel', 'selectedPedalDesign', 'selectedButtonCount',
+      'selectedOutputType', 'selectedWiredWireless', 'selectedToeLoop', 'selectedTreadleType',
+      'selectedCustomLabeling', 'selectedLEDs',
+    ] as const;
+    for (const field of stringFields) {
+      if (typeof src[field] === 'string') out[field] = src[field] as string;
+    }
+
+    const arrayFields = ['selectedFeatures', 'selectedMedicalFeatures', 'selectedAccessories'] as const;
+    for (const field of arrayFields) {
+      if (isStringArray(src[field])) out[field] = src[field] as string[];
+    }
+
+    // A payload with no step is unusable for restore
+    if (out.step === undefined) return null;
+    return out;
   } catch {
     return null;
   }

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { ChevronRight } from 'lucide-react';
-import type { Option } from '@/app/data/options';
+import { optionLabel, type Option } from '@/app/data/options';
 import type { WizardState } from '@/app/hooks/useWizardState';
 
 interface WizardBreadcrumbProps {
@@ -16,25 +16,32 @@ interface WizardBreadcrumbProps {
   onJumpToStep: (step: number) => void;
 }
 
+// Compact summary value: multi-select arrays truncate to "first, second +N"
+// so the bar stays scannable on a phone.
+function formatMulti(ids: string[], options: Option[], cap = 2): string {
+  if (ids.length === 0) return '';
+  const labels = ids.map(id => optionLabel(options, id));
+  if (labels.length <= cap) return labels.join(', ');
+  return `${labels.slice(0, cap).join(', ')} +${labels.length - cap}`;
+}
+
 interface Crumb {
   step: number;
   label: string;
   value: string;
 }
 
-// Compact summary value: "no_preference" reads as "Any", multi-select arrays
-// truncate to "first, +N more" so the bar stays scannable on a phone.
-function formatMulti(ids: string[], options: Option[], cap = 2): string {
-  if (ids.length === 0) return '';
-  const labels = ids.map(id => options.find(o => o.id === id)?.label ?? id);
-  if (labels.length <= cap) return labels.join(', ');
-  return `${labels.slice(0, cap).join(', ')} +${labels.length - cap}`;
-}
-
-function labelFor(options: Option[], id: string): string {
-  if (id === 'no_preference') return 'Any';
-  return options.find(o => o.id === id)?.label ?? id;
-}
+// One entry per single-select wizard step, in step order. Guard and Features
+// have bespoke value formats and are appended separately below.
+const CRUMB_CONFIG = [
+  { step: 0, label: 'Industry', field: 'selectedApplication', source: 'applications' },
+  { step: 1, label: 'Tech', field: 'selectedTechnology', source: 'technologies' },
+  { step: 2, label: 'Action', field: 'selectedAction', source: 'actions' },
+  { step: 3, label: 'Env', field: 'selectedEnvironment', source: 'environments' },
+  { step: 4, label: 'Duty', field: 'selectedDuty', source: 'duties' },
+  { step: 5, label: 'Wiring', field: 'selectedConnection', source: 'connections' },
+  { step: 6, label: 'Circuits', field: 'selectedCircuitCount', source: 'circuitCounts' },
+] as const;
 
 /**
  * Horizontal strip of clickable chips summarising the user's prior choices.
@@ -42,69 +49,27 @@ function labelFor(options: Option[], id: string): string {
  * if the user then picks a different option at the destination, the existing
  * handleSingleSelect machinery clears downstream for them.
  */
-export const WizardBreadcrumb = memo(function WizardBreadcrumb({
-  wizardState,
-  applications,
-  technologies,
-  actions,
-  environments,
-  duties,
-  connections,
-  circuitCounts,
-  features,
-  onJumpToStep,
-}: WizardBreadcrumbProps) {
-  const crumbs: Crumb[] = [];
+export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBreadcrumbProps) {
+  const { wizardState, features, onJumpToStep } = props;
 
-  if (wizardState.selectedApplication) {
-    crumbs.push({
-      step: 0,
-      label: 'Industry',
-      value: labelFor(applications, wizardState.selectedApplication),
-    });
-  }
-  if (wizardState.selectedTechnology) {
-    crumbs.push({
-      step: 1,
-      label: 'Tech',
-      value: labelFor(technologies, wizardState.selectedTechnology),
-    });
-  }
-  if (wizardState.selectedAction) {
-    crumbs.push({
-      step: 2,
-      label: 'Action',
-      value: labelFor(actions, wizardState.selectedAction),
-    });
-  }
-  if (wizardState.selectedEnvironment) {
-    crumbs.push({
-      step: 3,
-      label: 'Env',
-      value: labelFor(environments, wizardState.selectedEnvironment),
-    });
-  }
-  if (wizardState.selectedDuty) {
-    crumbs.push({
-      step: 4,
-      label: 'Duty',
-      value: labelFor(duties, wizardState.selectedDuty),
-    });
-  }
-  if (wizardState.selectedConnection) {
-    crumbs.push({
-      step: 5,
-      label: 'Wiring',
-      value: labelFor(connections, wizardState.selectedConnection),
-    });
-  }
-  if (wizardState.selectedCircuitCount) {
-    crumbs.push({
-      step: 6,
-      label: 'Circuits',
-      value: labelFor(circuitCounts, wizardState.selectedCircuitCount),
-    });
-  }
+  const optionSources: Record<(typeof CRUMB_CONFIG)[number]['source'], Option[]> = {
+    applications: props.applications,
+    technologies: props.technologies,
+    actions: props.actions,
+    environments: props.environments,
+    duties: props.duties,
+    connections: props.connections,
+    circuitCounts: props.circuitCounts,
+  };
+
+  const crumbs: Crumb[] = CRUMB_CONFIG
+    .filter(c => wizardState[c.field])
+    .map(c => ({
+      step: c.step,
+      label: c.label,
+      value: optionLabel(optionSources[c.source], wizardState[c.field]),
+    }));
+
   if (wizardState.selectedGuard) {
     crumbs.push({
       step: 7,

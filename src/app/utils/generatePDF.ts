@@ -4,6 +4,7 @@ import { WizardState } from '@/app/hooks/useWizardState';
 import { trackPDFDownload } from '@/app/utils/analytics';
 import { getLogoBase64 } from '@/app/utils/logoBase64';
 import { BUILDER_STEP_CONFIGS, optionLabel } from '@/app/data/options';
+import { hasPreference } from '@/app/utils/preference';
 
 export interface GeneratePDFOptions {
   wizardState: WizardState;
@@ -165,8 +166,8 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     if (wizardState.selectedMedicalFeatures.length > 0) rows.push(['Technical Features', wizardState.selectedMedicalFeatures.join(', ')]);
     if (wizardState.selectedAccessories.length > 0) rows.push(['Accessories', wizardState.selectedAccessories.join(', ')]);
     if (wizardState.selectedAction) {
-      // Mirror the standard-flow rendering: "no_preference" reads as "Any"
-      const actionLabel = wizardState.selectedAction !== 'no_preference'
+      // Mirror the standard-flow rendering: "no preference" reads as "Any"
+      const actionLabel = hasPreference(wizardState.selectedAction)
         ? actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction
         : 'Any';
       rows.push(['Action Type', actionLabel]);
@@ -188,7 +189,7 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     // Standard flow
     const appLabel = applications.find(a => a.id === wizardState.selectedApplication)?.label || wizardState.selectedApplication;
     const techLabel = technologies.find(t => t.id === wizardState.selectedTechnology)?.label || wizardState.selectedTechnology;
-    const actionLabel = wizardState.selectedAction && wizardState.selectedAction !== 'no_preference'
+    const actionLabel = hasPreference(wizardState.selectedAction)
       ? actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction
       : 'Any';
     const envLabel = environments.find(e => e.id === wizardState.selectedEnvironment)?.label || wizardState.selectedEnvironment;
@@ -200,12 +201,12 @@ export async function generatePDF(opts: GeneratePDFOptions) {
       ['Environment', envLabel],
     ];
 
-    if (wizardState.selectedDuty && wizardState.selectedDuty !== 'no_preference') {
+    if (hasPreference(wizardState.selectedDuty)) {
       const dutyLabel = duties.find(d => d.id === wizardState.selectedDuty)?.label || wizardState.selectedDuty;
       rows.push(['Duty Class', dutyLabel]);
     }
     if (wizardState.selectedMaterial) rows.push(['Material', wizardState.selectedMaterial]);
-    if (wizardState.selectedConnection && wizardState.selectedConnection !== 'no_preference') {
+    if (hasPreference(wizardState.selectedConnection)) {
       // Stored as an id like "screw-terminal" — print it human-readable
       const connLabel = wizardState.selectedConnection
         .split('-')
@@ -213,7 +214,7 @@ export async function generatePDF(opts: GeneratePDFOptions) {
         .join(' ');
       rows.push(['Connection', connLabel]);
     }
-    if (wizardState.selectedCircuitCount && wizardState.selectedCircuitCount !== 'no_preference') {
+    if (hasPreference(wizardState.selectedCircuitCount)) {
       const n = wizardState.selectedCircuitCount;
       rows.push(['Circuits Controlled', `${n} ${n === '1' ? 'circuit' : 'circuits'}`]);
     }

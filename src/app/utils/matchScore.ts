@@ -1,5 +1,7 @@
 import type { Product } from '@/app/lib/api';
 import type { WizardState } from '@/app/hooks/useWizardState';
+import { matchesEnvironment } from '@/app/utils/productFilters';
+import { hasPreference } from '@/app/utils/preference';
 
 /**
  * Smart-match scoring for the results page.
@@ -33,14 +35,9 @@ const DUTY_TIER: Record<string, number> = { light: 0, medium: 1, heavy: 2 };
 const IP_RANK: Record<string, number> = { IPXX: 0, IP20: 1, IP56: 2, IP68: 3 };
 const ENV_MIN_RANK: Record<string, number> = { open: 0, dry: 0, damp: 2, wet: 3 };
 
-function envExactMatch(env: string, ip: string): boolean {
-  // The original strict tiers — preserved for "exact" credit
-  if (env === 'open') return ip === 'IPXX';
-  if (env === 'dry') return ip === 'IPXX' || ip === 'IP20';
-  if (env === 'damp') return ip === 'IP56' || ip === 'IP68';
-  if (env === 'wet') return ip === 'IP68';
-  return true;
-}
+// Exact-tier credit delegates to the shared rule set in productFilters so the
+// IP/environment tier definitions live in exactly one place.
+const envExactMatch = matchesEnvironment;
 
 function envMeetsMinimum(env: string, ip: string): boolean {
   if (env === 'any') return true;
@@ -85,7 +82,7 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
   }
 
   // Duty (weight 2 exact, 1 adjacent tier)
-  if (state.selectedDuty && state.selectedDuty !== 'no_preference') {
+  if (hasPreference(state.selectedDuty)) {
     totalSelected += 1;
     maxScore += 2;
     if (product.duty === state.selectedDuty) {
@@ -102,11 +99,7 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
   }
 
   // Connection / wiring (weight 1) — irrelevant for pneumatic
-  if (
-    state.selectedTechnology !== 'pneumatic' &&
-    state.selectedConnection &&
-    state.selectedConnection !== 'no_preference'
-  ) {
+  if (state.selectedTechnology !== 'pneumatic' && hasPreference(state.selectedConnection)) {
     totalSelected += 1;
     maxScore += 1;
     if (product.connector_type === state.selectedConnection) {
@@ -118,7 +111,7 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
   }
 
   // Circuit count (weight 1)
-  if (state.selectedCircuitCount && state.selectedCircuitCount !== 'no_preference') {
+  if (hasPreference(state.selectedCircuitCount)) {
     totalSelected += 1;
     maxScore += 1;
     if (product.circuitry === state.selectedCircuitCount) {
@@ -194,11 +187,7 @@ export function scoreAndSplit(products: Product[], state: WizardState): SplitRes
 
   const passesHardFilter = (p: Product) => {
     if (state.selectedTechnology && p.technology !== state.selectedTechnology) return false;
-    if (
-      state.selectedAction &&
-      state.selectedAction !== 'no_preference' &&
-      !p.actions.includes(state.selectedAction)
-    ) return false;
+    if (hasPreference(state.selectedAction) && !p.actions.includes(state.selectedAction)) return false;
     return true;
   };
 

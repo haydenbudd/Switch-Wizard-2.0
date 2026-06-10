@@ -20,6 +20,7 @@ import {
   circuitCounts as staticCircuitCounts,
 } from '@/app/data/options';
 import { products as staticProducts } from '@/app/data/products';
+import { NO_PREFERENCE } from '@/app/utils/preference';
 
 // Extend Option to allow component icons (e.g. Lucide icons)
 interface OptionWithIcon extends Omit<Option, 'icon'> {
@@ -176,10 +177,10 @@ export function useProductData(): ProductData {
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
 
     // Always append "No Preference" option
-    const noPreference = metaMap.get('no_preference');
+    const noPreference = metaMap.get(NO_PREFERENCE);
     if (noPreference) {
       derived.push({
-        id: 'no_preference',
+        id: NO_PREFERENCE,
         category: 'connection',
         label: noPreference.label,
         description: noPreference.description,
@@ -196,7 +197,7 @@ export function useProductData(): ProductData {
     const metaMap = new Map(staticOptionData.duties.map(d => [d.id, d]));
 
     const seen = new Set<string>();
-    return products
+    const derived = products
       .filter(p => {
         if (seen.has(p.duty)) return false;
         seen.add(p.duty);
@@ -214,6 +215,23 @@ export function useProductData(): ProductData {
         };
       })
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
+
+    // Always append "No Preference" option (same pattern as connections /
+    // circuitCounts — derived lists override the static array, so the static
+    // no-pref entry never reaches the UI without this)
+    const noPreference = metaMap.get(NO_PREFERENCE);
+    if (noPreference) {
+      derived.push({
+        id: NO_PREFERENCE,
+        category: 'duty',
+        label: noPreference.label,
+        description: noPreference.description,
+        icon: noPreference.icon,
+        sortOrder: noPreference.sortOrder ?? 99,
+      });
+    }
+
+    return derived;
   }, [products]);
 
   // Derive unique circuit counts from product data
@@ -242,10 +260,10 @@ export function useProductData(): ProductData {
       .sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99));
 
     // Always append "No Preference" option
-    const noPreference = metaMap.get('no_preference');
+    const noPreference = metaMap.get(NO_PREFERENCE);
     if (noPreference) {
       derived.push({
-        id: 'no_preference',
+        id: NO_PREFERENCE,
         category: 'circuitCount',
         label: noPreference.label,
         description: noPreference.description,

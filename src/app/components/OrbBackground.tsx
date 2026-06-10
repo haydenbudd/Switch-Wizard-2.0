@@ -49,9 +49,23 @@ export function OrbBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // Live-tracked so toggling the OS reduced-motion setting takes effect
+  // immediately (the main effect below re-runs when this flips)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+    () => typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
   }, []);
 
   useEffect(() => {
@@ -62,12 +76,6 @@ export function OrbBackground() {
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    // Respect user's reduced-motion preference — draw a single static frame
-    // and don't burn CPU on the animation loop.
-    const prefersReducedMotion =
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let width = window.innerWidth;
     let height = window.innerHeight;
@@ -152,11 +160,12 @@ export function OrbBackground() {
     };
 
     // Pause animation when tab is hidden — saves CPU/battery and prevents a
-    // burst of catch-up frames when the user returns.
+    // burst of catch-up frames when the user returns. Always cancel any
+    // pending frame before starting a new loop so rapid visibility flips
+    // can't stack multiple concurrent rAF chains.
     const handleVisibility = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animationFrameId);
-      } else if (!prefersReducedMotion) {
+      cancelAnimationFrame(animationFrameId);
+      if (!document.hidden && !prefersReducedMotion) {
         animate();
       }
     };
@@ -176,7 +185,7 @@ export function OrbBackground() {
       document.removeEventListener('visibilitychange', handleVisibility);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mounted, resolvedTheme]);
+  }, [mounted, resolvedTheme, prefersReducedMotion]);
 
   return (
     <canvas
