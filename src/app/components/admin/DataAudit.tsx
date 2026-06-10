@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { AlertTriangle, AlertCircle, Info, ChevronDown, ChevronRight, Pencil, Check, X, ExternalLink } from 'lucide-react';
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { toast } from 'sonner';
 
 const EDITABLE_FIELDS = new Set(['image', 'description', 'link', 'material', 'ip', 'connector_type', 'voltage', 'circuitry', 'stages', 'configuration', 'color', 'pfc_config']);

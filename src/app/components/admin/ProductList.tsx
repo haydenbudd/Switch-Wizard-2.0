@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { getProxiedImageUrl } from '@/app/utils/imageProxy';
 import { Button } from '@/app/components/ui/button';
 import {

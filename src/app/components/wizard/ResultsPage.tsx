@@ -3,7 +3,7 @@ import { ProductCard } from '@/app/components/ProductCard';
 import { ProductDetailModal } from '@/app/components/ProductDetailModal';
 import { CompareProducts } from '@/app/components/wizard/CompareProducts';
 import { Button } from '@/app/components/ui/button';
-import { Product, Option } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { RefreshCw, Download, ArrowLeft, SlidersHorizontal, ArrowUp, Check, Search, Link, GitCompareArrows, Mail, Menu } from 'lucide-react';
 import { buildShareUrl } from '@/app/utils/shareUrl';
@@ -44,15 +44,22 @@ const RELAXED_FILTER_LABELS: Record<string, string> = {
   technology: 'technology',
 };
 
+// Only id/label are read — accepts options whose icon is a React component
+// (useProductData's OptionWithIcon) or a string (api Option).
+interface LabeledOption {
+  id: string;
+  label: string;
+}
+
 interface ResultsPageProps {
   wizardState: WizardState;
   products: Product[];
-  applications: Option[];
-  technologies: Option[];
-  actions: Option[];
-  environments: Option[];
-  features: Option[];
-  duties: Option[];
+  applications: LabeledOption[];
+  technologies: LabeledOption[];
+  actions: LabeledOption[];
+  environments: LabeledOption[];
+  features: LabeledOption[];
+  duties: LabeledOption[];
   filterProducts: (overrides?: Partial<WizardState>) => Product[];
   scoredProducts: (overrides?: Partial<WizardState>) => import('@/app/utils/matchScore').SplitResults;
   getAlternativeProducts: () => { products: Product[]; relaxed: string };
@@ -276,8 +283,12 @@ export function ResultsPage({
     }
     navigator.clipboard.writeText(url).then(() => {
       toast.success('Link copied to clipboard');
-    }).catch(() => {
-      toast.error('Failed to copy link');
+    }).catch((err: unknown) => {
+      if (err instanceof DOMException && err.name === 'NotAllowedError') {
+        toast.error('Clipboard access denied — copy the URL from the address bar instead');
+      } else {
+        toast.error('Failed to copy link');
+      }
     });
   };
 

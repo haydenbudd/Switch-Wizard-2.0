@@ -14,4 +14,9 @@ if (mountEl) {
       <App />
     </ThemeProvider>
   );
+} else {
+  console.error(
+    '[Linemaster Product Finder] Mount point not found: expected #lm-wizard-root ' +
+    '(WordPress shortcode) or #root (standalone) in the DOM. The wizard did not render.'
+  );
 }

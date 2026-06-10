@@ -34,7 +34,8 @@ import { FieldCoverage } from './FieldCoverage';
 import { WizardAnalytics } from './WizardAnalytics';
 import { FunnelAnalysis } from './FunnelAnalysis';
 import { Button } from '@/app/components/ui/button';
-import { Product, fetchProducts, createOrUpdateProduct, deleteProduct } from '@/app/lib/api';
+import { fetchProducts, createOrUpdateProduct, deleteProduct } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { toast } from 'sonner';
 
 interface AdminDashboardProps {
@@ -380,7 +381,7 @@ export function AdminDashboard({ onSignOut }: AdminDashboardProps) {
                   <Button variant="outline" onClick={() => {
                     const headers = ['id','series','part_number','technology','duty','ip','material','actions','applications','connector_type','voltage','amperage','certifications','description','image','link'];
                     const rows = products.map(p => headers.map(h => {
-                      const val = (p as Record<string, unknown>)[h];
+                      const val = (p as unknown as Record<string, unknown>)[h];
                       const str = Array.isArray(val) ? val.join('; ') : String(val ?? '');
                       return `"${str.replace(/"/g, '""')}"`;
                     }).join(','));

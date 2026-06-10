@@ -20,7 +20,7 @@ export function SupabaseDebugger() {
 
       setStatus('connected');
       setDetails({
-        url: process.env.NEXT_PUBLIC_SUPABASE_URL || 'Configured (hidden)',
+        url: 'Configured (hidden)', // process.env does not exist in Vite browser bundles
         productCount: data,
         timestamp: new Date().toISOString()
       });

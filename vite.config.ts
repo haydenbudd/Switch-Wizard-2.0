@@ -25,15 +25,16 @@ export default defineConfig({
         assetFileNames: 'assets/[name][extname]',
         manualChunks: {
           'vendor-motion': ['motion'],
+          // Only the Radix packages the wizard itself loads eagerly.
+          // Admin-only packages (e.g. react-select) must NOT be listed:
+          // the object form of manualChunks pulls listed modules into an
+          // eagerly-preloaded chunk even when their only importer is a
+          // lazy route. Same reason jspdf is absent — listing it forced
+          // 382KB into the static graph despite its dynamic import.
           'vendor-radix': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-popover',
           ],
-          'vendor-jspdf': ['jspdf'],
         },
       },
     },

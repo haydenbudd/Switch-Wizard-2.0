@@ -84,7 +84,6 @@ export interface WizardState {
   selectedConnection: string;
   selectedCircuitCount: string;
   selectedGuard: string;
-  selectedPedalConfig: string;
   selectedFeatures: string[];
   // Medical flow
   selectedMedicalPath: string;
@@ -115,7 +114,6 @@ export interface WizardState {
   setSelectedConnection: (id: string) => void;
   setSelectedCircuitCount: (id: string) => void;
   setSelectedGuard: (id: string) => void;
-  setSelectedPedalConfig: (id: string) => void;
   setSelectedFeatures: React.Dispatch<React.SetStateAction<string[]>>;
   setSelectedMedicalPath: (id: string) => void;
   setSelectedConsoleStyle: (id: string) => void;
@@ -150,7 +148,6 @@ export function useWizardState(): WizardState {
   const [selectedConnection, setSelectedConnection] = useState('');
   const [selectedCircuitCount, setSelectedCircuitCount] = useState('');
   const [selectedGuard, setSelectedGuard] = useState('');
-  const [selectedPedalConfig, setSelectedPedalConfig] = useState('');
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   // Medical flow
   const [selectedMedicalPath, setSelectedMedicalPath] = useState('');
@@ -213,7 +210,6 @@ export function useWizardState(): WizardState {
     setSelectedConnection('');
     setSelectedCircuitCount('');
     setSelectedGuard('');
-    setSelectedPedalConfig('');
     setSelectedFeatures([]);
     setSelectedMedicalPath('');
     setSelectedConsoleStyle('');
@@ -244,7 +240,6 @@ export function useWizardState(): WizardState {
     selectedConnection,
     selectedCircuitCount,
     selectedGuard,
-    selectedPedalConfig,
     selectedFeatures,
     selectedMedicalPath,
     selectedConsoleStyle,
@@ -263,7 +258,6 @@ export function useWizardState(): WizardState {
     setSelectedConnection,
     setSelectedCircuitCount,
     setSelectedGuard,
-    setSelectedPedalConfig,
     setSelectedFeatures,
     setSelectedMedicalPath,
     setSelectedConsoleStyle,

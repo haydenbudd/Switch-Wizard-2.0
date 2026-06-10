@@ -1,6 +1,6 @@
 import type { ElementType } from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { fetchProducts, Product, Option } from '@/app/lib/api';
+import type { Product, Option } from '@/app/lib/api';
 import type { Option as DataOption } from '@/app/data/options';
 import {
   categories as staticCategories,
@@ -101,6 +101,9 @@ export function useProductData(): ProductData {
       setLoading(true);
       setError(null);
 
+      // Dynamic import keeps @supabase/supabase-js out of the eager bundle —
+      // the wizard renders instantly on static data while this chunk loads.
+      const { fetchProducts } = await import('@/app/lib/api');
       const productsData = await fetchProducts();
 
       if (signal?.aborted) return;
@@ -197,7 +200,9 @@ export function useProductData(): ProductData {
     const metaMap = new Map(staticOptionData.duties.map(d => [d.id, d]));
 
     const seen = new Set<string>();
-    const derived = products
+    // Explicit annotation: element ids must widen to string so the
+    // no_preference append below typechecks (p.duty is a union type)
+    const derived: OptionWithIcon[] = products
       .filter(p => {
         if (seen.has(p.duty)) return false;
         seen.add(p.duty);

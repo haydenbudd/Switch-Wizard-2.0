@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/app/components/ui/button';
 import { Upload, FileUp, AlertTriangle, CheckCircle, Info } from 'lucide-react';
-import { createOrUpdateProducts, Product } from '@/app/lib/api';
+import { createOrUpdateProducts } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { toast } from 'sonner';
 import { Progress } from '@/app/components/ui/progress';
 
@@ -121,7 +122,7 @@ export function CSVImport({ onImportComplete }: CSVImportProps) {
 
       // Default values if missing
       if (!product.id && product.part_number) product.id = product.part_number;
-      if (!product.id && product.series) product.id = product.series.toLowerCase().replace(/\s+/g, '-');
+      if (!product.id && product.series) product.id = String(product.series).toLowerCase().replace(/\s+/g, '-');
       
       // Leave image empty so the series-based fallback in transformProduct kicks in
       if (!product.image) product.image = '';

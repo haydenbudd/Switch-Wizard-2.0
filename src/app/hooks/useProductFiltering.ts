@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Product } from '@/app/lib/api';
+import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { matchesEnvironment } from '@/app/utils/productFilters';
 import { scoreAndSplit, type SplitResults } from '@/app/utils/matchScore';

@@ -37,10 +37,6 @@ function WizardApp() {
     actions,
     environments,
     features,
-    consoleStyles,
-    pedalCounts,
-    medicalTechnicalFeatures,
-    accessories,
     connections,
     circuitCounts,
     duties,
@@ -168,13 +164,12 @@ function WizardApp() {
         wizardState,
         matchedProducts: filterProducts(),
         applications, technologies, actions, environments, features, duties,
-        consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories,
       });
     } catch (err) {
       console.error('PDF generation failed:', err);
       toast.error('PDF generation failed — please try again');
     }
-  }, [wizardState, filterProducts, applications, technologies, actions, environments, features, duties, consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories]);
+  }, [wizardState, filterProducts, applications, technologies, actions, environments, features, duties]);
 
   // Medical flow
   if (wizardState.flow === 'medical') {

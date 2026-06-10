@@ -1,0 +1,25 @@
+{
+  // Typecheck-only config — Vite/esbuild does the actual transpilation.
+  // Run with: npx tsc --noEmit
+  // This catches missing-import bugs (e.g. the useRef crash) that
+  // `vite build` silently ships.
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "types": ["vite/client"],
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src", "utils"],
+  // Figma Make scaffolding kept for reference — not part of the app
+  // (uses figma:asset imports that only resolve inside Figma's bundler)
+  "exclude": ["src/imports"]
+}

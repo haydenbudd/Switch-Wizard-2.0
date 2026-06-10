@@ -31,15 +31,12 @@ export default defineConfig({
         assetFileNames: 'assets/[name][extname]',
         manualChunks: {
           'vendor-motion': ['motion'],
+          // Keep in sync with vite.config.ts — see comment there for why
+          // admin-only Radix packages and jspdf must not be listed.
           'vendor-radix': [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-popover',
           ],
-          'vendor-jspdf': ['jspdf'],
         },
       },
     },

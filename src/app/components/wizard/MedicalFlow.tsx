@@ -290,7 +290,7 @@ export function MedicalFlow({
         if (!cfg) return null;
         const selectedValue = wizardState[cfg.stateKey as keyof WizardState] as string;
         const setterKey = SETTER_MAP[cfg.stateKey];
-        const setter = setterKey ? (wizardState as Record<string, unknown>)[setterKey] as (id: string) => void : undefined;
+        const setter = setterKey ? (wizardState as unknown as Record<string, unknown>)[setterKey] as (id: string) => void : undefined;
         if (!setter) return null;
         return renderOptionStep(cfg.title, cfg.subtitle, cfg.options, cfg.columns, selectedValue, setter);
       }
