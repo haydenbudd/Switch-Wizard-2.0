@@ -42,7 +42,7 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
     wizardState.setSelectedTechnology('');
     clearDownstreamSelections(0);
     wizardState.setFlow('standard');
-    setTimeout(() => wizardState.setStep(1), 150);
+    wizardState.setStep(1);
     trackWizardStep(0, 'standard', { application: id });
   }, [clearDownstreamSelections, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 

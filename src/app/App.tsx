@@ -3,11 +3,14 @@ import { Router } from '@/app/components/Router';
 import { Header } from '@/app/components/Header';
 import { OrbBackground } from '@/app/components/OrbBackground';
 import { useProductData } from '@/app/hooks/useProductData';
-import { useWizardState } from '@/app/hooks/useWizardState';
+import { useWizardState, takeSnapshot, type WizardSnapshot } from '@/app/hooks/useWizardState';
 import { useWizardNavigation } from '@/app/hooks/useWizardNavigation';
 import { useProductFiltering } from '@/app/hooks/useProductFiltering';
 import { trackNoResults } from '@/app/utils/analytics';
-import { parseShareParams, updateUrlWithState, clearShareParams } from '@/app/utils/shareUrl';
+import {
+  parseShareParams, updateUrlWithState, clearShareParams,
+  saveWizardStateToLocal, loadWizardStateFromLocal, clearWizardStateFromLocal,
+} from '@/app/utils/shareUrl';
 import { Toaster, toast } from 'sonner';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
@@ -65,49 +68,65 @@ function WizardApp() {
 
   const {
     filterProducts,
+    scoredProducts,
     getProductCount,
     getAlternativeProducts,
     needsCustomSolution,
   } = useProductFiltering({ wizardState, products });
 
-  // Restore wizard state from URL share params on mount.
+  // Restore wizard state on mount.
+  // Priority: share URL > localStorage > defaults.
+  //   - Share URL always lands the user on the results page (it's the
+  //     output of buildShareUrl, which is only invoked from results).
+  //   - localStorage restores to the exact step the user last left off on.
   // State setters are stable (never change), so we capture them via ref to
   // avoid adding them as deps of this one-shot effect.
-  const [shareRestored, setShareRestored] = useState(false);
   const wizardSettersRef = useRef(wizardState);
   wizardSettersRef.current = wizardState;
   useEffect(() => {
-    const shared = parseShareParams(window.location.search);
-    if (!shared) return;
-
     const s = wizardSettersRef.current;
-    if (shared.selectedApplication) s.setSelectedApplication(shared.selectedApplication);
-    if (shared.selectedTechnology) s.setSelectedTechnology(shared.selectedTechnology);
-    if (shared.selectedAction) s.setSelectedAction(shared.selectedAction);
-    if (shared.selectedEnvironment) s.setSelectedEnvironment(shared.selectedEnvironment);
-    if (shared.selectedDuty) s.setSelectedDuty(shared.selectedDuty);
-    if (shared.selectedMaterial) s.setSelectedMaterial(shared.selectedMaterial);
-    if (shared.selectedConnection) s.setSelectedConnection(shared.selectedConnection);
-    if (shared.selectedCircuitCount) s.setSelectedCircuitCount(shared.selectedCircuitCount);
-    if (shared.selectedGuard) s.setSelectedGuard(shared.selectedGuard);
-    if (shared.selectedFeatures) s.setSelectedFeatures(shared.selectedFeatures);
-    if (shared.flow) s.setFlow(shared.flow as 'standard' | 'medical');
+    const shared = parseShareParams(window.location.search);
+    if (shared) {
+      // Share URLs always land on the results page
+      s.applyPartial({ ...shared, step: 9 } as Partial<WizardSnapshot>);
+      return;
+    }
 
-    s.setStep(9);
-    setShareRestored(true);
+    // No share URL — try localStorage (resumes at the exact step)
+    const persisted = loadWizardStateFromLocal();
+    if (persisted) s.applyPartial(persisted);
   }, []);
 
-  // Update URL bar when viewing results; clear when navigating away
+  // Auto-save wizard state to localStorage whenever it meaningfully changes.
+  // The serialized snapshot doubles as the change detector — the effect only
+  // re-runs when a persisted field actually changed, and writes are skipped
+  // while the wizard is pristine.
+  const snapshot = takeSnapshot(wizardState);
+  const snapshotJson = JSON.stringify(snapshot);
+  useEffect(() => {
+    const hasAnyInput =
+      snapshot.step > 0 ||
+      snapshot.selectedCategory ||
+      snapshot.selectedApplication;
+    if (!hasAnyInput) return;
+    saveWizardStateToLocal(snapshot);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [snapshotJson]);
+
+  // Update URL bar when viewing results; clear our params when navigating
+  // away. clearShareParams only touches the wizard's own query keys (and
+  // no-ops when none are present), so this is safe for organic users and
+  // preserves the host page's params (e.g. WordPress ?page_id=).
   useEffect(() => {
     if (wizardState.step === 9) {
       updateUrlWithState(wizardState);
-    } else if (shareRestored) {
+    } else {
       clearShareParams();
     }
   }, [wizardState.step, wizardState.selectedApplication, wizardState.selectedTechnology,
       wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty,
       wizardState.selectedConnection, wizardState.selectedCircuitCount, wizardState.selectedGuard,
-      wizardState.selectedFeatures, wizardState.selectedMaterial, wizardState.flow, shareRestored]);
+      wizardState.selectedFeatures, wizardState.selectedMaterial, wizardState.flow]);
 
   // Enhanced search state for results page
   const [searchTerm, setSearchTerm] = useState('');
@@ -123,6 +142,7 @@ function WizardApp() {
     setDutyFilter([]);
     setCordedFilter('all');
     setMaterialFilter([]);
+    clearWizardStateFromLocal();
   }, [wizardState.resetWizard]);
 
   // Track no-results as a side effect
@@ -142,13 +162,18 @@ function WizardApp() {
   }, [filterProducts, wizardState.step]);
 
   const handleGeneratePDF = useCallback(async () => {
-    const { generatePDF } = await import('@/app/utils/generatePDF');
-    await generatePDF({
-      wizardState,
-      matchedProducts: filterProducts(),
-      applications, technologies, actions, environments, features, duties,
-      consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories,
-    });
+    try {
+      const { generatePDF } = await import('@/app/utils/generatePDF');
+      await generatePDF({
+        wizardState,
+        matchedProducts: filterProducts(),
+        applications, technologies, actions, environments, features, duties,
+        consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories,
+      });
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      toast.error('PDF generation failed — please try again');
+    }
   }, [wizardState, filterProducts, applications, technologies, actions, environments, features, duties, consoleStyles, pedalCounts, medicalTechnicalFeatures, accessories]);
 
   // Medical flow
@@ -213,6 +238,7 @@ function WizardApp() {
           features={features}
           duties={duties}
           filterProducts={filterProducts}
+          scoredProducts={scoredProducts}
           getAlternativeProducts={getAlternativeProducts}
           needsCustomSolution={needsCustomSolution}
           onBack={handleBack}

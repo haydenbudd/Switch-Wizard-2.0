@@ -2,7 +2,9 @@ import { Product } from '@/app/lib/api';
 import { Badge } from '@/app/components/ui/badge';
 import { Button } from '@/app/components/ui/button';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
-import { getProxiedImageUrl } from '@/app/utils/imageProxy';
+import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
+import { getPortalContainer } from '@/app/utils/portalContainer';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
@@ -27,7 +29,7 @@ import {
   Star,
   FileText,
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import {
   colorClasses,
   getTechColor,
@@ -143,23 +145,8 @@ function DetailedSpecs({ specs }: { specs: Record<string, string> }) {
 }
 
 export function ProductDetailModal({ product, open, onClose }: ProductDetailModalProps) {
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    },
-    [onClose]
-  );
-
-  useEffect(() => {
-    if (open) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [open, handleKeyDown]);
+  // Radix Dialog handles focus trap, return-focus, scroll lock, and Escape
+  // for free — no manual effects needed.
 
   if (!product) return null;
 
@@ -198,43 +185,44 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
   }
 
   return (
-    <AnimatePresence>
-      {open && (
-        <MotionDiv
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-        >
-          {/* Backdrop */}
-          <MotionDiv
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          />
+    <DialogPrimitive.Root open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <AnimatePresence>
+        {open && (
+          <DialogPrimitive.Portal container={getPortalContainer()} forceMount>
+            {/* Backdrop — Radix dismisses on click and traps focus */}
+            <DialogPrimitive.Overlay asChild forceMount>
+              <MotionDiv
+                className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              />
+            </DialogPrimitive.Overlay>
 
-          {/* Modal */}
-          <MotionDiv
-            className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border/60 bg-background shadow-2xl"
-            initial={{ opacity: 0, scale: 0.92, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: 'spring', damping: 28, stiffness: 350 }}
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${product.series} product details`}
-          >
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-muted transition-colors"
-              aria-label="Close product details"
+            {/* Content — Radix provides focus trap, Escape, return focus */}
+            <DialogPrimitive.Content
+              asChild
+              forceMount
+              aria-label={`${product.series} product details`}
             >
-              <X className="w-6 h-6" />
-            </button>
+              <MotionDiv
+                className="fixed left-[50%] top-[50%] z-[61] w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border/60 bg-background shadow-2xl"
+                initial={{ opacity: 0, scale: 0.92, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+              >
+                {/* Visually hidden title for assistive tech — the visible h2 below is decorative styling */}
+                <DialogPrimitive.Title className="sr-only">{product.series}</DialogPrimitive.Title>
+
+                {/* Close button */}
+                <DialogPrimitive.Close
+                  className="absolute top-4 right-4 z-10 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-muted transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                  aria-label="Close product details"
+                >
+                  <X className="w-6 h-6" />
+                </DialogPrimitive.Close>
 
             {/* Hero image */}
             <div className="relative bg-gradient-to-b from-secondary/80 to-transparent p-8 pb-6 flex items-center justify-center min-h-[220px]">
@@ -249,6 +237,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
               {product.image ? (
                 <ImageWithFallback
                   src={getProxiedImageUrl(product.image, { width: 800, quality: 85 })}
+                  srcSet={getProxiedImageSrcSet(product.image, 800, 85)}
                   alt={product.series}
                   className="max-w-full max-h-[200px] object-contain drop-shadow-xl"
                 />
@@ -354,19 +343,30 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     </a>
                   </Button>
                 )}
-                {datasheetUrl && (
+                {datasheetUrl ? (
                   <Button asChild variant="outline" className="flex-1 gap-2 !text-base">
                     <a href={datasheetUrl} target="_blank" rel="noopener noreferrer">
                       <FileText className="w-6 h-6" />
                       Datasheet PDF
                     </a>
                   </Button>
+                ) : (
+                  /* Wrapper div carries the tooltip — disabled buttons have
+                     pointer-events-none, so a title on the Button never shows */
+                  <div className="flex-1" title="No PDF datasheet is published for this series yet">
+                    <Button disabled variant="outline" className="w-full gap-2 !text-base border-dashed">
+                      <FileText className="w-6 h-6" />
+                      Datasheet unavailable
+                    </Button>
+                  </div>
                 )}
               </div>
             </div>
           </MotionDiv>
-        </MotionDiv>
-      )}
-    </AnimatePresence>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+        )}
+      </AnimatePresence>
+    </DialogPrimitive.Root>
   );
 }

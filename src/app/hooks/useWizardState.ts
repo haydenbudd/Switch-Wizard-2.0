@@ -2,6 +2,75 @@ import { useState, useCallback } from 'react';
 
 type FlowType = 'standard' | 'medical';
 
+/**
+ * The serializable slice of wizard state — used by localStorage persistence
+ * (and restorable from share URLs via applyPartial). Adding a wizard field?
+ * Update this interface, takeSnapshot, and applyPartial — all in this file.
+ */
+export interface WizardSnapshot {
+  step: number;
+  flow: FlowType;
+  selectedCategory: string;
+  selectedApplication: string;
+  selectedTechnology: string;
+  selectedAction: string;
+  selectedEnvironment: string;
+  selectedDuty: string;
+  selectedMaterial: string;
+  selectedConnection: string;
+  selectedCircuitCount: string;
+  selectedGuard: string;
+  selectedFeatures: string[];
+  // Medical flow + custom builder
+  selectedMedicalPath: string;
+  selectedConsoleStyle: string;
+  selectedPedalCount: string;
+  selectedMedicalFeatures: string[];
+  selectedAccessories: string[];
+  selectedChannel: string;
+  selectedPedalDesign: string;
+  selectedButtonCount: string;
+  selectedOutputType: string;
+  selectedWiredWireless: string;
+  selectedToeLoop: string;
+  selectedTreadleType: string;
+  selectedCustomLabeling: string;
+  selectedLEDs: string;
+}
+
+/** Extract the persistable slice of the live wizard state. */
+export function takeSnapshot(state: WizardState): WizardSnapshot {
+  return {
+    step: state.step,
+    flow: state.flow,
+    selectedCategory: state.selectedCategory,
+    selectedApplication: state.selectedApplication,
+    selectedTechnology: state.selectedTechnology,
+    selectedAction: state.selectedAction,
+    selectedEnvironment: state.selectedEnvironment,
+    selectedDuty: state.selectedDuty,
+    selectedMaterial: state.selectedMaterial,
+    selectedConnection: state.selectedConnection,
+    selectedCircuitCount: state.selectedCircuitCount,
+    selectedGuard: state.selectedGuard,
+    selectedFeatures: state.selectedFeatures,
+    selectedMedicalPath: state.selectedMedicalPath,
+    selectedConsoleStyle: state.selectedConsoleStyle,
+    selectedPedalCount: state.selectedPedalCount,
+    selectedMedicalFeatures: state.selectedMedicalFeatures,
+    selectedAccessories: state.selectedAccessories,
+    selectedChannel: state.selectedChannel,
+    selectedPedalDesign: state.selectedPedalDesign,
+    selectedButtonCount: state.selectedButtonCount,
+    selectedOutputType: state.selectedOutputType,
+    selectedWiredWireless: state.selectedWiredWireless,
+    selectedToeLoop: state.selectedToeLoop,
+    selectedTreadleType: state.selectedTreadleType,
+    selectedCustomLabeling: state.selectedCustomLabeling,
+    selectedLEDs: state.selectedLEDs,
+  };
+}
+
 export interface WizardState {
   flow: FlowType;
   step: number;
@@ -63,6 +132,8 @@ export interface WizardState {
   setSelectedTreadleType: (id: string) => void;
   setSelectedCustomLabeling: (id: string) => void;
   setSelectedLEDs: (id: string) => void;
+  /** Apply a restored snapshot (share URL / localStorage). Skips empty values. */
+  applyPartial: (partial: Partial<WizardSnapshot>) => void;
   resetWizard: () => void;
 }
 
@@ -97,6 +168,37 @@ export function useWizardState(): WizardState {
   const [selectedTreadleType, setSelectedTreadleType] = useState('');
   const [selectedCustomLabeling, setSelectedCustomLabeling] = useState('');
   const [selectedLEDs, setSelectedLEDs] = useState('');
+
+  const applyPartial = useCallback((partial: Partial<WizardSnapshot>) => {
+    if (partial.selectedCategory) setSelectedCategory(partial.selectedCategory);
+    if (partial.selectedApplication) setSelectedApplication(partial.selectedApplication);
+    if (partial.selectedTechnology) setSelectedTechnology(partial.selectedTechnology);
+    if (partial.selectedAction) setSelectedAction(partial.selectedAction);
+    if (partial.selectedEnvironment) setSelectedEnvironment(partial.selectedEnvironment);
+    if (partial.selectedDuty) setSelectedDuty(partial.selectedDuty);
+    if (partial.selectedMaterial) setSelectedMaterial(partial.selectedMaterial);
+    if (partial.selectedConnection) setSelectedConnection(partial.selectedConnection);
+    if (partial.selectedCircuitCount) setSelectedCircuitCount(partial.selectedCircuitCount);
+    if (partial.selectedGuard) setSelectedGuard(partial.selectedGuard);
+    if (Array.isArray(partial.selectedFeatures) && partial.selectedFeatures.length) setSelectedFeatures(partial.selectedFeatures);
+    if (partial.selectedMedicalPath) setSelectedMedicalPath(partial.selectedMedicalPath);
+    if (partial.selectedConsoleStyle) setSelectedConsoleStyle(partial.selectedConsoleStyle);
+    if (partial.selectedPedalCount) setSelectedPedalCount(partial.selectedPedalCount);
+    if (Array.isArray(partial.selectedMedicalFeatures) && partial.selectedMedicalFeatures.length) setSelectedMedicalFeatures(partial.selectedMedicalFeatures);
+    if (Array.isArray(partial.selectedAccessories) && partial.selectedAccessories.length) setSelectedAccessories(partial.selectedAccessories);
+    if (partial.selectedChannel) setSelectedChannel(partial.selectedChannel);
+    if (partial.selectedPedalDesign) setSelectedPedalDesign(partial.selectedPedalDesign);
+    if (partial.selectedButtonCount) setSelectedButtonCount(partial.selectedButtonCount);
+    if (partial.selectedOutputType) setSelectedOutputType(partial.selectedOutputType);
+    if (partial.selectedWiredWireless) setSelectedWiredWireless(partial.selectedWiredWireless);
+    if (partial.selectedToeLoop) setSelectedToeLoop(partial.selectedToeLoop);
+    if (partial.selectedTreadleType) setSelectedTreadleType(partial.selectedTreadleType);
+    if (partial.selectedCustomLabeling) setSelectedCustomLabeling(partial.selectedCustomLabeling);
+    if (partial.selectedLEDs) setSelectedLEDs(partial.selectedLEDs);
+    if (partial.flow === 'standard' || partial.flow === 'medical') setFlow(partial.flow);
+    // step 0 is legitimate — guard on type, not truthiness
+    if (typeof partial.step === 'number') setStep(partial.step);
+  }, []);
 
   const resetWizard = useCallback(() => {
     setFlow('standard');
@@ -186,6 +288,7 @@ export function useWizardState(): WizardState {
     setSelectedTreadleType,
     setSelectedCustomLabeling,
     setSelectedLEDs,
+    applyPartial,
     resetWizard,
   };
 }

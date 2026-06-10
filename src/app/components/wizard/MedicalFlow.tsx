@@ -116,27 +116,30 @@ export function MedicalFlow({
   };
   const displayStep = wizardState.step; // fork(1)=1, action(2)=2, environment(3)=3
 
+  // No artificial setTimeout delays — AnimatePresence already provides the
+  // visual handoff to the next step, and waiting just makes clicks feel laggy.
+  // (Matches the snappiness pattern in StandardSteps.handleSingleSelect.)
   const handleForkSelect = (path: 'stock' | 'custom') => {
     wizardState.setSelectedMedicalPath(path);
-    setTimeout(onContinue, 200);
+    onContinue();
   };
 
   const handleActionSelect = (id: string) => {
     wizardState.setSelectedAction(id);
-    setTimeout(onContinue, 150);
+    onContinue();
   };
 
   const handleEnvironmentSelect = (id: string) => {
     wizardState.setSelectedEnvironment(id);
     wizardState.setSelectedTechnology('electrical');
-    setTimeout(onViewStandardProducts, 150);
+    onViewStandardProducts();
   };
 
   // ── Custom builder handlers ──
 
   const handleBuilderSelect = (setter: (id: string) => void, id: string) => {
     setter(id);
-    setTimeout(onContinue, 150);
+    onContinue();
   };
 
   // Generate button count options based on channel + pedal (memoized to stabilize NumberIcon refs)
@@ -253,7 +256,7 @@ export function MedicalFlow({
                 How many buttons per pedal?
                 {wizardState.selectedChannel === 'aero' && (
                   <span className="block text-xs mt-1 text-red-400">
-                    Aero {wizardState.selectedPedalDesign} supports up to {maxButtons} button{maxButtons > 1 ? 's' : ''}
+                    Aero {optionLabel(pedalDesigns, wizardState.selectedPedalDesign)} supports up to {maxButtons} button{maxButtons > 1 ? 's' : ''}
                   </span>
                 )}
               </p>

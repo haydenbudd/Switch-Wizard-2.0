@@ -2,6 +2,8 @@ import { useCallback, useMemo } from 'react';
 import { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { matchesEnvironment } from '@/app/utils/productFilters';
+import { scoreAndSplit, type SplitResults } from '@/app/utils/matchScore';
+import { hasPreference, NO_PREFERENCE } from '@/app/utils/preference';
 
 interface UseProductFilteringOptions {
   wizardState: WizardState;
@@ -15,16 +17,15 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
     return (products || []).filter((product) => {
       if (state.selectedApplication && !product.applications.includes(state.selectedApplication)) return false;
       if (state.selectedTechnology && product.technology !== state.selectedTechnology) return false;
-      if (state.selectedAction && !product.actions.includes(state.selectedAction)) return false;
+      if (hasPreference(state.selectedAction) && !product.actions.includes(state.selectedAction)) return false;
       if (!matchesEnvironment(state.selectedEnvironment, product.ip)) return false;
-      if (state.selectedDuty && product.duty !== state.selectedDuty) return false;
+      if (hasPreference(state.selectedDuty) && product.duty !== state.selectedDuty) return false;
       if (
         state.selectedTechnology !== 'pneumatic' &&
-        state.selectedConnection &&
-        state.selectedConnection !== 'no_preference' &&
+        hasPreference(state.selectedConnection) &&
         product.connector_type !== state.selectedConnection
       ) return false;
-      if (state.selectedCircuitCount && state.selectedCircuitCount !== 'no_preference' && product.circuitry !== state.selectedCircuitCount) return false;
+      if (hasPreference(state.selectedCircuitCount) && product.circuitry !== state.selectedCircuitCount) return false;
       if (state.selectedGuard === 'yes' && !(product.features || []).includes('shield')) return false;
 
       if (state.selectedFeatures.length > 0) {
@@ -64,8 +65,12 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       for (const action of p.actions) {
         counts.set(key(2, action), (counts.get(key(2, action)) || 0) + 1);
       }
+      // "no_preference" matches everything at this filtering level
+      counts.set(key(2, NO_PREFERENCE), (counts.get(key(2, NO_PREFERENCE)) || 0) + 1);
 
-      const matchesAction = p.actions.includes(wizardState.selectedAction);
+      const matchesAction =
+        !hasPreference(wizardState.selectedAction) ||
+        p.actions.includes(wizardState.selectedAction);
       if (!matchesAction) continue;
 
       // Step 3: Environment — check each env option against this product's IP
@@ -80,8 +85,12 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
 
       // Step 4: Duty
       counts.set(key(4, p.duty), (counts.get(key(4, p.duty)) || 0) + 1);
+      // "no_preference" matches everything at this filtering level
+      counts.set(key(4, NO_PREFERENCE), (counts.get(key(4, NO_PREFERENCE)) || 0) + 1);
 
-      const matchesDuty = !wizardState.selectedDuty || p.duty === wizardState.selectedDuty;
+      const matchesDuty =
+        !hasPreference(wizardState.selectedDuty) ||
+        p.duty === wizardState.selectedDuty;
       if (!matchesDuty) continue;
 
       // Step 5: Connection Type
@@ -89,9 +98,9 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
         counts.set(key(5, p.connector_type), (counts.get(key(5, p.connector_type)) || 0) + 1);
       }
       // "no_preference" matches everything at this filtering level
-      counts.set(key(5, 'no_preference'), (counts.get(key(5, 'no_preference')) || 0) + 1);
+      counts.set(key(5, NO_PREFERENCE), (counts.get(key(5, NO_PREFERENCE)) || 0) + 1);
 
-      const matchesConnection = wizardState.selectedTechnology === 'pneumatic' || !wizardState.selectedConnection || wizardState.selectedConnection === 'no_preference' || p.connector_type === wizardState.selectedConnection;
+      const matchesConnection = wizardState.selectedTechnology === 'pneumatic' || !hasPreference(wizardState.selectedConnection) || p.connector_type === wizardState.selectedConnection;
       if (!matchesConnection) continue;
 
       // Step 6: Circuit Count
@@ -99,9 +108,9 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
         counts.set(key(6, p.circuitry), (counts.get(key(6, p.circuitry)) || 0) + 1);
       }
       // "no_preference" matches everything at this filtering level
-      counts.set(key(6, 'no_preference'), (counts.get(key(6, 'no_preference')) || 0) + 1);
+      counts.set(key(6, NO_PREFERENCE), (counts.get(key(6, NO_PREFERENCE)) || 0) + 1);
 
-      const matchesCircuit = !wizardState.selectedCircuitCount || wizardState.selectedCircuitCount === 'no_preference' || p.circuitry === wizardState.selectedCircuitCount;
+      const matchesCircuit = !hasPreference(wizardState.selectedCircuitCount) || p.circuitry === wizardState.selectedCircuitCount;
       if (!matchesCircuit) continue;
 
       // Step 7: Guard
@@ -122,6 +131,12 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
   }, [productCountMap]);
 
   const getAlternativeProducts = useCallback(() => {
+    // "no_preference" never constrains results, so relaxing it is a no-op —
+    // treat it like an unset value when deciding which criterion to relax
+    // and when re-filtering by action below.
+    const hasAction = hasPreference(wizardState.selectedAction);
+    const hasDuty = hasPreference(wizardState.selectedDuty);
+
     if (wizardState.selectedFeatures.length > 0) {
       const withoutFeatures = filterProducts({ selectedFeatures: [] });
       if (withoutFeatures.length > 0) return { products: withoutFeatures, relaxed: 'features' as const };
@@ -130,7 +145,7 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       const withoutGuard = filterProducts({ selectedFeatures: [], selectedGuard: '' });
       if (withoutGuard.length > 0) return { products: withoutGuard, relaxed: 'guard' as const };
     }
-    if (wizardState.selectedDuty) {
+    if (hasDuty) {
       const withoutDuty = filterProducts({ selectedFeatures: [], selectedGuard: '', selectedDuty: '' });
       if (withoutDuty.length > 0) return { products: withoutDuty, relaxed: 'duty' as const };
     }
@@ -138,12 +153,12 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       const withoutEnvironment = (products || []).filter((product) => {
         if (!product.applications.includes(wizardState.selectedApplication)) return false;
         if (product.technology !== wizardState.selectedTechnology) return false;
-        if (!product.actions.includes(wizardState.selectedAction)) return false;
+        if (hasAction && !product.actions.includes(wizardState.selectedAction)) return false;
         return true;
       });
       if (withoutEnvironment.length > 0) return { products: withoutEnvironment, relaxed: 'environment' as const };
     }
-    if (wizardState.selectedAction) {
+    if (hasAction) {
       const withoutAction = (products || []).filter((product) => {
         if (!product.applications.includes(wizardState.selectedApplication)) return false;
         if (product.technology !== wizardState.selectedTechnology) return false;
@@ -167,10 +182,21 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       wizardState.selectedFeatures.includes('custom_connector');
   }, [wizardState.selectedFeatures]);
 
+  /**
+   * Smart-match split: perfect matches (every soft criterion satisfied) and
+   * close matches (partial fit). Hard filter is technology + action only —
+   * everything else is a weighted preference. See utils/matchScore.ts.
+   */
+  const scoredProducts = useCallback((overrides: Partial<WizardState> = {}): SplitResults => {
+    const state = { ...wizardState, ...overrides };
+    return scoreAndSplit(products || [], state);
+  }, [products, wizardState]);
+
   return {
     filterProducts,
     getProductCount,
     getAlternativeProducts,
     needsCustomSolution,
+    scoredProducts,
   };
 }

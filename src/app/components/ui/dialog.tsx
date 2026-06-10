@@ -3,6 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/app/components/ui/utils"
+import { getPortalContainer } from "@/app/utils/portalContainer"
 
 const Dialog = DialogPrimitive.Root
 
@@ -31,11 +32,8 @@ const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, ...props }, ref) => {
-  const container = typeof document !== 'undefined'
-    ? document.getElementById('lm-product-finder') ?? document.body
-    : undefined;
   return (
-  <DialogPortal container={container}>
+  <DialogPortal container={getPortalContainer()}>
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}

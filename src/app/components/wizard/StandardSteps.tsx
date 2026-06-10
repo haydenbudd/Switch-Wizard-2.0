@@ -1,13 +1,15 @@
-import { useState, useEffect, useRef, Fragment } from 'react';
-import { createPortal } from 'react-dom';
-import { getPortalContainer } from '@/app/utils/portalContainer';
+import { useState, useEffect, useRef, Fragment, lazy, Suspense } from 'react';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
+import { NO_PREFERENCE } from '@/app/utils/preference';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { Button } from '@/app/components/ui/button';
+import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import { motion, AnimatePresence } from 'motion/react';
+
+const LazyWizardCompanion = lazy(() => import('@/app/components/wizard/WizardCompanion'));
 
 // Magic wand cursor as inline SVG data URI
 const WAND_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='4' y1='28' x2='18' y2='14' stroke='%23a78bfa' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18,14 L20,10 L24,12 L22,16 Z' fill='%23fbbf24'/%3E%3Ccircle cx='26' cy='4' r='1.5' fill='%23fbbf24'/%3E%3Ccircle cx='29' cy='9' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='24' cy='2' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='30' cy='5' r='0.8' fill='%23fff'/%3E%3Ccircle cx='27' cy='1' r='0.8' fill='%23fff'/%3E%3C/svg%3E") 4 28, auto`;
@@ -42,77 +44,6 @@ const WizardHat = ({ visible }: { visible: boolean }) => (
     )}
   </AnimatePresence>
 );
-
-const WIZARD_ASCII = `\
-                                            ####
-                                          #######
-                                        ##########
-                                       ############
-                                      ####### ######
-                                     ######    ######
-                                    ######      ######
-                                   ######        ######
-                                  ######          ######
-                                 ######            ######
-                                ######              ######
-                               ######                ######
-                              #######                  #######
-                             #######                    #######
-                        #############################################
-                   ####################################################### ######
-                 ########################################################### ############
-            ##################                                               ###############
-          ##############           ####################################           ##############
-        ###########               ######################################               ###########
-      ########                   ######################################                   ########
-      ######                    ######   #######        #######   ######                    ######
-       #######                ######### ###########    ########### #########                #######
-         #########            ########## ############   ###########  #########            #########
-           ###########       ##########   ###   #### ## ####   ###   ##########       ###########
-              ##########################   ######### #### #########   ##########################
-                 ################### #   ############################   # ###################
-                    ##############   ################################   #################
-                      ###############      ########      ###############    ###########
-                        ###########        ########        ###########     #############
-                          #########        ##########        #########     ####### #######
-                       ###########        ##############        ##################   ######
-                      ##########        ########  ########        #########################
-           ###               ######################      ######################   #############
-           #####                ##################          ##################       #########
-            ######                    ##########                ##########           ###########
-            ######                     ######                       #####            ###########
-             ######                    #######                     ######            ###########
-             ######                   ########                     #######              #####
-              ######                  ##########                  ########              #####
-              ######                  ############               #########              #####
-               ######                ###############            ###########             #####
-               ######              ########  #########          #############           #####
-                ######           ##########     #######      ####### ##########         #####
-                ######    #  #############        #####     ######    #############  #  #####
-               ######## ##################        #####  ########     ########################
-              #################### ######        #############       ###### ##################
-             ###############      #####         ###########          #####      ##############
-             ##############     ######        ##########            ######     ##############
-             ##############    #######        #########             #######    #############
-                 #####################              ####              #####################
-                    # ################              ####              #####################
-                      ################              ####              #####################
-                       #######  ######              ####              ######  ####### #####
-                               ######               ####               ######         #####
-                               ######               ####               ######         #####
-                               ######               ####               ######         #####
-                              ######                ####                ######        #####
-                              ######                ####                ######        #####
-                              ######                 ##                 ######        #####
-                             ######                  ##                  ######       #####
-                             ######                 ####                 ######       #####
-                             ######                 ####                 ######       #####
-                             #####                  ####                  #####       #####
-                            ######                  ####                  ######      #####
-                            ######                  ####                  ######      #####
-                            ####################################################      #####
-                           ######################################################     #####
-                           ######################################################     #####`;
 
 interface StandardStepsProps {
   wizardState: WizardState;
@@ -158,6 +89,11 @@ export function StandardSteps({
   onContinue,
 }: StandardStepsProps) {
   const [showWizard, setShowWizard] = useState(false);
+  // Once toggled on, keep the lazy chunk mounted for exit animations
+  const [companionLoaded, setCompanionLoaded] = useState(false);
+  useEffect(() => {
+    if (showWizard) setCompanionLoaded(true);
+  }, [showWizard]);
   const [stepAnnouncement, setStepAnnouncement] = useState('');
   const stepContentRef = useRef<HTMLDivElement>(null);
 
@@ -200,7 +136,9 @@ export function StandardSteps({
   // Guard against undefined props in environments like Figma Make
   if (!wizardState || !categories) return null;
 
-  // Helper to handle single-select progression
+  // Helper to handle single-select progression. No artificial delay — the
+  // AnimatePresence exit animation already gives a visual handoff to the
+  // next step, and a setTimeout here just made every click feel laggy.
   const handleSingleSelect = (
     value: string,
     setter: (val: string) => void,
@@ -208,7 +146,7 @@ export function StandardSteps({
   ) => {
     setter(value);
     clearDownstreamSelections(stepIndex);
-    setTimeout(onContinue, 150);
+    onContinue();
   };
 
   // Helper to handle multi-select toggle
@@ -231,91 +169,14 @@ export function StandardSteps({
 
   const progressPercent = Math.round((getProgressStep(wizardState.step) / totalSteps) * 100);
 
-  // Wizard companion — slides in from right, hidden on mobile
-  const wizardCompanion = createPortal(
-    <AnimatePresence>
-      {showWizard && (
-        <motion.div
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '100%', opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="hidden md:block"
-          style={{
-            position: 'fixed',
-            bottom: '24px',
-            right: '24px',
-            zIndex: 99999,
-          }}
-          onClick={() => setShowWizard(false)}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); setShowWizard(false); } }}
-          role="button"
-          tabIndex={0}
-          aria-label="Dismiss Switch Wizard companion"
-        >
-          <div
-            aria-hidden="true"
-            style={{
-              padding: '8px',
-              userSelect: 'none' as const,
-            }}
-          >
-            {/* Speech bubble above wizard's head */}
-            <div style={{
-              position: 'relative',
-              background: 'var(--card, rgba(255,255,255,0.72))',
-              border: '1px solid var(--border, rgba(15,23,42,0.08))',
-              borderRadius: '12px',
-              padding: '6px 12px',
-              marginBottom: '6px',
-              maxWidth: '140px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            }}>
-              <p style={{
-                textAlign: 'center',
-                fontSize: '9px',
-                color: 'var(--foreground, #0f172a)',
-                fontStyle: 'italic',
-                letterSpacing: '0.03em',
-                margin: 0,
-                lineHeight: 1.4,
-              }}>
-                The Switch Wizard is with you
-              </p>
-              {/* Speech bubble tail */}
-              <div style={{
-                position: 'absolute',
-                bottom: '-6px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: 0,
-                height: 0,
-                borderLeft: '6px solid transparent',
-                borderRight: '6px solid transparent',
-                borderTop: '6px solid var(--card, rgba(255,255,255,0.72))',
-              }} />
-            </div>
-            <pre
-              style={{
-                fontSize: '2.875px',
-                lineHeight: 1.15,
-                fontFamily: 'monospace',
-                color: 'var(--wizard-color, #0c2461)',
-                whiteSpace: 'pre',
-                margin: 0,
-                filter: 'drop-shadow(0 2px 8px rgba(59,130,246,0.25))',
-              }}
-            >
-{WIZARD_ASCII}
-            </pre>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
-    getPortalContainer()
-  );
+  // Wizard companion easter egg — lazily loaded so the ASCII art stays out
+  // of the main bundle until the user actually toggles it on. Stays mounted
+  // after first load so the exit animation can play on dismiss.
+  const wizardCompanion = companionLoaded ? (
+    <Suspense fallback={null}>
+      <LazyWizardCompanion visible={showWizard} onDismiss={() => setShowWizard(false)} />
+    </Suspense>
+  ) : null;
 
   // Step 0: Category Selection
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
@@ -433,6 +294,20 @@ export function StandardSteps({
         </div>
       </div>
 
+      {/* Clickable breadcrumb of prior answers — tap any chip to jump back */}
+      <WizardBreadcrumb
+        wizardState={wizardState}
+        applications={applications}
+        technologies={technologies}
+        actions={actions}
+        environments={environments}
+        duties={duties}
+        connections={connections}
+        circuitCounts={circuitCounts}
+        features={features}
+        onJumpToStep={wizardState.setStep}
+      />
+
       {/* Screen reader announcements for step changes */}
       <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
         {stepAnnouncement}
@@ -453,16 +328,16 @@ export function StandardSteps({
         <AnimatePresence mode="wait">
           <motion.div
             key={wizardState.step}
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Step 0 Phase 2: Application Selection */}
             {wizardState.step === 0 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</h2>
                   <p className="!text-lg !text-muted-foreground">Choose the specific use case for your foot switch</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
@@ -485,8 +360,11 @@ export function StandardSteps({
             {wizardState.step === 1 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Technology</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Technology</h2>
                   <p className="!text-lg !text-muted-foreground">Choose the switching mechanism for your application</p>
+                  <p className="!text-sm !text-muted-foreground/80 mt-3 italic">
+                    Pneumatic and Wireless skip the wiring and circuit questions — 2 fewer steps.
+                  </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
@@ -511,10 +389,10 @@ export function StandardSteps({
             {wizardState.step === 2 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</h2>
                   <p className="!text-lg !text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select action type">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
                     .map((action, i) => (
@@ -524,7 +402,7 @@ export function StandardSteps({
                         description={action.description}
                         icon={action.icon}
                         selected={wizardState.selectedAction === action.id}
-                        count={getProductCount(2, action.id)}
+                        count={action.id === NO_PREFERENCE ? undefined : getProductCount(2, action.id)}
                         onClick={() => handleSingleSelect(action.id, wizardState.setSelectedAction, 2)}
                         index={i}
                       />
@@ -537,7 +415,7 @@ export function StandardSteps({
             {wizardState.step === 3 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</h2>
                   <p className="!text-lg !text-muted-foreground">Where will the switch be used?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
@@ -561,10 +439,10 @@ export function StandardSteps({
             {wizardState.step === 4 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</h2>
                   <p className="!text-lg !text-muted-foreground">How heavy will the usage be?</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
                       key={duty.id}
@@ -572,7 +450,7 @@ export function StandardSteps({
                       description={duty.description}
                       icon={duty.icon}
                       selected={wizardState.selectedDuty === duty.id}
-                      count={getProductCount(4, duty.id)}
+                      count={duty.id === NO_PREFERENCE ? undefined : getProductCount(4, duty.id)}
                       onClick={() => handleSingleSelect(duty.id, wizardState.setSelectedDuty, 4)}
                       index={i}
                     />
@@ -585,7 +463,7 @@ export function StandardSteps({
             {wizardState.step === 5 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Connection Type</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Connection Type</h2>
                   <p className="!text-lg !text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
@@ -596,7 +474,7 @@ export function StandardSteps({
                       description={conn.description}
                       icon={conn.icon}
                       selected={wizardState.selectedConnection === conn.id}
-                      count={conn.id === 'no_preference' ? undefined : getProductCount(5, conn.id)}
+                      count={conn.id === NO_PREFERENCE ? undefined : getProductCount(5, conn.id)}
                       onClick={() => handleSingleSelect(conn.id, wizardState.setSelectedConnection, 5)}
                       index={i}
                     />
@@ -609,7 +487,7 @@ export function StandardSteps({
             {wizardState.step === 6 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</h2>
                   <p className="!text-lg !text-muted-foreground">How many circuits do you need to control?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
@@ -620,7 +498,7 @@ export function StandardSteps({
                       description={cc.description}
                       icon={cc.icon}
                       selected={wizardState.selectedCircuitCount === cc.id}
-                      count={cc.id === 'no_preference' ? undefined : getProductCount(6, cc.id)}
+                      count={cc.id === NO_PREFERENCE ? undefined : getProductCount(6, cc.id)}
                       onClick={() => handleSingleSelect(cc.id, wizardState.setSelectedCircuitCount, 6)}
                       index={i}
                     />
@@ -633,7 +511,7 @@ export function StandardSteps({
             {wizardState.step === 7 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</h2>
                   <p className="!text-lg !text-muted-foreground">Do you need protection against accidental activation?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
@@ -663,7 +541,7 @@ export function StandardSteps({
             {wizardState.step === 8 && (
               <div className="space-y-6">
                 <div className="text-center mb-10">
-                  <span className="!text-4xl !font-bold tracking-tight block mb-2">Additional Features</span>
+                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Additional Features</h2>
                   <p className="!text-lg !text-muted-foreground">Select any that apply, or skip to view results.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">

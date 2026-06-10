@@ -349,7 +349,14 @@ body,
 
 .animate-card-enter {
   opacity: 0;
-  animation: card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: card-enter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-enter {
+    animation-duration: 0.01ms;
+    opacity: 1;
+  }
 }
 
 .animate-pulse-ring {

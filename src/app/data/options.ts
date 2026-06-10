@@ -239,6 +239,14 @@ export const actions: Option[] = [
     description: 'Speed varies with pressure.',
     availableFor: ['electrical', 'pneumatic'],
   },
+  {
+    id: 'no_preference',
+    label: 'No Preference',
+    icon: Ban,
+    description: 'Show all action types.',
+    availableFor: ['electrical', 'pneumatic', 'wireless'],
+    sortOrder: 99,
+  },
 ];
 
 export const environments: Option[] = [
@@ -405,6 +413,13 @@ export const duties: Option[] = [
     icon: Anvil,
     description: 'Maximum stability. Cast metal construction stays firmly in place. Best for machinery and high-force applications.',
     sortOrder: 2
+  },
+  {
+    id: 'no_preference',
+    label: 'No Preference',
+    icon: Ban,
+    description: 'Show all duty ratings.',
+    sortOrder: 99,
   },
 ];
 
@@ -591,7 +606,10 @@ export const BUILDER_STEP_CONFIGS: BuilderStepConfig[] = [
   { step: 10, title: 'LED Indicators',   subtitle: 'Would you like LED indicators on your footswitch?',          options: ledOptions,            columns: 2, stateKey: 'selectedLEDs',           summaryLabel: 'LEDs' },
 ];
 
-/** Look up a display label from an option array by id. */
+/** Look up a display label from an option array by id.
+ *  The "no preference" sentinel reads as "Any" in compact summary contexts
+ *  (breadcrumb chips, PDF rows) — option cards use option.label directly. */
 export function optionLabel(options: Option[], id: string): string {
+  if (id === 'no_preference') return 'Any';
   return options.find(o => o.id === id)?.label ?? id;
 }

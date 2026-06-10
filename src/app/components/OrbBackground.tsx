@@ -49,9 +49,23 @@ export function OrbBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  // Live-tracked so toggling the OS reduced-motion setting takes effect
+  // immediately (the main effect below re-runs when this flips)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(
+    () => typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
   }, []);
 
   useEffect(() => {
@@ -89,7 +103,9 @@ export function OrbBackground() {
       mouseY = e.clientY;
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    if (!prefersReducedMotion) {
+      window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    }
 
     // Animated orbs: large, gentle movement
     const orbs: Orb[] = [
@@ -143,14 +159,33 @@ export function OrbBackground() {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    animate();
+    // Pause animation when tab is hidden — saves CPU/battery and prevents a
+    // burst of catch-up frames when the user returns. Always cancel any
+    // pending frame before starting a new loop so rapid visibility flips
+    // can't stack multiple concurrent rAF chains.
+    const handleVisibility = () => {
+      cancelAnimationFrame(animationFrameId);
+      if (!document.hidden && !prefersReducedMotion) {
+        animate();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    if (prefersReducedMotion) {
+      // One static frame, no rAF loop.
+      animate();
+      cancelAnimationFrame(animationFrameId);
+    } else {
+      animate();
+    }
 
     return () => {
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('visibilitychange', handleVisibility);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [mounted, resolvedTheme]);
+  }, [mounted, resolvedTheme, prefersReducedMotion]);
 
   return (
     <canvas
