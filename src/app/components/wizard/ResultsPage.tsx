@@ -29,7 +29,7 @@ import {
 } from '@/app/components/ui/drawer';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { getProcessedProducts } from '@/app/utils/productFilters';
-import { getProxiedImageUrl } from '@/app/utils/imageProxy';
+import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 
 const MAX_COMPARE = 3;
 
@@ -174,7 +174,10 @@ export function ResultsPage({
       .filter((p): p is Product => p !== undefined);
   }, [compareIds, finalResults, products]);
 
-  // Preload first 4 product images (above-the-fold)
+  // Preload first 4 product images (above-the-fold). Use imagesrcset so the
+  // browser picks the same URL the <img> srcset will resolve to (otherwise
+  // retina users preload the 1x and the actual fetch is a separate 2x URL,
+  // wasting the preload entirely).
   useEffect(() => {
     const toPreload = finalResults.slice(0, 4);
     const links: HTMLLinkElement[] = [];
@@ -185,6 +188,10 @@ export function ResultsPage({
       link.as = 'image';
       link.type = 'image/webp';
       link.href = getProxiedImageUrl(p.image, { width: 400 });
+      const srcset = getProxiedImageSrcSet(p.image, 400);
+      if (srcset) link.setAttribute('imagesrcset', srcset);
+      // High priority — these images dominate LCP on the results page
+      link.setAttribute('fetchpriority', 'high');
       document.head.appendChild(link);
       links.push(link);
     });
@@ -404,11 +411,11 @@ export function ResultsPage({
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="min-w-[14rem]">
                 <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as 'relevance' | 'duty' | 'ip')}>
-                  <DropdownMenuRadioItem value="relevance">Relevance</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="duty">Duty Rating (Heavy First)</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="ip">IP Rating (High to Low)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="relevance" className="!text-lg py-2">Relevance</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="duty" className="!text-lg py-2">Duty Rating (Heavy First)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="ip" className="!text-lg py-2">IP Rating (High to Low)</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -428,21 +435,21 @@ export function ResultsPage({
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-72">
                 {/* Labeled "Wiring" (not "Connection Type") to avoid clashing
                     with the wizard step of that name, which means terminals */}
-                <DropdownMenuLabel>Wiring</DropdownMenuLabel>
+                <DropdownMenuLabel className="!text-lg">Wiring</DropdownMenuLabel>
                 <DropdownMenuRadioGroup value={cordedFilter} onValueChange={(v) => setCordedFilter(v as 'all' | 'corded' | 'cordless')}>
-                  <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="corded">Cord included (pre-wired)</DropdownMenuRadioItem>
-                  <DropdownMenuRadioItem value="cordless">You wire it (terminals)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="all" className="!text-lg py-2">All</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="corded" className="!text-lg py-2">Cord included (pre-wired)</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="cordless" className="!text-lg py-2">You wire it (terminals)</DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuLabel>Duty Rating</DropdownMenuLabel>
+                <DropdownMenuLabel className="!text-lg">Duty Rating</DropdownMenuLabel>
                 {(['light', 'medium', 'heavy'] as const).map(duty => (
-                  <div key={duty} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
+                  <div key={duty} className="flex items-center px-2 py-2 hover:bg-accent cursor-pointer"
                     role="checkbox"
                     aria-checked={dutyFilter.includes(duty)}
                     aria-label={`${duty} duty`}
@@ -450,18 +457,18 @@ export function ResultsPage({
                     onClick={makeToggleHandler(setDutyFilter, duty)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') makeToggleHandler(setDutyFilter, duty)(e); }}
                   >
-                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${dutyFilter.includes(duty) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
-                      {dutyFilter.includes(duty) && <Check className="w-3 h-3" />}
+                    <div className={`w-5 h-5 border rounded mr-2 flex items-center justify-center ${dutyFilter.includes(duty) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
+                      {dutyFilter.includes(duty) && <Check className="w-4 h-4" />}
                     </div>
-                    <span className="capitalize text-sm">{duty}</span>
+                    <span className="capitalize text-lg">{duty}</span>
                   </div>
                 ))}
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuLabel>Material</DropdownMenuLabel>
+                <DropdownMenuLabel className="!text-lg">Material</DropdownMenuLabel>
                 {availableMaterials.map(mat => (
-                  <div key={mat} className="flex items-center px-2 py-1.5 hover:bg-accent cursor-pointer"
+                  <div key={mat} className="flex items-center px-2 py-2 hover:bg-accent cursor-pointer"
                     role="checkbox"
                     aria-checked={materialFilter.includes(mat)}
                     aria-label={mat}
@@ -471,10 +478,10 @@ export function ResultsPage({
                       if (e.key === 'Enter' || e.key === ' ') makeToggleHandler(setMaterialFilter, mat)(e);
                     }}
                   >
-                    <div className={`w-4 h-4 border rounded mr-2 flex items-center justify-center ${materialFilter.includes(mat) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
-                      {materialFilter.includes(mat) && <Check className="w-3 h-3" />}
+                    <div className={`w-5 h-5 border rounded mr-2 flex items-center justify-center ${materialFilter.includes(mat) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
+                      {materialFilter.includes(mat) && <Check className="w-4 h-4" />}
                     </div>
-                    <span className="text-sm">{mat}</span>
+                    <span className="text-lg">{mat}</span>
                   </div>
                 ))}
               </DropdownMenuContent>
