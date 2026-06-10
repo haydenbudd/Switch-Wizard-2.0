@@ -29,7 +29,7 @@ import {
 } from '@/app/components/ui/drawer';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { getProcessedProducts } from '@/app/utils/productFilters';
-import { getProxiedImageUrl } from '@/app/utils/imageProxy';
+import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 
 const MAX_COMPARE = 3;
 
@@ -174,7 +174,10 @@ export function ResultsPage({
       .filter((p): p is Product => p !== undefined);
   }, [compareIds, finalResults, products]);
 
-  // Preload first 4 product images (above-the-fold)
+  // Preload first 4 product images (above-the-fold). Use imagesrcset so the
+  // browser picks the same URL the <img> srcset will resolve to (otherwise
+  // retina users preload the 1x and the actual fetch is a separate 2x URL,
+  // wasting the preload entirely).
   useEffect(() => {
     const toPreload = finalResults.slice(0, 4);
     const links: HTMLLinkElement[] = [];
@@ -185,6 +188,10 @@ export function ResultsPage({
       link.as = 'image';
       link.type = 'image/webp';
       link.href = getProxiedImageUrl(p.image, { width: 400 });
+      const srcset = getProxiedImageSrcSet(p.image, 400);
+      if (srcset) link.setAttribute('imagesrcset', srcset);
+      // High priority — these images dominate LCP on the results page
+      link.setAttribute('fetchpriority', 'high');
       document.head.appendChild(link);
       links.push(link);
     });

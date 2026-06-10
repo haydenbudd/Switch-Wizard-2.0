@@ -3,7 +3,7 @@ import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { X, ExternalLink, ChevronUp, ChevronDown, GitCompareArrows } from 'lucide-react';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
-import { getProxiedImageUrl } from '@/app/utils/imageProxy';
+import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -81,10 +81,17 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                         title={p.series}
                       >
                         {p.image ? (
+                          // Width matches ProductCard (400/800 srcset) so the
+                          // browser cache hits instead of fetching a fresh
+                          // 80px variant from wsrv.nl every time the user
+                          // adds a product to compare. CSS scales it down.
                           <ImageWithFallback
-                            src={getProxiedImageUrl(p.image, { width: 80 })}
+                            src={getProxiedImageUrl(p.image, { width: 400 })}
+                            srcSet={getProxiedImageSrcSet(p.image, 400)}
                             alt={p.series}
                             className="w-full h-full object-cover"
+                            loading="eager"
+                            fetchPriority="high"
                           />
                         ) : (
                           <span className="text-sm font-bold text-muted-foreground">{p.series.slice(0, 2)}</span>
@@ -128,10 +135,15 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                   <div className="flex flex-col items-center gap-3">
                                     {product.image && (
                                       <div className="w-36 h-28 flex items-center justify-center">
+                                        {/* Same width as ProductCard for
+                                            cross-surface cache reuse */}
                                         <ImageWithFallback
-                                          src={getProxiedImageUrl(product.image, { width: 250 })}
+                                          src={getProxiedImageUrl(product.image, { width: 400 })}
+                                          srcSet={getProxiedImageSrcSet(product.image, 400)}
                                           alt={product.series}
                                           className="max-w-full max-h-full object-contain"
+                                          loading="eager"
+                                          fetchPriority="high"
                                         />
                                       </div>
                                     )}
