@@ -351,12 +351,13 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     </a>
                   </Button>
                 ) : (
-                  <div
-                    className="flex-1 flex items-center justify-center gap-2 !text-base !text-muted-foreground border border-dashed border-border/60 rounded-md px-4 py-2 cursor-not-allowed"
-                    title="No PDF datasheet is published for this series yet"
-                  >
-                    <FileText className="w-6 h-6 opacity-60" />
-                    Datasheet unavailable
+                  /* Wrapper div carries the tooltip — disabled buttons have
+                     pointer-events-none, so a title on the Button never shows */
+                  <div className="flex-1" title="No PDF datasheet is published for this series yet">
+                    <Button disabled variant="outline" className="w-full gap-2 !text-base border-dashed">
+                      <FileText className="w-6 h-6" />
+                      Datasheet unavailable
+                    </Button>
                   </div>
                 )}
               </div>

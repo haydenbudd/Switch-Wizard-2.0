@@ -165,7 +165,10 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     if (wizardState.selectedMedicalFeatures.length > 0) rows.push(['Technical Features', wizardState.selectedMedicalFeatures.join(', ')]);
     if (wizardState.selectedAccessories.length > 0) rows.push(['Accessories', wizardState.selectedAccessories.join(', ')]);
     if (wizardState.selectedAction) {
-      const actionLabel = actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction;
+      // Mirror the standard-flow rendering: "no_preference" reads as "Any"
+      const actionLabel = wizardState.selectedAction !== 'no_preference'
+        ? actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction
+        : 'Any';
       rows.push(['Action Type', actionLabel]);
     }
     if (wizardState.selectedEnvironment) {

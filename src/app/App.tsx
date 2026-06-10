@@ -81,7 +81,6 @@ function WizardApp() {
   //   - localStorage restores to the exact step the user last left off on.
   // State setters are stable (never change), so we capture them via ref to
   // avoid adding them as deps of this one-shot effect.
-  const [shareRestored, setShareRestored] = useState(false);
   const wizardSettersRef = useRef(wizardState);
   wizardSettersRef.current = wizardState;
   useEffect(() => {
@@ -100,7 +99,6 @@ function WizardApp() {
       if (shared.selectedFeatures) s.setSelectedFeatures(shared.selectedFeatures);
       if (shared.flow) s.setFlow(shared.flow as 'standard' | 'medical');
       s.setStep(9);
-      setShareRestored(true);
       return;
     }
 
@@ -118,8 +116,24 @@ function WizardApp() {
     if (persisted.selectedCircuitCount) s.setSelectedCircuitCount(persisted.selectedCircuitCount);
     if (persisted.selectedGuard) s.setSelectedGuard(persisted.selectedGuard);
     if (persisted.selectedFeatures?.length) s.setSelectedFeatures(persisted.selectedFeatures);
+    // Medical flow + custom builder
+    if (persisted.selectedMedicalPath) s.setSelectedMedicalPath(persisted.selectedMedicalPath);
+    if (persisted.selectedConsoleStyle) s.setSelectedConsoleStyle(persisted.selectedConsoleStyle);
+    if (persisted.selectedPedalCount) s.setSelectedPedalCount(persisted.selectedPedalCount);
+    if (persisted.selectedMedicalFeatures?.length) s.setSelectedMedicalFeatures(persisted.selectedMedicalFeatures);
+    if (persisted.selectedAccessories?.length) s.setSelectedAccessories(persisted.selectedAccessories);
+    if (persisted.selectedChannel) s.setSelectedChannel(persisted.selectedChannel);
+    if (persisted.selectedPedalDesign) s.setSelectedPedalDesign(persisted.selectedPedalDesign);
+    if (persisted.selectedButtonCount) s.setSelectedButtonCount(persisted.selectedButtonCount);
+    if (persisted.selectedOutputType) s.setSelectedOutputType(persisted.selectedOutputType);
+    if (persisted.selectedWiredWireless) s.setSelectedWiredWireless(persisted.selectedWiredWireless);
+    if (persisted.selectedToeLoop) s.setSelectedToeLoop(persisted.selectedToeLoop);
+    if (persisted.selectedTreadleType) s.setSelectedTreadleType(persisted.selectedTreadleType);
+    if (persisted.selectedCustomLabeling) s.setSelectedCustomLabeling(persisted.selectedCustomLabeling);
+    if (persisted.selectedLEDs) s.setSelectedLEDs(persisted.selectedLEDs);
     if (persisted.flow) s.setFlow(persisted.flow);
-    if (persisted.step) s.setStep(persisted.step);
+    // step 0 is a legitimate persisted value — don't let the falsy check eat it
+    if (typeof persisted.step === 'number') s.setStep(persisted.step);
   }, []);
 
   // Auto-save wizard state to localStorage whenever it meaningfully changes.
@@ -144,6 +158,20 @@ function WizardApp() {
       selectedCircuitCount: wizardState.selectedCircuitCount,
       selectedGuard: wizardState.selectedGuard,
       selectedFeatures: wizardState.selectedFeatures,
+      selectedMedicalPath: wizardState.selectedMedicalPath,
+      selectedConsoleStyle: wizardState.selectedConsoleStyle,
+      selectedPedalCount: wizardState.selectedPedalCount,
+      selectedMedicalFeatures: wizardState.selectedMedicalFeatures,
+      selectedAccessories: wizardState.selectedAccessories,
+      selectedChannel: wizardState.selectedChannel,
+      selectedPedalDesign: wizardState.selectedPedalDesign,
+      selectedButtonCount: wizardState.selectedButtonCount,
+      selectedOutputType: wizardState.selectedOutputType,
+      selectedWiredWireless: wizardState.selectedWiredWireless,
+      selectedToeLoop: wizardState.selectedToeLoop,
+      selectedTreadleType: wizardState.selectedTreadleType,
+      selectedCustomLabeling: wizardState.selectedCustomLabeling,
+      selectedLEDs: wizardState.selectedLEDs,
       flow: wizardState.flow,
     });
   }, [
@@ -151,20 +179,28 @@ function WizardApp() {
     wizardState.selectedTechnology, wizardState.selectedAction, wizardState.selectedEnvironment,
     wizardState.selectedDuty, wizardState.selectedMaterial, wizardState.selectedConnection,
     wizardState.selectedCircuitCount, wizardState.selectedGuard, wizardState.selectedFeatures,
+    wizardState.selectedMedicalPath, wizardState.selectedConsoleStyle, wizardState.selectedPedalCount,
+    wizardState.selectedMedicalFeatures, wizardState.selectedAccessories, wizardState.selectedChannel,
+    wizardState.selectedPedalDesign, wizardState.selectedButtonCount, wizardState.selectedOutputType,
+    wizardState.selectedWiredWireless, wizardState.selectedToeLoop, wizardState.selectedTreadleType,
+    wizardState.selectedCustomLabeling, wizardState.selectedLEDs,
     wizardState.flow,
   ]);
 
-  // Update URL bar when viewing results; clear when navigating away
+  // Update URL bar when viewing results; clear our params when navigating
+  // away. clearShareParams only touches the wizard's own query keys (and
+  // no-ops when none are present), so this is safe for organic users and
+  // preserves the host page's params (e.g. WordPress ?page_id=).
   useEffect(() => {
     if (wizardState.step === 9) {
       updateUrlWithState(wizardState);
-    } else if (shareRestored) {
+    } else {
       clearShareParams();
     }
   }, [wizardState.step, wizardState.selectedApplication, wizardState.selectedTechnology,
       wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty,
       wizardState.selectedConnection, wizardState.selectedCircuitCount, wizardState.selectedGuard,
-      wizardState.selectedFeatures, wizardState.selectedMaterial, wizardState.flow, shareRestored]);
+      wizardState.selectedFeatures, wizardState.selectedMaterial, wizardState.flow]);
 
   // Enhanced search state for results page
   const [searchTerm, setSearchTerm] = useState('');

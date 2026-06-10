@@ -141,6 +141,12 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
   }, [productCountMap]);
 
   const getAlternativeProducts = useCallback(() => {
+    // "no_preference" never constrains results, so relaxing it is a no-op —
+    // treat it like an unset value when deciding which criterion to relax
+    // and when re-filtering by action below.
+    const hasAction = wizardState.selectedAction && wizardState.selectedAction !== 'no_preference';
+    const hasDuty = wizardState.selectedDuty && wizardState.selectedDuty !== 'no_preference';
+
     if (wizardState.selectedFeatures.length > 0) {
       const withoutFeatures = filterProducts({ selectedFeatures: [] });
       if (withoutFeatures.length > 0) return { products: withoutFeatures, relaxed: 'features' as const };
@@ -149,7 +155,7 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       const withoutGuard = filterProducts({ selectedFeatures: [], selectedGuard: '' });
       if (withoutGuard.length > 0) return { products: withoutGuard, relaxed: 'guard' as const };
     }
-    if (wizardState.selectedDuty) {
+    if (hasDuty) {
       const withoutDuty = filterProducts({ selectedFeatures: [], selectedGuard: '', selectedDuty: '' });
       if (withoutDuty.length > 0) return { products: withoutDuty, relaxed: 'duty' as const };
     }
@@ -157,12 +163,12 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       const withoutEnvironment = (products || []).filter((product) => {
         if (!product.applications.includes(wizardState.selectedApplication)) return false;
         if (product.technology !== wizardState.selectedTechnology) return false;
-        if (!product.actions.includes(wizardState.selectedAction)) return false;
+        if (hasAction && !product.actions.includes(wizardState.selectedAction)) return false;
         return true;
       });
       if (withoutEnvironment.length > 0) return { products: withoutEnvironment, relaxed: 'environment' as const };
     }
-    if (wizardState.selectedAction) {
+    if (hasAction) {
       const withoutAction = (products || []).filter((product) => {
         if (!product.applications.includes(wizardState.selectedApplication)) return false;
         if (product.technology !== wizardState.selectedTechnology) return false;

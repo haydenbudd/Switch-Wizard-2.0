@@ -23,9 +23,16 @@ const REVERSE_MAP = Object.fromEntries(
   Object.entries(PARAM_MAP).map(([k, v]) => [v, k])
 ) as Record<string, ParamKey>;
 
-/** Build a shareable URL from current wizard state */
+/** Build a shareable URL from current wizard state.
+ *  Preserves foreign query params (e.g. WordPress's ?page_id=) — only the
+ *  wizard's own keys are added/replaced. */
 export function buildShareUrl(state: WizardState): string {
-  const params = new URLSearchParams();
+  const params = new URLSearchParams(window.location.search);
+
+  // Remove any stale wizard params before re-adding current ones
+  for (const param of Object.keys(PARAM_MAP) as ParamKey[]) {
+    params.delete(param);
+  }
 
   for (const [param, field] of Object.entries(PARAM_MAP) as [ParamKey, string][]) {
     const value = (state as Record<string, unknown>)[field];
@@ -70,10 +77,24 @@ export function updateUrlWithState(state: WizardState) {
   window.history.replaceState(null, '', url);
 }
 
-/** Clear share params from the URL bar */
+/** Clear the wizard's own share params from the URL bar.
+ *  Foreign query params (e.g. WordPress's ?page_id=) are preserved.
+ *  No-op when no wizard params are present, so it's safe to call on
+ *  every step change. */
 export function clearShareParams() {
+  const params = new URLSearchParams(window.location.search);
+  let removedAny = false;
+  for (const param of Object.keys(PARAM_MAP) as ParamKey[]) {
+    if (params.has(param)) {
+      params.delete(param);
+      removedAny = true;
+    }
+  }
+  if (!removedAny) return;
+
   const base = window.location.origin + window.location.pathname;
-  window.history.replaceState(null, '', base);
+  const qs = params.toString();
+  window.history.replaceState(null, '', qs ? `${base}?${qs}` : base);
 }
 
 // ──────────────────────────────────────────────────────────────────────
@@ -98,6 +119,22 @@ interface PersistedState {
   selectedCircuitCount: string;
   selectedGuard: string;
   selectedFeatures: string[];
+  // Medical flow + custom builder — without these, a refresh mid-medical-flow
+  // restores the step number but none of the upstream answers it depends on
+  selectedMedicalPath: string;
+  selectedConsoleStyle: string;
+  selectedPedalCount: string;
+  selectedMedicalFeatures: string[];
+  selectedAccessories: string[];
+  selectedChannel: string;
+  selectedPedalDesign: string;
+  selectedButtonCount: string;
+  selectedOutputType: string;
+  selectedWiredWireless: string;
+  selectedToeLoop: string;
+  selectedTreadleType: string;
+  selectedCustomLabeling: string;
+  selectedLEDs: string;
   flow: 'standard' | 'medical';
 }
 
