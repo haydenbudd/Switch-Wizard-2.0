@@ -167,7 +167,11 @@ function WizardApp() {
       });
     } catch (err) {
       console.error('PDF generation failed:', err);
-      toast.error('PDF generation failed — please try again');
+      // Surface the underlying message so users can report it back to us —
+      // a bare "please try again" toast hides the actual cause (dynamic
+      // import 404, jspdf crash, etc.) and we can't diagnose remotely.
+      const detail = err instanceof Error ? err.message : String(err);
+      toast.error(`PDF generation failed: ${detail.slice(0, 140)}`, { duration: 10000 });
     }
   }, [wizardState, filterProducts, applications, technologies, actions, environments, features, duties]);
 
