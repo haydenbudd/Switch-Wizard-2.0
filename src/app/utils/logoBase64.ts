@@ -1,19 +1,12 @@
-let cached: string | null = null;
+// The logo is inlined as a base64 data URI at build time (Vite `?inline`),
+// NOT fetched at runtime. A runtime fetch resolved against import.meta.env
+// .BASE_URL ("/Switch-Wizard-2.0/...") works on GitHub Pages but resolves
+// against the HOST page's origin when the wizard is embedded in WordPress —
+// there it 404s, the HTML error page gets passed to jsPDF.addImage, and the
+// whole PDF throws "wrong PNG signature". Inlining removes the network
+// dependency entirely, so PDF generation works in every embedding context.
+import logoDataUri from '@/assets/linemaster-logo.png?inline';
 
 export async function getLogoBase64(): Promise<string> {
-  if (cached) return cached;
-
-  const base = import.meta.env.BASE_URL || '/';
-  const res = await fetch(`${base}Linemaster Blue Corporate Logo 2.png`);
-  const blob = await res.blob();
-
-  return new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      cached = reader.result as string;
-      resolve(cached);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
+  return logoDataUri;
 }
