@@ -111,6 +111,11 @@ function deriveConnectorType(row: StockSwitchRow): string | undefined {
 function normalizeIp(raw: string | null): string {
   if (!raw) return 'IPXX';
   if (raw === 'IPX8') return 'IP68';
+  // Some scraped rows carry the marketing term "Water Tight" instead of an
+  // IP code. Those switches are actually IP20 — "watertight" is not
+  // technically accurate, so show the real rating everywhere (card badge,
+  // detail modal, compare table, PDF all render product.ip).
+  if (/water\s*-?\s*tight/i.test(raw)) return 'IP20';
   return raw;
 }
 
