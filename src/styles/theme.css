@@ -32,7 +32,7 @@
   --chart-3: #d97706;
   --chart-4: #7c3aed;
   --chart-5: #dc2626;
-  --radius: 1rem;
+  --radius: 16px; /* px so the embed doesn't rescale — see @theme override */
 
   /* Industrial accent */
   --accent-warm: #d97706;
@@ -159,6 +159,54 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ============================================================
+   * Px-based scales (embed-safe typography)
+   *
+   * Tailwind 4's text, spacing, and container scales are rem-based
+   * by default — `text-base` = 1rem, `p-4` = 1rem of padding, etc.
+   * Inside a WordPress embed the host theme often sets html to a
+   * smaller font-size, so every rem-based utility shrinks: the
+   * wizard renders ~14% smaller on linemaster.com than on GitHub
+   * Pages even though both load the same app.js.
+   *
+   * Pinning these tokens to absolute pixels keeps the wizard
+   * pixel-identical across every embedding context. The values
+   * here match Tailwind's defaults converted at a 16px base, so
+   * GitHub Pages looks exactly the same — only host pages with a
+   * different root font-size are affected.
+   * ============================================================ */
+
+  /* Text scale (font-size + matching line-height) */
+  --text-xs:   12px; --text-xs--line-height:   16px;
+  --text-sm:   14px; --text-sm--line-height:   20px;
+  --text-base: 16px; --text-base--line-height: 24px;
+  --text-lg:   18px; --text-lg--line-height:   28px;
+  --text-xl:   20px; --text-xl--line-height:   28px;
+  --text-2xl:  24px; --text-2xl--line-height:  32px;
+  --text-3xl:  30px; --text-3xl--line-height:  36px;
+  --text-4xl:  36px; --text-4xl--line-height:  40px;
+  --text-5xl:  48px; --text-5xl--line-height:  1;
+  --text-6xl:  60px; --text-6xl--line-height:  1;
+  --text-7xl:  72px; --text-7xl--line-height:  1;
+
+  /* Spacing scale: `p-N`, `m-N`, `gap-N`, `w-N`, `h-N` all multiply this */
+  --spacing: 4px;
+
+  /* Container / max-w widths used by max-w-* utilities */
+  --container-3xs:  256px;
+  --container-2xs:  288px;
+  --container-xs:   320px;
+  --container-sm:   384px;
+  --container-md:   448px;
+  --container-lg:   512px;
+  --container-xl:   576px;
+  --container-2xl:  672px;
+  --container-3xl:  768px;
+  --container-4xl:  896px;
+  --container-5xl: 1024px;
+  --container-6xl: 1152px;
+  --container-7xl: 1280px;
 }
 
 @layer base {

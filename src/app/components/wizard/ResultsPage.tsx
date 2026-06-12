@@ -422,7 +422,7 @@ export function ResultsPage({
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[14rem]">
+              <DropdownMenuContent align="end" className="min-w-[224px]">
                 <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as 'relevance' | 'duty' | 'ip')}>
                   <DropdownMenuRadioItem value="relevance" className="!text-lg py-2">Relevance</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="duty" className="!text-lg py-2">Duty Rating (Heavy First)</DropdownMenuRadioItem>
