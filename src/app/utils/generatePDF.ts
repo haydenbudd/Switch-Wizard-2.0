@@ -73,11 +73,16 @@ export async function generatePDF(opts: GeneratePDFOptions) {
   doc.setFillColor(255, 255, 255);
   doc.rect(0, 0, pageWidth, 34, 'F');
 
-  // Logo — original is 1323x496, render at ~50x19mm in the header
-  const logoW = 50;
-  const logoH = logoW * (496 / 1323);
-  const logoBase64 = await getLogoBase64();
-  doc.addImage(logoBase64, 'PNG', 15, 3, logoW, logoH);
+  // Logo — original is 1323x496, render at ~50x19mm in the header.
+  // The logo is decorative: never let a logo problem abort the whole PDF.
+  try {
+    const logoW = 50;
+    const logoH = logoW * (496 / 1323);
+    const logoBase64 = await getLogoBase64();
+    doc.addImage(logoBase64, 'PNG', 15, 3, logoW, logoH);
+  } catch (err) {
+    console.warn('PDF logo could not be added; continuing without it:', err);
+  }
 
   // Subtitle below logo
   doc.setFontSize(11);
