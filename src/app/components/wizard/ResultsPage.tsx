@@ -538,7 +538,9 @@ export function ResultsPage({
                   <h3 className="!text-2xl !font-bold !text-foreground">Close Matches</h3>
                   <span className="!text-base !text-muted-foreground tabular-nums">({finalClose.length})</span>
                 </div>
-                <p className="!text-base !text-muted-foreground">
+                {/* Large enough that "these aren't exact matches" can't be
+                    missed when scanning straight from the section heading */}
+                <p className="!text-xl !text-muted-foreground">
                   {finalPerfect.length > 0
                     ? 'These differ slightly from your preferences but might still fit.'
                     : 'No products match every preference exactly — here are the closest options.'}

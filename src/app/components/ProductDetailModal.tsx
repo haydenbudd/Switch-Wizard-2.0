@@ -27,7 +27,6 @@ import {
   Hash,
   ToggleLeft,
   Star,
-  FileText,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -48,42 +47,6 @@ interface ProductDetailModalProps {
   product: Product | null;
   open: boolean;
   onClose: () => void;
-}
-
-// Map series names to their datasheet PDFs on linemaster.com
-const SERIES_DATASHEETS: Record<string, string> = {
-  'hercules': 'https://linemaster.com/wp-content/uploads/2025/03/hercules_lit-034_rev_d.pdf',
-  'hercules anti-trip': 'https://linemaster.com/wp-content/uploads/2025/03/hercules_anti-trip_lit-033_rev_d_.pdf',
-  'atlas': 'https://linemaster.com/wp-content/uploads/2025/03/atlas_lit-054_rev_b.pdf',
-  'clipper': 'https://linemaster.com/wp-content/uploads/2025/03/clipper_lit-037_rev_b.pdf',
-  'classic iv': 'https://linemaster.com/wp-content/uploads/2025/03/classic_iv_lit-010_rev_d.pdf',
-  'classic': 'https://linemaster.com/wp-content/uploads/2025/03/classic_ii_lit-056_rev_b.pdf',
-  'dolphin': 'https://linemaster.com/wp-content/uploads/2025/03/dolphin_lit-048_rev_b.pdf',
-  'gem': 'https://linemaster.com/wp-content/uploads/2025/03/gem_lit-052_rev_b.pdf',
-  'varior': 'https://linemaster.com/wp-content/uploads/2025/03/varior_lit-006_rev_d.pdf',
-  'compact': 'https://linemaster.com/wp-content/uploads/2025/03/compact_lit-042_rev_c.pdf',
-  'treadlite': 'https://linemaster.com/wp-content/uploads/2025/03/treadlite_ii_lit-044_rev_b.pdf',
-  'aquiline': 'https://linemaster.com/wp-content/uploads/2025/03/aquiline_metal_lit-063_rev_b.pdf',
-  'vanguard': 'https://linemaster.com/wp-content/uploads/2025/03/vanguard_lit-049_rev_b.pdf',
-  'air seal': 'https://linemaster.com/wp-content/uploads/2025/03/air_footswitches_lit-025_rev_c.pdf',
-  'air-seal': 'https://linemaster.com/wp-content/uploads/2025/03/air_footswitches_lit-025_rev_c.pdf',
-  'airval': 'https://linemaster.com/wp-content/uploads/2025/03/air_footswitches_lit-025_rev_c.pdf',
-  'rf wireless': 'https://linemaster.com/wp-content/uploads/2025/03/digital_rf_wireless_lit-030_rev_c.pdf',
-  'explosion proof': 'https://linemaster.com/wp-content/uploads/2025/03/explosion_proof_lit-051_rev_b.pdf',
-};
-
-function getDatasheetUrl(series: string): string | null {
-  const s = series.trim().toLowerCase();
-  if (!s) return null;
-  if (SERIES_DATASHEETS[s]) return SERIES_DATASHEETS[s];
-  // Prefer the longest matching key so e.g. "hercules anti-trip" wins over "hercules"
-  let bestKey = '';
-  for (const key of Object.keys(SERIES_DATASHEETS)) {
-    if (s.includes(key) && key.length > bestKey.length) {
-      bestKey = key;
-    }
-  }
-  return bestKey ? SERIES_DATASHEETS[bestKey] : null;
 }
 
 function MaterialIcon({ material }: { material: string }) {
@@ -149,8 +112,6 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
   // for free — no manual effects needed.
 
   if (!product) return null;
-
-  const datasheetUrl = getDatasheetUrl(product.series);
 
   const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor }[] = [
     { icon: <TechIcon tech={product.technology} />, label: 'Technology', value: product.technology, color: getTechColor(product.technology) },
@@ -330,37 +291,23 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                 <DetailedSpecs specs={product.specs} />
               )}
 
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                {product.link && (
+              {/* Actions — the datasheet lives on the linemaster.com product
+                  page, so a single button covers both. (A hardcoded series →
+                  PDF map used to live here; the URLs rotted as linemaster.com
+                  reorganized uploads, so it was removed rather than maintained.) */}
+              {product.link && (
+                <div className="flex">
                   <Button
                     asChild
                     className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
                   >
                     <a href={product.link} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="w-6 h-6" />
-                      View Product Page
+                      View Product Page &amp; Datasheet
                     </a>
                   </Button>
-                )}
-                {datasheetUrl ? (
-                  <Button asChild variant="outline" className="flex-1 gap-2 !text-base">
-                    <a href={datasheetUrl} target="_blank" rel="noopener noreferrer">
-                      <FileText className="w-6 h-6" />
-                      Datasheet PDF
-                    </a>
-                  </Button>
-                ) : (
-                  /* Wrapper div carries the tooltip — disabled buttons have
-                     pointer-events-none, so a title on the Button never shows */
-                  <div className="flex-1" title="No PDF datasheet is published for this series yet">
-                    <Button disabled variant="outline" className="w-full gap-2 !text-base border-dashed">
-                      <FileText className="w-6 h-6" />
-                      Datasheet unavailable
-                    </Button>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           </MotionDiv>
         </DialogPrimitive.Content>
