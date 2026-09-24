@@ -36,7 +36,9 @@ export interface MatchResult {
 const DUTY_TIER: Record<string, number> = { light: 0, medium: 1, heavy: 2 };
 
 /** Environment → minimum acceptable IP rank. Higher rank = more sealed. */
-const IP_RANK: Record<string, number> = { IPXX: 0, IP20: 1, IP56: 2, IP68: 3 };
+// IP41 (explosion-proof 500s) is drip-proof but not splash-rated, so it ranks
+// with IP20 — fine for open/dry, short of damp/wet.
+const IP_RANK: Record<string, number> = { IPXX: 0, IP20: 1, IP41: 1, IP56: 2, IP68: 3 };
 const ENV_MIN_RANK: Record<string, number> = { open: 0, dry: 0, damp: 2, wet: 3 };
 
 // Exact-tier credit delegates to the shared rule set in productFilters so the

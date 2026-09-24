@@ -63,6 +63,9 @@ const SECTIONS: { title: string; rows: CompareRow[] }[] = [
       { label: 'Action Type', value: p => (p.actions || []).map(a => optionLabel(actionOptions, a)).join(' / ') },
       { label: 'Duty Rating', value: p => cap(p.duty), color: p => colorClasses(getDutyColor(p.duty)) },
       { label: 'IP Rating', value: p => ipShort(p.ip), color: p => colorClasses(getIpColor(p.ip)), title: p => ipMeaning(p.ip) },
+      // Explosion-proof models: hazardous-location classes and agency marks
+      { label: 'Hazardous Location', value: spec('Hazardous Location Ratings') },
+      { label: 'Approvals', value: spec('Agency Approvals') },
     ],
   },
   {
