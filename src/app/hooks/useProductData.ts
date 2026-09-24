@@ -29,6 +29,7 @@ interface OptionWithIcon extends Omit<Option, 'icon'> {
   availableFor?: string[];
   hideFor?: string[];
   parentCategory?: string;
+  image?: string;
 }
 
 // Helper to process options without destroying React component icons
@@ -45,6 +46,7 @@ function processOption(opt: DataOption): OptionWithIcon {
     hideFor: opt.hideFor || undefined,
     parentCategory: opt.parentCategory || undefined,
     sortOrder: opt.sortOrder ?? 0,
+    image: opt.image || undefined,
   };
 }
 
