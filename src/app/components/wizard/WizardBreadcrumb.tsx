@@ -107,7 +107,7 @@ export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBrea
       {title && (
         <p className="!text-sm !font-medium !text-muted-foreground mb-2 px-1">{title}</p>
       )}
-      <div className={wrap ? 'flex flex-wrap items-center gap-2 px-1' : 'flex items-center gap-2 overflow-x-auto pb-1 -mb-1 px-1'}>
+      <div className={wrap ? 'flex flex-wrap items-center gap-2 px-1' : 'flex items-center gap-2 overflow-x-auto pb-1 -mb-1 px-1 w-fit max-w-full mx-auto'}>
         {crumbs.map((c, idx) => (
           <div key={c.step} className="flex items-center gap-2 shrink-0">
             {idx > 0 && (
