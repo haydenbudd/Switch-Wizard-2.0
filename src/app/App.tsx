@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, Suspense, lazy, Component, ty
 import { Router } from '@/app/components/Router';
 import { Header } from '@/app/components/Header';
 import { OrbBackground } from '@/app/components/OrbBackground';
+import { ON_SITE } from '@/app/utils/embed';
 import { useProductData } from '@/app/hooks/useProductData';
 import { useWizardState, takeSnapshot, type WizardSnapshot } from '@/app/hooks/useWizardState';
 import { useWizardNavigation } from '@/app/hooks/useWizardNavigation';
@@ -235,8 +236,8 @@ function WizardApp() {
   // Standard flow
   return (
     <>
-    <OrbBackground />
-    <div className="min-h-screen relative z-10 grain-overlay">
+    {!ON_SITE && <OrbBackground />}
+    <div className={`min-h-screen relative z-10${ON_SITE ? '' : ' grain-overlay'}`}>
       <a href="#wizard-main" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-medium">
         Skip to content
       </a>

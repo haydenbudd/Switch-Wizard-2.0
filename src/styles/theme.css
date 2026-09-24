@@ -15,7 +15,7 @@
   --secondary: rgba(15, 23, 42, 0.04);
   --secondary-foreground: #0f172a;
   --muted: rgba(15, 23, 42, 0.05);
-  --muted-foreground: #64748b;
+  --muted-foreground: #475569;
   --accent: rgba(15, 23, 42, 0.03);
   --accent-foreground: #0f172a;
   --destructive: #dc2626;
@@ -294,6 +294,15 @@ body,
 .dark #lm-product-finder {
   background-color: var(--background, #020617);
   color: var(--foreground, #e2e8f0);
+}
+
+/* Embedded on linemaster.com: plain white so the finder reads as part of
+   the page rather than a tinted box, with card edges drawn by a light
+   border instead of the white glass edge (invisible on white). */
+.lm-on-site:not(.lm-dark) {
+  --background: #ffffff;
+  --glass-border: rgba(15, 23, 42, 0.08);
+  background-color: #ffffff;
 }
 
 /* Refined mesh gradients — subtle depth behind glass */

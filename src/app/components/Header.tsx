@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { RotateCcw, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { ON_SITE } from '@/app/utils/embed';
 
 interface HeaderProps {
   onReset: () => void;
@@ -45,7 +46,8 @@ export function Header({ onReset }: HeaderProps) {
       <div className="mx-auto px-4">
         {/* Pill toolbar — top right */}
         <nav aria-label="Wizard controls" className="group absolute top-3 right-4 flex items-center gap-0.5 rounded-full glass-card px-1 py-1">
-          <button
+          {/* linemaster.com is light-only, so no theme toggle when embedded */}
+          {!ON_SITE && <button
             className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
             title={isDark ? 'Light mode' : 'Dark mode'}
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -56,7 +58,7 @@ export function Header({ onReset }: HeaderProps) {
             ) : (
               <Moon className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             )}
-          </button>
+          </button>}
 
           {/* No admin gear here: it was visible to every public visitor
               (and its link broke inside the WordPress embed). The admin
