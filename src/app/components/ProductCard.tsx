@@ -78,17 +78,6 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
         </button>
       )}
 
-      {/* Featured/Flagship Badge — hidden for close matches so the "Differs on"
-          context is the first thing the user reads on a non-perfect card. */}
-      {isFlagship && !differsOn?.length && (
-        <div className="absolute top-4 right-4 z-20">
-          <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-sm tracking-wide uppercase">
-            <Star className="w-6 h-6 fill-current opacity-70" />
-            Top Choice
-          </Badge>
-        </div>
-      )}
-
       {/* Close-match "Differs on" pill */}
       {differsOn && differsOn.length > 0 && (
         <div className="absolute top-4 right-4 z-20 max-w-[60%]">
@@ -125,6 +114,17 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
           </div>
         )}
 
+        {/* Featured/Flagship Badge — bottom corner of the image so it can't
+            collide with the Compare pill on narrow (4-column) cards. Hidden
+            for close matches so "Differs on" is the first thing read. */}
+        {isFlagship && !differsOn?.length && (
+          <div className="absolute bottom-3 right-3 z-20">
+            <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-sm tracking-wide uppercase">
+              <Star className="w-6 h-6 fill-current opacity-70" />
+              Top Choice
+            </Badge>
+          </div>
+        )}
       </div>
 
       {/* Content */}

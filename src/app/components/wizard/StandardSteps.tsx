@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, Fragment, lazy, Suspense } from 'react';
-import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag } from 'lucide-react';
+import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, Search } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
@@ -63,6 +63,8 @@ interface StandardStepsProps {
   clearDownstreamSelections: (step: number) => void;
   onCategorySelect: (id: string) => void;
   onApplicationSelect: (id: string) => void;
+  /** Skip the questions and open the full catalog (search + compare). */
+  onBrowseAll: () => void;
   onBack: () => void;
   onContinue: () => void;
 }
@@ -85,6 +87,7 @@ export function StandardSteps({
   clearDownstreamSelections,
   onCategorySelect,
   onApplicationSelect,
+  onBrowseAll,
   onBack,
   onContinue,
 }: StandardStepsProps) {
@@ -246,6 +249,25 @@ export function StandardSteps({
             </motion.div>
           ))}
         </div>
+
+        {/* Shortcut for buyers who already know what they want */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.45, duration: 0.5 }}
+          className="flex flex-col items-center gap-2 mt-10"
+        >
+          <span className="!text-base !text-muted-foreground">Already know what you need?</span>
+          <Button
+            variant="outline"
+            onClick={onBrowseAll}
+            className="gap-2 !text-lg h-auto px-6 py-3 rounded-full group"
+          >
+            <Search className="w-5 h-5" aria-hidden="true" />
+            Skip the questions — search &amp; compare all products
+            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+          </Button>
+        </motion.div>
 
         {/* Trust Badges */}
         <motion.div

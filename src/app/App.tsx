@@ -54,6 +54,7 @@ function WizardApp() {
     clearDownstreamSelections,
     handleCategorySelect,
     handleApplicationSelect,
+    handleBrowseAll: navBrowseAll,
     handleBack,
     handleContinue,
     handleViewMedicalProducts,
@@ -141,6 +142,17 @@ function WizardApp() {
     clearWizardStateFromLocal();
   }, [wizardState.resetWizard]);
 
+  // Start page shortcut → full catalog on the results page. Clears any
+  // leftover search/filters so the catalog opens unfiltered.
+  const handleBrowseAll = useCallback(() => {
+    setSearchTerm('');
+    setSortBy('relevance');
+    setDutyFilter([]);
+    setCordedFilter('all');
+    setMaterialFilter([]);
+    navBrowseAll();
+  }, [navBrowseAll]);
+
   // Track no-results as a side effect
   useEffect(() => {
     if (wizardState.step === 9) {
@@ -221,6 +233,7 @@ function WizardApp() {
           clearDownstreamSelections={clearDownstreamSelections}
           onCategorySelect={handleCategorySelect}
           onApplicationSelect={handleApplicationSelect}
+          onBrowseAll={handleBrowseAll}
           onBack={handleBack}
           onContinue={handleContinue}
         />

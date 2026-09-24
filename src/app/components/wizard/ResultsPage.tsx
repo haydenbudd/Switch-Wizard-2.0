@@ -292,6 +292,11 @@ export function ResultsPage({
     });
   };
 
+  // Browse-all mode: reached via the start page shortcut (or by removing the
+  // application chip). There's no configuration, so the page is a plain
+  // catalog — no "recommended" framing, no PDF summary or share link.
+  const isBrowseAll = wizardState.flow === 'standard' && !wizardState.selectedApplication;
+
   // Only show the filter-chip bar when there's at least one chip to display —
   // an empty bar reading just "Filters:" is confusing.
   const hasActiveFilters = Boolean(
@@ -325,11 +330,11 @@ export function ResultsPage({
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label="Go back to wizard" className="hidden md:flex h-12 w-12">
+            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label={isBrowseAll ? 'Back to start' : 'Go back to wizard'} className="hidden md:flex h-12 w-12">
               <ArrowLeft className="w-7 h-7" aria-hidden="true" />
             </Button>
             <h2 className="!text-3xl !font-bold !text-foreground">
-              Recommended Products
+              {isBrowseAll ? 'All Products' : 'Recommended Products'}
               <span className="!text-lg font-normal !text-muted-foreground ml-3">
                 ({finalResults.length}
                 {finalPerfect.length > 0 && finalClose.length > 0 && (
@@ -340,14 +345,18 @@ export function ResultsPage({
           </div>
           <div className="flex gap-2">
             {/* aria-labels needed: the text spans are display:none on mobile */}
-            <Button variant="outline" onClick={handleCopyLink} className="gap-2 !text-base" aria-label="Copy share link">
-              <Link className="w-6 h-6" aria-hidden="true" />
-              <span className="hidden sm:inline">Copy Link</span>
-            </Button>
-            <Button variant="outline" onClick={onGeneratePDF} className="gap-2 !text-base" aria-label="Download results as PDF">
-              <Download className="w-6 h-6" aria-hidden="true" />
-              <span className="hidden sm:inline">Download PDF</span>
-            </Button>
+            {!isBrowseAll && (
+              <>
+                <Button variant="outline" onClick={handleCopyLink} className="gap-2 !text-base" aria-label="Copy share link">
+                  <Link className="w-6 h-6" aria-hidden="true" />
+                  <span className="hidden sm:inline">Copy Link</span>
+                </Button>
+                <Button variant="outline" onClick={onGeneratePDF} className="gap-2 !text-base" aria-label="Download results as PDF">
+                  <Download className="w-6 h-6" aria-hidden="true" />
+                  <span className="hidden sm:inline">Download PDF</span>
+                </Button>
+              </>
+            )}
             <Button variant="ghost" onClick={onReset} className="gap-2 !text-base" aria-label="Reset wizard and start over">
               <RefreshCw className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Reset</span>
@@ -569,6 +578,26 @@ export function ResultsPage({
             <Search className="w-10 h-10 !text-muted-foreground" aria-hidden="true" />
           </div>
           <div className="max-w-md">
+            {isBrowseAll ? (
+              <>
+                <h3 className="text-xl font-semibold mb-2">No products match your search</h3>
+                <p className="!text-muted-foreground mb-6">
+                  Try a different series name or part number, or clear your filters.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setDutyFilter([]);
+                    setMaterialFilter([]);
+                    setCordedFilter('all');
+                  }}
+                >
+                  Clear search &amp; filters
+                </Button>
+              </>
+            ) : (
+            <>
             <h3 className="text-xl font-semibold mb-2">No exact matches found</h3>
             <p className="!text-muted-foreground mb-6">
               We couldn't find any products matching all your criteria. Try removing some filters or viewing our full catalog.
@@ -601,6 +630,8 @@ export function ResultsPage({
                 </Button>
                 <Button variant="link" onClick={onReset}>Start over</Button>
               </div>
+            )}
+            </>
             )}
           </div>
         </div>
@@ -645,16 +676,20 @@ export function ResultsPage({
                 <ArrowLeft className="w-6 h-6" /> Go Back
               </Button>
             </DrawerClose>
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-full gap-2 justify-start" onClick={handleCopyLink}>
-                <Link className="w-6 h-6" /> Copy Share Link
-              </Button>
-            </DrawerClose>
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-full gap-2 justify-start" onClick={onGeneratePDF}>
-                <Download className="w-6 h-6" /> Download PDF
-              </Button>
-            </DrawerClose>
+            {!isBrowseAll && (
+              <>
+                <DrawerClose asChild>
+                  <Button variant="outline" className="w-full gap-2 justify-start" onClick={handleCopyLink}>
+                    <Link className="w-6 h-6" /> Copy Share Link
+                  </Button>
+                </DrawerClose>
+                <DrawerClose asChild>
+                  <Button variant="outline" className="w-full gap-2 justify-start" onClick={onGeneratePDF}>
+                    <Download className="w-6 h-6" /> Download PDF
+                  </Button>
+                </DrawerClose>
+              </>
+            )}
             <DrawerClose asChild>
               <Button variant="outline" className="w-full gap-2 justify-start !text-destructive" onClick={onReset}>
                 <RefreshCw className="w-6 h-6" /> Reset Wizard
