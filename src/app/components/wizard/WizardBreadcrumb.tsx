@@ -39,16 +39,18 @@ interface Crumb {
   value: string;
 }
 
-// One entry per single-select wizard step, in step order. Guard and Features
+// One entry per single-select wizard step, in step order. Labels match the
+// step titles, the PDF and the quote text — one name per answer everywhere.
+// Guard and Features
 // have bespoke value formats and are appended separately below.
 const CRUMB_CONFIG = [
-  { step: 0, label: 'Industry', field: 'selectedApplication', source: 'applications' },
-  { step: 1, label: 'Tech', field: 'selectedTechnology', source: 'technologies' },
-  { step: 2, label: 'Action', field: 'selectedAction', source: 'actions' },
-  { step: 3, label: 'Env', field: 'selectedEnvironment', source: 'environments' },
-  { step: 4, label: 'Duty', field: 'selectedDuty', source: 'duties' },
-  { step: 5, label: 'Wiring', field: 'selectedConnection', source: 'connections' },
-  { step: 6, label: 'Circuits', field: 'selectedCircuitCount', source: 'circuitCounts' },
+  { step: 0, label: 'Application', field: 'selectedApplication', source: 'applications' },
+  { step: 1, label: 'Technology', field: 'selectedTechnology', source: 'technologies' },
+  { step: 2, label: 'Action Type', field: 'selectedAction', source: 'actions' },
+  { step: 3, label: 'Environment', field: 'selectedEnvironment', source: 'environments' },
+  { step: 4, label: 'Duty Rating', field: 'selectedDuty', source: 'duties' },
+  { step: 5, label: 'Connection Type', field: 'selectedConnection', source: 'connections' },
+  { step: 6, label: 'Circuits Controlled', field: 'selectedCircuitCount', source: 'circuitCounts' },
 ] as const;
 
 /**
@@ -81,7 +83,7 @@ export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBrea
   if (wizardState.selectedGuard) {
     crumbs.push({
       step: 7,
-      label: 'Guard',
+      label: 'Safety Guard',
       value: wizardState.selectedGuard === 'yes' ? 'Required' : 'Not required',
     });
   }

@@ -7,6 +7,7 @@ import { ArrowRight, Star, Shield, Zap, Wind, CheckCircle2, Package, Droplets, A
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { colorClasses, getIpColor, getMaterialColor, getFeatureColor } from '@/app/lib/attributeColors';
+import { ipBadgeLabel, ipMeaning } from '@/app/utils/ipRating';
 
 // Icon mapping for features - defined outside component to avoid re-creation on every render
 function FeatureIcon({ feature }: { feature: string }) {
@@ -157,9 +158,13 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
 
         {/* Specs & Features */}
         <div className="flex flex-wrap gap-1.5 mb-6">
-          <Badge variant="secondary" className={`text-sm px-2.5 py-1 font-normal flex items-center ${colorClasses(getIpColor(product.ip))}`}>
+          <Badge
+            variant="secondary"
+            className={`text-sm px-2.5 py-1 font-normal flex items-center ${colorClasses(getIpColor(product.ip))}`}
+            title={ipMeaning(product.ip)}
+          >
             <IpIcon />
-            {product.ip}
+            {ipBadgeLabel(product.ip)}
           </Badge>
           <Badge variant="secondary" className={`text-sm px-2.5 py-1 font-normal capitalize flex items-center ${colorClasses(getMaterialColor(product.material))}`}>
             <MaterialIcon material={product.material} />

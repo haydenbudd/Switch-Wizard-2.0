@@ -15,6 +15,7 @@ import { Toaster, toast } from 'sonner';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage, type PDFResults } from '@/app/components/wizard/ResultsPage';
+import { ConfirmResetDialog } from '@/app/components/ConfirmResetDialog';
 
 // Lazy load admin panel with fallback for environments like Figma Make
 const AdminContainer = lazy(() =>
@@ -63,7 +64,7 @@ function WizardApp() {
     totalSteps,
     getProgressStep,
     getDisplayStep,
-  } = useWizardNavigation({ wizardState, categories });
+  } = useWizardNavigation({ wizardState, categories, technologies });
 
   const {
     filterProducts,
@@ -146,6 +147,18 @@ function WizardApp() {
     clearWizardStateFromLocal();
   }, [wizardState.resetWizard]);
 
+  // Every Reset / Start over entry point asks first once there's anything to
+  // lose — a stray tap used to wipe all answers and saved progress.
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+  const hasProgress = wizardState.step > 0 || Boolean(wizardState.selectedCategory);
+  const requestReset = useCallback(() => {
+    if (hasProgress) setConfirmResetOpen(true);
+    else handleReset();
+  }, [hasProgress, handleReset]);
+  const confirmResetDialog = (
+    <ConfirmResetDialog open={confirmResetOpen} onOpenChange={setConfirmResetOpen} onConfirm={handleReset} />
+  );
+
   // Start page shortcut → full catalog on the results page. Clears any
   // leftover search/filters so the catalog opens unfiltered.
   const handleBrowseAll = useCallback(() => {
@@ -209,11 +222,12 @@ function WizardApp() {
         onContinue={handleContinue}
         onViewStandardProducts={handleViewMedicalProducts}
         onGeneratePDF={handleGeneratePDF}
-        onReset={handleReset}
+        onReset={requestReset}
       />
       {/* Toasts (PDF errors, quote copy confirmation) — previously only
           mounted for the standard flow, so medical screens showed none */}
       <Toaster position="top-right" />
+      {confirmResetDialog}
       </>
     );
   }
@@ -226,7 +240,7 @@ function WizardApp() {
       <a href="#wizard-main" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-medium">
         Skip to content
       </a>
-      <Header onReset={handleReset} />
+      <Header onReset={requestReset} />
       <main id="wizard-main">
 
       {wizardState.step >= 0 && wizardState.step <= 8 && (
@@ -271,7 +285,7 @@ function WizardApp() {
           getAlternativeProducts={getAlternativeProducts}
           needsCustomSolution={needsCustomSolution}
           onBack={handleBack}
-          onReset={handleReset}
+          onReset={requestReset}
           onGeneratePDF={handleGeneratePDF}
           connections={connections}
           circuitCounts={circuitCounts}
@@ -294,6 +308,7 @@ function WizardApp() {
       </main>
     </div>
     <Toaster position="top-right" />
+    {confirmResetDialog}
     </>
   );
 }

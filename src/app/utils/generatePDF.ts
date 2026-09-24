@@ -3,7 +3,7 @@ import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { trackPDFDownload } from '@/app/utils/analytics';
 import { getLogoBase64 } from '@/app/utils/logoBase64';
-import { BUILDER_STEP_CONFIGS, optionLabel } from '@/app/data/options';
+import { BUILDER_STEP_CONFIGS, optionLabel, connections } from '@/app/data/options';
 import { hasPreference } from '@/app/utils/preference';
 
 // Only id/label are read — callers can pass options whose icon is a React
@@ -204,7 +204,8 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     const actionLabel = hasPreference(wizardState.selectedAction)
       ? actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction
       : 'Any';
-    const envLabel = environments.find(e => e.id === wizardState.selectedEnvironment)?.label || wizardState.selectedEnvironment;
+    // optionLabel so "no preference" reads "Any", same as the answers bar
+    const envLabel = optionLabel(environments, wizardState.selectedEnvironment);
 
     const rows: [string, string][] = [
       ['Application', appLabel],
@@ -215,16 +216,11 @@ export async function generatePDF(opts: GeneratePDFOptions) {
 
     if (hasPreference(wizardState.selectedDuty)) {
       const dutyLabel = duties.find(d => d.id === wizardState.selectedDuty)?.label || wizardState.selectedDuty;
-      rows.push(['Duty Class', dutyLabel]);
+      rows.push(['Duty Rating', dutyLabel]);
     }
     if (wizardState.selectedMaterial) rows.push(['Material', wizardState.selectedMaterial]);
     if (hasPreference(wizardState.selectedConnection)) {
-      // Stored as an id like "screw-terminal" — print it human-readable
-      const connLabel = wizardState.selectedConnection
-        .split('-')
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
-      rows.push(['Connection', connLabel]);
+      rows.push(['Connection Type', optionLabel(connections, wizardState.selectedConnection)]);
     }
     if (hasPreference(wizardState.selectedCircuitCount)) {
       const n = wizardState.selectedCircuitCount;
@@ -308,11 +304,11 @@ export async function generatePDF(opts: GeneratePDFOptions) {
       // Specifications — each on its own line to avoid overlap
       doc.setFontSize(8.5);
       doc.setTextColor(60, 60, 60);
-      doc.text(`IP Rating: ${product.ip}  |  Duty: ${product.duty}  |  Material: ${product.material}`, 25, yPos);
+      doc.text(`IP Rating: ${product.ip}  |  Duty Rating: ${product.duty.charAt(0).toUpperCase() + product.duty.slice(1)}  |  Material: ${product.material}`, 25, yPos);
       yPos += 4.5;
 
       if (product.connector_type && product.connector_type !== 'undefined') {
-        doc.text(`Connection: ${product.connector_type.replace(/-/g, ' ')}`, 25, yPos);
+        doc.text(`Connection Type: ${optionLabel(connections, product.connector_type)}`, 25, yPos);
         yPos += 4.5;
       }
 

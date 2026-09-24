@@ -221,7 +221,7 @@ export function StandardSteps({
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className="pt-20 pb-12" style={{ paddingLeft: '15%', paddingRight: '15%' }}>
+      <div className="pt-20 pb-12 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -246,7 +246,7 @@ export function StandardSteps({
             Find Your Solution
           </h1>
           <p className="!text-xl !text-muted-foreground" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
-            Select your industry to begin. We'll guide you to the right foot switch.
+            Select your industry to begin. We'll guide you to the right footswitch.
           </p>
         </motion.div>
 
@@ -335,7 +335,7 @@ export function StandardSteps({
   // Common wrapper for all steps after category selection
   return (
     <Fragment>
-    <div className="pt-16 pb-16" style={{ paddingLeft: '15%', paddingRight: '15%' }}>
+    <div className="pt-16 pb-16 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
       {/* Progress Bar */}
       <div className="mx-auto mb-14" style={{ maxWidth: '700px' }}>
         <div className="flex justify-between !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
@@ -403,7 +403,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</h2>
-                  <p className="!text-lg !text-muted-foreground">Choose the specific use case for your foot switch</p>
+                  <p className="!text-lg !text-muted-foreground">Choose the specific use case for your footswitch</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
                   {filteredApplications.map((app, i) => (

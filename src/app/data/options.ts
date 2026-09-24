@@ -255,25 +255,25 @@ export const environments: Option[] = [
     id: 'open',
     label: 'Open / Unprotected',
     icon: Sparkles,
-    description: 'IPXX — basic or no ingress protection.',
+    description: 'Clean, dry, protected spots. Any switch works, including ones with no IP rating (IPXX).',
   },
   {
     id: 'dry',
     label: 'Dry / Indoor',
     icon: Sun,
-    description: 'IP20 — protected from solid objects.',
+    description: 'Indoors, away from liquids. IP20: guards against fingers and debris, not water.',
   },
   {
     id: 'damp',
     label: 'Damp / Splash',
     icon: CloudRain,
-    description: 'IP56 — splash and dust proof.',
+    description: 'Dust or occasional splashes. IP56: dust-protected, resists water jets.',
   },
   {
     id: 'wet',
     label: 'Wet / Washdown',
     icon: Droplets,
-    description: 'IP68 — fully submersible.',
+    description: 'Washdown or liquid exposure. IP68: dust-tight and submersible.',
   },
   {
     id: 'any',
@@ -600,7 +600,7 @@ export interface BuilderStepConfig {
 export const BUILDER_STEP_CONFIGS: BuilderStepConfig[] = [
   { step: 3,  title: 'Treadle Count',    subtitle: 'How many treadles do you need?',                             options: pedalDesigns,          columns: 3, stateKey: 'selectedPedalDesign',    summaryLabel: 'Treadle Count' },
   { step: 5,  title: 'Output Type',     subtitle: 'What type of output do you need?',                           options: outputTypes,           columns: 2, stateKey: 'selectedOutputType',     summaryLabel: 'Output Type' },
-  { step: 6,  title: 'Connection Type',  subtitle: 'Wired or wireless?',                                        options: wiredWirelessOptions,  columns: 2, stateKey: 'selectedWiredWireless',  summaryLabel: 'Connection' },
+  { step: 6,  title: 'Wired or Wireless', subtitle: 'How should the footswitch connect to your equipment?',   options: wiredWirelessOptions,  columns: 2, stateKey: 'selectedWiredWireless',  summaryLabel: 'Wired / Wireless' },
   { step: 7,  title: 'Toe Loop',         subtitle: 'Would you like toe loops for secure foot positioning?',      options: toeLoopOptions,        columns: 2, stateKey: 'selectedToeLoop',        summaryLabel: 'Toe Loop' },
   { step: 8,  title: 'Treadle Type',     subtitle: 'Choose the treadle style for your Aero footswitch.',         options: treadleTypes,          columns: 2, stateKey: 'selectedTreadleType',    summaryLabel: 'Treadle Type', aeroOnly: true },
   { step: 9,  title: 'Custom Labeling',  subtitle: 'Would you like custom labels or markings on your footswitch?', options: customLabelingOptions, columns: 2, stateKey: 'selectedCustomLabeling', summaryLabel: 'Custom Labeling' },

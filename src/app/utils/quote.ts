@@ -22,16 +22,16 @@ export function answerRows(s: WizardState, src: AnswerSources): [string, string]
   const add = (label: string, value: string, options: Labeled) => {
     if (value) rows.push([label, optionLabel(options, value)]);
   };
-  add('Industry', s.selectedApplication, src.applications);
+  add('Application', s.selectedApplication, src.applications);
   add('Technology', s.selectedTechnology, src.technologies);
-  add('Action', s.selectedAction, src.actions);
+  add('Action Type', s.selectedAction, src.actions);
   add('Environment', s.selectedEnvironment, src.environments);
-  add('Duty', s.selectedDuty, src.duties);
+  add('Duty Rating', s.selectedDuty, src.duties);
   if (s.selectedTechnology !== 'pneumatic' && s.selectedTechnology !== 'wireless') {
-    add('Connection', s.selectedConnection, src.connections);
-    add('Circuits', s.selectedCircuitCount, src.circuitCounts);
+    add('Connection Type', s.selectedConnection, src.connections);
+    add('Circuits Controlled', s.selectedCircuitCount, src.circuitCounts);
   }
-  if (s.selectedGuard) rows.push(['Safety guard', s.selectedGuard === 'yes' ? 'Required' : 'Not required']);
+  if (s.selectedGuard) rows.push(['Safety Guard', s.selectedGuard === 'yes' ? 'Required' : 'Not required']);
   if (s.selectedFeatures.length > 0) {
     rows.push(['Features', s.selectedFeatures.map(f => optionLabel(src.features, f)).join(', ')]);
   }
@@ -57,7 +57,7 @@ export function resultsQuoteText(opts: {
   needsCustom: boolean;
 }): string {
   const rows = answerRows(opts.wizardState, opts.sources);
-  const lines: string[] = ["Quote request - Linemaster foot switch"];
+  const lines: string[] = ["Quote request - Linemaster footswitch"];
   if (rows.length > 0) {
     lines.push('', 'My requirements:', ...rows.map(([k, v]) => `- ${k}: ${v}`));
   }
@@ -73,7 +73,7 @@ export function resultsQuoteText(opts: {
 /** Quote request text for a single product (detail modal). */
 export function productQuoteText(p: Product): string {
   return [
-    'Quote request - Linemaster foot switch',
+    'Quote request - Linemaster footswitch',
     '',
     `- ${productLine(p)}`,
     ...(p.link ? [`- ${p.link}`] : []),
@@ -83,7 +83,7 @@ export function productQuoteText(p: Product): string {
 /** Quote request text for a semi-custom medical configuration. */
 export function configQuoteText(rows: { label: string; value: string }[]): string {
   return [
-    'Quote request - semi-custom medical foot switch',
+    'Quote request - semi-custom medical footswitch',
     '',
     ...rows.map(({ label, value }) => `- ${label}: ${value}`),
   ].join('\n');

@@ -7,12 +7,27 @@ interface CategoryOption {
   isMedical?: boolean;
 }
 
+interface TechnologyOption {
+  id: string;
+  availableFor?: string[];
+}
+
 interface UseWizardNavigationOptions {
   wizardState: WizardState;
   categories: CategoryOption[];
+  technologies: TechnologyOption[];
 }
 
-export function useWizardNavigation({ wizardState, categories }: UseWizardNavigationOptions) {
+export function useWizardNavigation({ wizardState, categories, technologies }: UseWizardNavigationOptions) {
+  // Technologies offered for an application. When there's only one (e.g.
+  // Tattoo → Electrical) the Technology step is a single card, so it's
+  // answered automatically and skipped.
+  const onlyTechnologyFor = useCallback((appId: string): string | null => {
+    const available = (technologies || []).filter(t => t.availableFor?.includes(appId));
+    return available.length === 1 ? available[0].id : null;
+  }, [technologies]);
+  const skipsTechStep = onlyTechnologyFor(wizardState.selectedApplication) !== null;
+
   const clearDownstreamSelections = useCallback((fromStep: number) => {
     if (fromStep <= 1) { wizardState.setSelectedAction(''); }
     if (fromStep <= 2) { wizardState.setSelectedEnvironment(''); }
@@ -41,19 +56,20 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
     // Re-picking the same industry (e.g. after jumping back via the
     // breadcrumb to check it) must not wipe every later answer.
     if (id === wizardState.selectedApplication && wizardState.flow === 'standard') {
-      const target = wizardState.resumeStep ?? 1;
+      const target = wizardState.resumeStep ?? (onlyTechnologyFor(id) ? 2 : 1);
       wizardState.setResumeStep(null);
       wizardState.setStep(target);
       return;
     }
     wizardState.setResumeStep(null);
     wizardState.setSelectedApplication(id);
-    wizardState.setSelectedTechnology('');
     clearDownstreamSelections(0);
     wizardState.setFlow('standard');
-    wizardState.setStep(1);
+    const onlyTech = onlyTechnologyFor(id);
+    wizardState.setSelectedTechnology(onlyTech ?? '');
+    wizardState.setStep(onlyTech ? 2 : 1);
     trackWizardStep(0, 'standard', { application: id });
-  }, [clearDownstreamSelections, wizardState.selectedApplication, wizardState.flow, wizardState.resumeStep, wizardState.setResumeStep, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
+  }, [clearDownstreamSelections, onlyTechnologyFor, wizardState.selectedApplication, wizardState.flow, wizardState.resumeStep, wizardState.setResumeStep, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
   // Skip the questions entirely: land on the results page with no wizard
   // answers, which scores every product as a match (see scoreAndSplit) —
@@ -99,9 +115,10 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
       if (prevStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
         prevStep--;
       }
+      if (prevStep === 1 && skipsTechStep) prevStep = 0;
       wizardState.setStep(prevStep);
     }
-  }, [wizardState.step, wizardState.flow, wizardState.selectedCategory, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
+  }, [wizardState.step, wizardState.flow, wizardState.selectedCategory, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, skipsTechStep, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
 
   const handleContinue = useCallback(() => {
     let newStep = wizardState.step + 1;
@@ -186,18 +203,20 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
     }
     let steps = 9;
     if (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') steps -= 2;
+    if (skipsTechStep) steps -= 1;
     return steps;
-  }, [wizardState.flow, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel]);
+  }, [wizardState.flow, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, skipsTechStep]);
 
   const skipsConnectionStep = wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless';
 
   const getProgressStep = useCallback((rawStep: number) => {
     if (rawStep <= 0) return 0;
     let step = rawStep;
+    if (skipsTechStep && rawStep > 1) step--;
     if (skipsConnectionStep && rawStep > 5) step--;
     if (skipsConnectionStep && rawStep > 6) step--;
     return step;
-  }, [skipsConnectionStep]);
+  }, [skipsConnectionStep, skipsTechStep]);
 
   const getDisplayStep = useCallback((rawStep: number) => getProgressStep(rawStep) + 1, [getProgressStep]);
 

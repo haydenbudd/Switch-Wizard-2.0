@@ -6,6 +6,8 @@ import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { optionLabel, connections } from '@/app/data/options';
+import { ipShort } from '@/app/utils/ipRating';
 import {
   colorClasses,
   getTechColor,
@@ -29,10 +31,10 @@ interface CompareProductsProps {
 const COMPARE_ROWS: { label: string; getValue: (p: Product) => string; getColor: (p: Product) => string }[] = [
   { label: 'Technology', getValue: (p) => p.technology, getColor: (p) => colorClasses(getTechColor(p.technology)) },
   { label: 'Duty Rating', getValue: (p) => p.duty, getColor: (p) => colorClasses(getDutyColor(p.duty)) },
-  { label: 'IP Rating', getValue: (p) => p.ip, getColor: (p) => colorClasses(getIpColor(p.ip)) },
+  { label: 'IP Rating', getValue: (p) => ipShort(p.ip), getColor: (p) => colorClasses(getIpColor(p.ip)) },
   { label: 'Material', getValue: (p) => p.material, getColor: (p) => colorClasses(getMaterialColor(p.material)) },
   { label: 'Circuit Count', getValue: (p) => p.circuitry || '—', getColor: (p) => p.circuitry ? colorClasses(getCircuitColor(p.circuitry)) : '' },
-  { label: 'Connection', getValue: (p) => p.connector_type?.replace(/-/g, ' ') || '—', getColor: (p) => p.connector_type ? colorClasses(getConnectionColor(p.connector_type)) : '' },
+  { label: 'Connection Type', getValue: (p) => (p.connector_type ? optionLabel(connections, p.connector_type) : '—'), getColor: (p) => p.connector_type ? colorClasses(getConnectionColor(p.connector_type)) : '' },
   { label: 'Part Number', getValue: (p) => p.part_number || '—', getColor: () => '' },
   { label: 'Features', getValue: (p) => (p.features || []).map(f => f.replace('_', ' ')).join(', ') || '—', getColor: () => '' },
 ];
@@ -190,7 +192,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove }: Comp
                                     <td key={product.id} className="p-4 text-center">
                                       <Badge
                                         variant="secondary"
-                                        className={`!text-base capitalize font-normal px-3 py-1 ${color}`}
+                                        className={`!text-base ${row.label === 'IP Rating' ? 'normal-case' : 'capitalize'} font-normal px-3 py-1 ${color}`}
                                       >
                                         {value}
                                       </Badge>

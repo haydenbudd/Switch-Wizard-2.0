@@ -441,7 +441,7 @@ export function MedicalFlow({
                     Browse Stock Products
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Explore our existing catalog of medical-grade foot switches
+                    Explore our existing catalog of medical-grade footswitches
                   </p>
                   {wizardState.selectedMedicalPath === 'stock' && (
                     <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
@@ -528,7 +528,7 @@ export function MedicalFlow({
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
                   Action Type
                 </h2>
-                <p className="text-muted-foreground">How should the foot switch activate?</p>
+                <p className="text-muted-foreground">How should the footswitch activate?</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
@@ -560,7 +560,7 @@ export function MedicalFlow({
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
                   Operating Environment
                 </h2>
-                <p className="text-muted-foreground">Where will the foot switch be used?</p>
+                <p className="text-muted-foreground">Where will the footswitch be used?</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">

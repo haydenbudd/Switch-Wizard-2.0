@@ -5,6 +5,7 @@ import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { getPortalContainer } from '@/app/utils/portalContainer';
 import { productQuoteText, quoteLinkProps } from '@/app/utils/quote';
+import { ipBadgeLabel, ipMeaning } from '@/app/utils/ipRating';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -115,10 +116,10 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
   if (!product) return null;
 
-  const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor }[] = [
+  const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor; hint?: string }[] = [
     { icon: <TechIcon tech={product.technology} />, label: 'Technology', value: product.technology, color: getTechColor(product.technology) },
     { icon: <Gauge className="w-7 h-7 !text-muted-foreground" />, label: 'Duty Rating', value: product.duty, color: getDutyColor(product.duty) },
-    { icon: <Droplets className="w-7 h-7 !text-muted-foreground" />, label: 'IP Rating', value: product.ip, color: getIpColor(product.ip) },
+    { icon: <Droplets className="w-7 h-7 !text-muted-foreground" />, label: 'IP Rating', value: ipBadgeLabel(product.ip), color: getIpColor(product.ip), hint: ipMeaning(product.ip) },
     { icon: <MaterialIcon material={product.material} />, label: 'Material', value: product.material, color: getMaterialColor(product.material) },
   ];
 
@@ -126,7 +127,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
     specs.push({ icon: <Hash className="w-7 h-7 !text-muted-foreground" />, label: 'Circuits', value: product.circuitry, color: getCircuitColor(product.circuitry) });
   }
   if (product.connector_type) {
-    specs.push({ icon: <Cable className="w-7 h-7 !text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
+    specs.push({ icon: <Cable className="w-7 h-7 !text-muted-foreground" />, label: 'Connection Type', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
   }
   if (product.stages) {
     specs.push({ icon: <Layers className="w-7 h-7 !text-muted-foreground" />, label: 'Stages', value: product.stages });
@@ -234,8 +235,8 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                 >
                   {product.duty} Duty
                 </Badge>
-                <Badge variant="outline" className={`text-sm ${colorClasses(getIpColor(product.ip))}`}>
-                  {product.ip}
+                <Badge variant="outline" className={`text-sm ${colorClasses(getIpColor(product.ip))}`} title={ipMeaning(product.ip)}>
+                  {ipBadgeLabel(product.ip)}
                 </Badge>
                 {product.actions?.map((action) => (
                   <Badge key={action} variant="secondary" className="capitalize text-sm">
@@ -264,6 +265,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     <div className="min-w-0">
                       <div className="text-sm !text-muted-foreground uppercase tracking-wide">{spec.label}</div>
                       <div className={`text-base font-medium capitalize truncate ${spec.color ? spec.color.text : ''}`}>{spec.value}</div>
+                      {spec.hint && <div className="text-sm !text-muted-foreground leading-snug mt-0.5">{spec.hint}</div>}
                     </div>
                   </div>
                 ))}

@@ -364,7 +364,7 @@ export function ResultsPage({
   };
 
   return (
-    <div className="w-full py-8 pb-32" style={{ paddingLeft: '5%', paddingRight: '5%' }}>
+    <div className="w-full py-8 pb-32 px-4 sm:px-[5%]">
       {/* Screen reader announcement for result count changes */}
       <div className="sr-only" aria-live="polite" aria-atomic="true" role="status">
         {finalResults.length} {finalResults.length === 1 ? 'product' : 'products'} found
@@ -443,7 +443,7 @@ export function ResultsPage({
           )}
 
           {dutyFilter.length > 0 && (
-            <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 !text-orange-800 dark:bg-orange-900/30 dark:!text-orange-300" />
+            <FilterChip label={`Duty Rating: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 !text-orange-800 dark:bg-orange-900/30 dark:!text-orange-300" />
           )}
 
           {cordedFilter !== 'all' && (
