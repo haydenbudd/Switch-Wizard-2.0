@@ -12,7 +12,10 @@ interface OptionCardProps {
   onClick: () => void;
   disabled?: boolean;
   className?: string;
+  /** Exact-match product count (undefined = don't show a count). */
   count?: number;
+  /** Close-match count — products that fit most, but not all, answers. */
+  closeCount?: number;
   index?: number;
   /** ARIA role — use 'radio' for single-select steps, 'checkbox' for multi-select */
   role?: 'radio' | 'checkbox';
@@ -26,18 +29,21 @@ export const OptionCard = memo(function OptionCard({
   onClick,
   disabled,
   count,
+  closeCount = 0,
   className,
   index = 0,
   role = 'radio',
 }: OptionCardProps) {
-  const isDisabled = disabled || count === 0;
+  // Only a card with nothing at all behind it is unavailable — zero exact
+  // matches but some close ones is still a legitimate preference to state.
+  const isDisabled = disabled || (count === 0 && closeCount === 0);
   return (
     <GlassCard
       interactive={!isDisabled}
       hoverEffect={!isDisabled && !selected}
       onClick={() => !isDisabled && onClick()}
       role={role}
-      aria-label={`${label}${selected ? ', selected' : ''}${isDisabled ? ', unavailable' : ''}${count !== undefined ? `, ${count} products` : ''}`}
+      aria-label={`${label}${selected ? ', selected' : ''}${isDisabled ? ', unavailable' : ''}${count !== undefined ? `, ${count} exact ${count === 1 ? 'match' : 'matches'}${closeCount ? `, ${closeCount} close` : ''}` : ''}`}
       aria-checked={selected}
       aria-disabled={isDisabled}
       className={cn(
@@ -78,12 +84,15 @@ export const OptionCard = memo(function OptionCard({
         </p>
       )}
 
-      {count !== undefined && count > 0 && (
+      {count !== undefined && (count > 0 || closeCount > 0) && (
         <span className="!text-base !font-medium mt-3 px-3 py-0.5 !text-muted-foreground bg-secondary rounded-full tabular-nums">
-          {count} {count === 1 ? 'product' : 'products'}
+          {count > 0
+            ? `${count} ${count === 1 ? 'match' : 'matches'}`
+            : 'No exact match'}
+          {closeCount > 0 && <span className="!text-amber-700 dark:!text-amber-400"> · {closeCount} close</span>}
         </span>
       )}
-      {count === 0 && (
+      {count === 0 && closeCount === 0 && (
         <span className="!text-base !font-medium mt-3 px-3 py-0.5 !text-red-400 dark:!text-red-500 bg-red-50 dark:bg-red-950/30 rounded-full">
           No products available
         </span>

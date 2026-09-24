@@ -4,11 +4,14 @@ import { Button } from '@/app/components/ui/button';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { getPortalContainer } from '@/app/utils/portalContainer';
+import { productQuoteText, quoteLinkProps } from '@/app/utils/quote';
+import { ipBadgeLabel, ipMeaning } from '@/app/utils/ipRating';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
   ExternalLink,
+  Mail,
   Zap,
   Wind,
   Shield,
@@ -113,10 +116,10 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
   if (!product) return null;
 
-  const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor }[] = [
+  const specs: { icon: React.ReactNode; label: string; value: string; color?: AttributeColor; hint?: string }[] = [
     { icon: <TechIcon tech={product.technology} />, label: 'Technology', value: product.technology, color: getTechColor(product.technology) },
     { icon: <Gauge className="w-7 h-7 !text-muted-foreground" />, label: 'Duty Rating', value: product.duty, color: getDutyColor(product.duty) },
-    { icon: <Droplets className="w-7 h-7 !text-muted-foreground" />, label: 'IP Rating', value: product.ip, color: getIpColor(product.ip) },
+    { icon: <Droplets className="w-7 h-7 !text-muted-foreground" />, label: 'IP Rating', value: ipBadgeLabel(product.ip), color: getIpColor(product.ip), hint: ipMeaning(product.ip) },
     { icon: <MaterialIcon material={product.material} />, label: 'Material', value: product.material, color: getMaterialColor(product.material) },
   ];
 
@@ -124,7 +127,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
     specs.push({ icon: <Hash className="w-7 h-7 !text-muted-foreground" />, label: 'Circuits', value: product.circuitry, color: getCircuitColor(product.circuitry) });
   }
   if (product.connector_type) {
-    specs.push({ icon: <Cable className="w-7 h-7 !text-muted-foreground" />, label: 'Connection', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
+    specs.push({ icon: <Cable className="w-7 h-7 !text-muted-foreground" />, label: 'Connection Type', value: formatConnector(product.connector_type)!, color: getConnectionColor(product.connector_type) });
   }
   if (product.stages) {
     specs.push({ icon: <Layers className="w-7 h-7 !text-muted-foreground" />, label: 'Stages', value: product.stages });
@@ -232,8 +235,8 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                 >
                   {product.duty} Duty
                 </Badge>
-                <Badge variant="outline" className={`text-sm ${colorClasses(getIpColor(product.ip))}`}>
-                  {product.ip}
+                <Badge variant="outline" className={`text-sm ${colorClasses(getIpColor(product.ip))}`} title={ipMeaning(product.ip)}>
+                  {ipBadgeLabel(product.ip)}
                 </Badge>
                 {product.actions?.map((action) => (
                   <Badge key={action} variant="secondary" className="capitalize text-sm">
@@ -262,6 +265,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                     <div className="min-w-0">
                       <div className="text-sm !text-muted-foreground uppercase tracking-wide">{spec.label}</div>
                       <div className={`text-base font-medium capitalize truncate ${spec.color ? spec.color.text : ''}`}>{spec.value}</div>
+                      {spec.hint && <div className="text-sm !text-muted-foreground leading-snug mt-0.5">{spec.hint}</div>}
                     </div>
                   </div>
                 ))}
@@ -295,19 +299,25 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                   page, so a single button covers both. (A hardcoded series →
                   PDF map used to live here; the URLs rotted as linemaster.com
                   reorganized uploads, so it was removed rather than maintained.) */}
-              {product.link && (
-                <div className="flex">
-                  <Button
-                    asChild
-                    className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
-                  >
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  asChild
+                  className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
+                >
+                  <a {...quoteLinkProps(productQuoteText(product))}>
+                    <Mail className="w-6 h-6" />
+                    Request a Quote
+                  </a>
+                </Button>
+                {product.link && (
+                  <Button asChild variant="outline" className="flex-1 gap-2 !text-base">
                     <a href={product.link} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="w-6 h-6" />
                       View Product Page &amp; Datasheet
                     </a>
                   </Button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </MotionDiv>
         </DialogPrimitive.Content>

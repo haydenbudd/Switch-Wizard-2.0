@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Sun, Droplets, ChevronLeft, Download, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, ChevronLeft, Download, ExternalLink } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
@@ -15,16 +15,22 @@ import {
   optionLabel,
 } from '@/app/data/options';
 import type { Option } from '@/app/data/options';
+import { NO_PREFERENCE, hasPreference } from '@/app/utils/preference';
+import { configQuoteText, quoteLinkProps } from '@/app/utils/quote';
 
 const MotionDiv = motion.div;
 
 const CRESCENT_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/neuro-and-ent-1-optimized.png';
 const AERO_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/electro-surgical-cardiac-2-optimized.png';
 
-// Medical-specific action options (all medical products are electrical)
+// Medical-specific action options. Variable and No Preference were missing,
+// and action is a hard filter — so variable-speed medical switches could
+// never be reached from this path.
 const MEDICAL_ACTIONS = [
   { id: 'momentary', label: 'Momentary', description: 'Active while pressed — ideal for surgical tools', icon: CircleDot },
   { id: 'maintained', label: 'Maintained', description: 'Toggle on/off — for diagnostic and therapy equipment', icon: ToggleLeft },
+  { id: 'variable', label: 'Variable Speed', description: 'Output varies with pedal pressure — e.g. drills, pumps', icon: Gauge },
+  { id: NO_PREFERENCE, label: 'No Preference', description: 'Show all medical switches', icon: Ban },
 ];
 
 // Medical-specific environment options
@@ -44,8 +50,9 @@ interface MedicalFlowProps {
   onReset: () => void;
 }
 
-// Stock path display: fork(1) + action(2) + environment(3) = 3 steps
-const STOCK_DISPLAY_TOTAL = 3;
+// Stock path display: action(1) + environment(2). The fork before it is an
+// unnumbered "choose a path" screen, so both paths count from 1.
+const STOCK_DISPLAY_TOTAL = 2;
 
 // Custom builder steps (after fork):
 // channel(2) + pedal(3) + buttons(4) + output(5) + wired(6) + toe(7) + treadle(8, aero only) + labeling(9) + LEDs(10) + summary(11)
@@ -103,18 +110,22 @@ export function MedicalFlow({
 
   const isCustomPath = wizardState.selectedMedicalPath === 'custom';
 
-  // Medical products filtered by application
-  const medicalProducts = (products || []).filter(p => p.applications.includes('medical') && p.technology === 'electrical');
+  // Medical products (any technology — wired and wireless medical switches
+  // both belong in this catalog; the results page's Technology filter can
+  // narrow them).
+  const medicalProducts = (products || []).filter(p => p.applications.includes('medical'));
 
   const getActionCount = (actionId: string) =>
     medicalProducts.filter(p => p.actions.includes(actionId)).length;
 
   const getEnvironmentCount = (envId: string) => {
-    const base = medicalProducts.filter(p => p.actions.includes(wizardState.selectedAction));
+    const base = hasPreference(wizardState.selectedAction)
+      ? medicalProducts.filter(p => p.actions.includes(wizardState.selectedAction))
+      : medicalProducts;
     if (envId === 'wet') return base.filter(p => p.ip === 'IP68').length;
     return base.length; // 'any' = no filter
   };
-  const displayStep = wizardState.step; // fork(1)=1, action(2)=2, environment(3)=3
+  const displayStep = wizardState.step - 1; // action(2)=1, environment(3)=2
 
   // No artificial setTimeout delays — AnimatePresence already provides the
   // visual handoff to the next step, and waiting just makes clicks feel laggy.
@@ -131,7 +142,6 @@ export function MedicalFlow({
 
   const handleEnvironmentSelect = (id: string) => {
     wizardState.setSelectedEnvironment(id);
-    wizardState.setSelectedTechnology('electrical');
     onViewStandardProducts();
   };
 
@@ -148,7 +158,7 @@ export function MedicalFlow({
     Array.from({ length: maxButtons }, (_, i) => ({
       id: String(i + 1),
       label: `${i + 1} Button${i > 0 ? 's' : ''}`,
-      description: `${i + 1} button${i > 0 ? 's' : ''} per pedal.`,
+      description: undefined,
       icon: NumberIcon(i + 1),
     })),
     [maxButtons],
@@ -253,12 +263,12 @@ export function MedicalFlow({
                 Number of Buttons
               </h2>
               <p className="text-muted-foreground">
-                How many buttons per pedal?
-                {wizardState.selectedChannel === 'aero' && (
-                  <span className="block text-xs mt-1 text-red-400">
-                    Aero {optionLabel(pedalDesigns, wizardState.selectedPedalDesign)} supports up to {maxButtons} button{maxButtons > 1 ? 's' : ''}
-                  </span>
-                )}
+                How many buttons does your switch need?
+                <span className="block text-xs mt-1 text-red-400">
+                  {wizardState.selectedChannel === 'aero'
+                    ? `Aero with ${optionLabel(pedalDesigns, wizardState.selectedPedalDesign).toLowerCase()} supports up to ${maxButtons} button${maxButtons > 1 ? 's' : ''}`
+                    : `Crescent supports up to ${maxButtons} buttons`}
+                </span>
               </p>
             </div>
             <div className={cn(
@@ -300,28 +310,31 @@ export function MedicalFlow({
   // ── Summary page ──
 
   const renderSummary = () => {
+    // Built in step order, matching the PDF: Channel, Treadle Count, Buttons,
+    // then the remaining builder steps. (The old version spliced Buttons in
+    // after a row labelled 'Pedal Design', which no longer exists — findIndex
+    // returned -1 and Buttons landed above Channel.)
     const configEntries: { label: string; value: string }[] = [];
-
-    // Channel + button count are special; the rest come from BUILDER_STEP_CONFIGS
-    const channelVal = wizardState.selectedChannel;
-    if (channelVal) {
-      const channelLabel = channelVal === 'crescent' ? 'Crescent Channel' : 'Aero Channel';
-      configEntries.push({ label: 'Channel', value: channelLabel });
-    }
-
-    for (const cfg of BUILDER_STEP_CONFIGS) {
-      if (cfg.aeroOnly && wizardState.selectedChannel !== 'aero') continue;
+    const pushCfg = (cfg: (typeof BUILDER_STEP_CONFIGS)[number]) => {
+      if (cfg.aeroOnly && wizardState.selectedChannel !== 'aero') return;
       const val = wizardState[cfg.stateKey as keyof WizardState] as string;
       if (val) configEntries.push({ label: cfg.summaryLabel, value: optionLabel(cfg.options, val) });
+    };
+
+    if (wizardState.selectedChannel) {
+      configEntries.push({ label: 'Channel', value: wizardState.selectedChannel === 'crescent' ? 'Crescent Channel' : 'Aero Channel' });
+    }
+    const treadleCfg = BUILDER_STEP_CONFIGS.find(c => c.stateKey === 'selectedPedalDesign');
+    if (treadleCfg) pushCfg(treadleCfg);
+    if (wizardState.selectedButtonCount) {
+      configEntries.push({ label: 'Buttons', value: wizardState.selectedButtonCount });
+    }
+    for (const cfg of BUILDER_STEP_CONFIGS) {
+      if (cfg !== treadleCfg) pushCfg(cfg);
     }
 
-    // Button count (step 4, not in BUILDER_STEP_CONFIGS since it's dynamic)
-    const btnVal = wizardState.selectedButtonCount;
-    if (btnVal) {
-      // Insert after pedal design (index 1) for logical ordering
-      const insertIdx = configEntries.findIndex(e => e.label === 'Pedal Design');
-      configEntries.splice(insertIdx + 1, 0, { label: 'Number of Buttons', value: btnVal });
-    }
+    // Contact page + configuration copied for its message box
+    const quoteLink = quoteLinkProps(configQuoteText(configEntries));
 
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
@@ -349,18 +362,22 @@ export function MedicalFlow({
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
           <Button
             className="bg-red-600 hover:bg-red-700 text-white px-6"
-            onClick={onGeneratePDF}
+            onClick={() => onGeneratePDF()}
           >
             <Download className="w-4 h-4 mr-2" aria-hidden="true" />
             Download Summary (PDF)
           </Button>
+          {/* Opens the contact page and copies the configuration so the buyer
+              doesn't have to retype it or attach the PDF */}
           <Button
+            asChild
             variant="outline"
             className="border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
-            onClick={() => window.open('https://linemaster.com/contact', '_blank')}
           >
-            <ExternalLink className="w-4 h-4 mr-2" aria-hidden="true" />
-            Contact Us
+            <a {...quoteLink}>
+              <Mail className="w-4 h-4 mr-2" aria-hidden="true" />
+              Request a Quote
+            </a>
           </Button>
         </div>
       </div>
@@ -379,8 +396,8 @@ export function MedicalFlow({
           <div className="flex items-center justify-center min-h-[400px]">
             <GlassCard className="max-w-2xl w-full p-8 md:p-10">
               <div className="text-center mb-6">
-                <p className="text-sm font-semibold text-blue-500 tracking-wide mb-2">
-                  STEP 1 OF {STOCK_DISPLAY_TOTAL}
+                <p className="text-sm font-semibold text-blue-500 tracking-wide mb-2 uppercase">
+                  Medical &amp; Healthcare
                 </p>
                 <h2 className="text-2xl md:text-3xl font-bold text-foreground">
                   How would you like to proceed?
@@ -390,7 +407,7 @@ export function MedicalFlow({
               <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-8 flex gap-3">
                 <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  Medical customers can browse our standard catalog of medical-grade products or configure a semi custom solution tailored to your specifications.
+                  Medical customers can browse our standard catalog of medical-grade products or configure a semi-custom solution tailored to your specifications.
                 </p>
               </div>
 
@@ -424,7 +441,7 @@ export function MedicalFlow({
                     Browse Stock Products
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Explore our existing catalog of medical-grade foot switches
+                    Explore our existing catalog of medical-grade footswitches
                   </p>
                   {wizardState.selectedMedicalPath === 'stock' && (
                     <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
@@ -433,7 +450,7 @@ export function MedicalFlow({
                   )}
                 </div>
 
-                {/* Configure Semi Custom Solution */}
+                {/* Configure Semi-Custom Solution */}
                 <div
                   onClick={() => handleForkSelect('custom')}
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleForkSelect('custom'); } }}
@@ -459,10 +476,10 @@ export function MedicalFlow({
                     "font-semibold text-lg mb-1 transition-colors",
                     wizardState.selectedMedicalPath === 'custom' ? "text-blue-700 dark:text-blue-300" : ""
                   )}>
-                    Configure Semi Custom Solution
+                    Configure Semi-Custom Solution
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Design a semi custom medical-grade footswitch to your specifications
+                    Design a semi-custom medical-grade footswitch to your specifications
                   </p>
                   {wizardState.selectedMedicalPath === 'custom' && (
                     <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
@@ -511,10 +528,10 @@ export function MedicalFlow({
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
                   Action Type
                 </h2>
-                <p className="text-muted-foreground">How should the foot switch activate?</p>
+                <p className="text-muted-foreground">How should the footswitch activate?</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
                 {MEDICAL_ACTIONS.map((action, i) => (
                   <OptionCard
                     key={action.id}
@@ -522,7 +539,7 @@ export function MedicalFlow({
                     description={action.description}
                     icon={action.icon}
                     selected={wizardState.selectedAction === action.id}
-                    count={getActionCount(action.id)}
+                    count={action.id === NO_PREFERENCE ? undefined : getActionCount(action.id)}
                     onClick={() => handleActionSelect(action.id)}
                     index={i}
                   />
@@ -543,7 +560,7 @@ export function MedicalFlow({
                 <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
                   Operating Environment
                 </h2>
-                <p className="text-muted-foreground">Where will the foot switch be used?</p>
+                <p className="text-muted-foreground">Where will the footswitch be used?</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">

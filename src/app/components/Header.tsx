@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { RotateCcw, Moon, Sun, Settings } from 'lucide-react';
+import { RotateCcw, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useRouter } from '@/app/components/Router';
 
 interface HeaderProps {
   onReset: () => void;
@@ -22,7 +21,6 @@ function toggleDarkClass(dark: boolean) {
 
 export function Header({ onReset }: HeaderProps) {
   const { setTheme } = useTheme();
-  const { navigate } = useRouter();
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -60,22 +58,18 @@ export function Header({ onReset }: HeaderProps) {
             )}
           </button>
 
-          <button
-            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
-            title="Admin Panel"
-            aria-label="Open admin panel"
-            onClick={() => navigate('/admin')}
-          >
-            <Settings className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
-          </button>
+          {/* No admin gear here: it was visible to every public visitor
+              (and its link broke inside the WordPress embed). The admin
+              panel is reached directly at /Switch-Wizard-2.0/admin. */}
 
           <button
-            className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
-            title="Reset"
-            aria-label="Reset wizard"
+            className="flex items-center gap-1.5 p-2 sm:pr-3 rounded-full hover:bg-black/5 dark:hover:bg-white/5 active:bg-black/10 dark:active:bg-white/10 transition-all duration-200"
+            title="Start over — clears all your answers"
+            aria-label="Start over (clears all your answers)"
             onClick={onReset}
           >
             <RotateCcw className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <span className="hidden sm:inline text-sm !text-muted-foreground">Start over</span>
           </button>
         </nav>
       </div>

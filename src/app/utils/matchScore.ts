@@ -2,6 +2,9 @@ import type { Product } from '@/app/lib/api';
 import type { WizardState } from '@/app/hooks/useWizardState';
 import { matchesEnvironment } from '@/app/utils/productFilters';
 import { hasPreference } from '@/app/utils/preference';
+import {
+  applications, environments, connections, features as featureOptions, optionLabel,
+} from '@/app/data/options';
 
 /**
  * Smart-match scoring for the results page.
@@ -14,8 +17,9 @@ import { hasPreference } from '@/app/utils/preference';
  *   - perfect: every selected soft criterion satisfied (matchedCount === totalSelected)
  *   - close:   at least one criterion satisfied but not all
  *
- * The `missing` array names criteria the product falls short on, so the UI
- * can display "Differs on: duty, environment" pills on close-match cards.
+ * The `missing` array holds short plain-language reasons the product falls
+ * short (e.g. "Heavier duty than selected", "Missing: Twin Pedal"), shown on
+ * close-match cards and in the PDF.
  */
 
 export interface MatchResult {
@@ -25,7 +29,7 @@ export interface MatchResult {
   matchedCount: number;
   /** Number of soft criteria the user picked overall. */
   totalSelected: number;
-  /** Friendly labels of criteria the product does NOT fully satisfy. */
+  /** Plain-language reasons the product does NOT fully satisfy the buyer's answers. */
   missing: string[];
 }
 
@@ -61,23 +65,21 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
       score += 3;
       matchedCount += 1;
     } else {
-      missing.push('industry');
+      missing.push(`Not listed for ${optionLabel(applications, state.selectedApplication)}`);
     }
   }
 
-  // Environment (weight 2 exact, 1 over-spec'd) — IP rating fit
+  // Environment (weight 2) — IP rating fit. A switch sealed *beyond* what the
+  // environment needs (e.g. IP68 for a dry bench) is fully suitable, so it
+  // counts as a match rather than being demoted to a close match.
   if (state.selectedEnvironment && state.selectedEnvironment !== 'any') {
     totalSelected += 1;
     maxScore += 2;
-    if (envExactMatch(state.selectedEnvironment, product.ip)) {
+    if (envExactMatch(state.selectedEnvironment, product.ip) || envMeetsMinimum(state.selectedEnvironment, product.ip)) {
       score += 2;
       matchedCount += 1;
-    } else if (envMeetsMinimum(state.selectedEnvironment, product.ip)) {
-      // Over-spec'd — works but isn't the cheapest fit
-      score += 1;
-      missing.push('environment (over-spec’d)');
     } else {
-      missing.push('environment');
+      missing.push(`Not rated for ${optionLabel(environments, state.selectedEnvironment)} (${product.ip})`);
     }
   }
 
@@ -94,7 +96,11 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
       if (sel !== undefined && have !== undefined && Math.abs(sel - have) === 1) {
         score += 1;
       }
-      missing.push('duty');
+      missing.push(
+        have !== undefined && sel !== undefined && have > sel
+          ? 'Heavier duty than selected'
+          : 'Lighter duty than selected'
+      );
     }
   }
 
@@ -106,7 +112,11 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
       score += 1;
       matchedCount += 1;
     } else {
-      missing.push('wiring');
+      missing.push(
+        product.connector_type
+          ? `Different connection (${optionLabel(connections, product.connector_type)})`
+          : 'Connection type not listed'
+      );
     }
   }
 
@@ -118,7 +128,11 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
       score += 1;
       matchedCount += 1;
     } else {
-      missing.push('circuits');
+      missing.push(
+        product.circuitry
+          ? `Controls ${product.circuitry} circuit${product.circuitry === '1' ? '' : 's'}`
+          : 'Circuit count not listed'
+      );
     }
   }
 
@@ -130,7 +144,7 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
       score += 1;
       matchedCount += 1;
     } else {
-      missing.push('safety guard');
+      missing.push('No safety guard');
     }
   }
 
@@ -147,10 +161,9 @@ export function scoreProduct(product: Product, state: WizardState): MatchResult 
       score += matched.length;
       if (matched.length === hardware.length) {
         matchedCount += 1;
-      } else if (matched.length === 0) {
-        missing.push('features');
       } else {
-        missing.push(`features (${matched.length}/${hardware.length})`);
+        const lacking = hardware.filter(f => !productFeatures.includes(f));
+        missing.push(`Missing: ${lacking.map(f => optionLabel(featureOptions, f)).join(', ')}`);
       }
     }
   }

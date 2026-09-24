@@ -133,11 +133,19 @@ export interface WizardState {
   /** Apply a restored snapshot (share URL / localStorage). Skips empty values. */
   applyPartial: (partial: Partial<WizardSnapshot>) => void;
   resetWizard: () => void;
+  /**
+   * Step to return to after editing an earlier answer (set when the user
+   * jumps back via the breadcrumb). Not persisted — it only lives for the
+   * current edit. null = normal forward progression.
+   */
+  resumeStep: number | null;
+  setResumeStep: (step: number | null) => void;
 }
 
 export function useWizardState(): WizardState {
   const [flow, setFlow] = useState<FlowType>('standard');
   const [step, setStep] = useState(0);
+  const [resumeStep, setResumeStep] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedApplication, setSelectedApplication] = useState('');
   const [selectedTechnology, setSelectedTechnology] = useState('');
@@ -198,6 +206,7 @@ export function useWizardState(): WizardState {
   }, []);
 
   const resetWizard = useCallback(() => {
+    setResumeStep(null);
     setFlow('standard');
     setStep(0);
     setSelectedCategory('');
@@ -284,5 +293,7 @@ export function useWizardState(): WizardState {
     setSelectedLEDs,
     applyPartial,
     resetWizard,
+    resumeStep,
+    setResumeStep,
   };
 }

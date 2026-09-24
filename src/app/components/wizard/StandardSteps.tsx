@@ -7,9 +7,22 @@ import { NO_PREFERENCE } from '@/app/utils/preference';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { Button } from '@/app/components/ui/button';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
+import type { OptionCount } from '@/app/hooks/useProductFiltering';
 import { motion, AnimatePresence } from 'motion/react';
 
 const LazyWizardCompanion = lazy(() => import('@/app/components/wizard/WizardCompanion'));
+
+// Current answer for each single-select step (1–7), used to tell a re-pick
+// of the same option apart from a real change.
+const STEP_ANSWER: Record<number, (s: WizardState) => string> = {
+  1: s => s.selectedTechnology,
+  2: s => s.selectedAction,
+  3: s => s.selectedEnvironment,
+  4: s => s.selectedDuty,
+  5: s => s.selectedConnection,
+  6: s => s.selectedCircuitCount,
+  7: s => s.selectedGuard,
+};
 
 // Magic wand cursor as inline SVG data URI
 const WAND_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='4' y1='28' x2='18' y2='14' stroke='%23a78bfa' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18,14 L20,10 L24,12 L22,16 Z' fill='%23fbbf24'/%3E%3Ccircle cx='26' cy='4' r='1.5' fill='%23fbbf24'/%3E%3Ccircle cx='29' cy='9' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='24' cy='2' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='30' cy='5' r='0.8' fill='%23fff'/%3E%3Ccircle cx='27' cy='1' r='0.8' fill='%23fff'/%3E%3C/svg%3E") 4 28, auto`;
@@ -59,7 +72,7 @@ interface StandardStepsProps {
   totalSteps: number;
   getProgressStep: (step: number) => number;
   getDisplayStep: (step: number) => number;
-  getProductCount: (step: number, optionId?: string) => number;
+  getProductCount: (step: number, optionId?: string) => OptionCount;
   clearDownstreamSelections: (step: number) => void;
   onCategorySelect: (id: string) => void;
   onApplicationSelect: (id: string) => void;
@@ -67,6 +80,10 @@ interface StandardStepsProps {
   onBrowseAll: () => void;
   onBack: () => void;
   onContinue: () => void;
+  /** Advance without changing anything — back to the resume step if set. */
+  onResumeOrContinue: () => void;
+  /** Breadcrumb jump that remembers where the user came from. */
+  onJumpToStep: (step: number) => void;
 }
 
 export function StandardSteps({
@@ -90,6 +107,8 @@ export function StandardSteps({
   onBrowseAll,
   onBack,
   onContinue,
+  onResumeOrContinue,
+  onJumpToStep,
 }: StandardStepsProps) {
   const [showWizard, setShowWizard] = useState(false);
   // Once toggled on, keep the lazy chunk mounted for exit animations
@@ -142,15 +161,32 @@ export function StandardSteps({
   // Helper to handle single-select progression. No artificial delay — the
   // AnimatePresence exit animation already gives a visual handoff to the
   // next step, and a setTimeout here just made every click feel laggy.
+  //
+  // Re-picking the answer a step already has (e.g. after jumping back via the
+  // breadcrumb to check it) keeps every later answer and returns the user to
+  // where they were. Only a *changed* answer clears the steps after it.
   const handleSingleSelect = (
     value: string,
     setter: (val: string) => void,
     stepIndex: number
   ) => {
+    if (value === STEP_ANSWER[stepIndex]?.(wizardState)) {
+      onResumeOrContinue();
+      return;
+    }
     setter(value);
     clearDownstreamSelections(stepIndex);
+    wizardState.setResumeStep(null);
     onContinue();
   };
+
+  // OptionCard props for an option's exact/close match counts
+  const countProps = (step: number, id: string) => {
+    const c = getProductCount(step, id);
+    return { count: c.exact, closeCount: c.close };
+  };
+
+  const currentAnswer = STEP_ANSWER[wizardState.step]?.(wizardState) ?? '';
 
   // Helper to handle multi-select toggle
   const handleMultiSelect = (
@@ -185,7 +221,7 @@ export function StandardSteps({
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className="pt-20 pb-12" style={{ paddingLeft: '15%', paddingRight: '15%' }}>
+      <div className="pt-20 pb-12 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -210,7 +246,7 @@ export function StandardSteps({
             Find Your Solution
           </h1>
           <p className="!text-xl !text-muted-foreground" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
-            Select your industry to begin. We'll guide you to the right foot switch.
+            Select your industry to begin. We'll guide you to the right footswitch.
           </p>
         </motion.div>
 
@@ -299,7 +335,7 @@ export function StandardSteps({
   // Common wrapper for all steps after category selection
   return (
     <Fragment>
-    <div className="pt-16 pb-16" style={{ paddingLeft: '15%', paddingRight: '15%' }}>
+    <div className="pt-16 pb-16 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
       {/* Progress Bar */}
       <div className="mx-auto mb-14" style={{ maxWidth: '700px' }}>
         <div className="flex justify-between !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
@@ -327,7 +363,7 @@ export function StandardSteps({
         connections={connections}
         circuitCounts={circuitCounts}
         features={features}
-        onJumpToStep={wizardState.setStep}
+        onJumpToStep={onJumpToStep}
       />
 
       {/* Screen reader announcements for step changes */}
@@ -340,11 +376,18 @@ export function StandardSteps({
           <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
           </Button>
-          {wizardState.step === 8 && (
-            <Button variant="ghost" onClick={onContinue} className="text-muted-foreground hover:text-foreground">
+          {wizardState.step === 8 ? (
+            <Button variant="ghost" onClick={onResumeOrContinue} className="text-muted-foreground hover:text-foreground">
               Skip <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
             </Button>
-          )}
+          ) : currentAnswer ? (
+            // Step already answered (user came back to review it): let them
+            // move on without re-clicking a card.
+            <Button variant="outline" onClick={onResumeOrContinue} className="gap-1">
+              {wizardState.resumeStep === 9 ? 'Back to results' : 'Continue'}
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Button>
+          ) : null}
         </div>
 
         <AnimatePresence mode="wait">
@@ -360,7 +403,7 @@ export function StandardSteps({
               <div className="space-y-6">
                 <div className="text-center mb-10">
                   <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</h2>
-                  <p className="!text-lg !text-muted-foreground">Choose the specific use case for your foot switch</p>
+                  <p className="!text-lg !text-muted-foreground">Choose the specific use case for your footswitch</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
                   {filteredApplications.map((app, i) => (
@@ -398,7 +441,7 @@ export function StandardSteps({
                         description={tech.description}
                         icon={tech.icon}
                         selected={wizardState.selectedTechnology === tech.id}
-                        count={getProductCount(1, tech.id)}
+                        {...countProps(1, tech.id)}
                         onClick={() => handleSingleSelect(tech.id, wizardState.setSelectedTechnology, 1)}
                         index={i}
                       />
@@ -424,7 +467,7 @@ export function StandardSteps({
                         description={action.description}
                         icon={action.icon}
                         selected={wizardState.selectedAction === action.id}
-                        count={action.id === NO_PREFERENCE ? undefined : getProductCount(2, action.id)}
+                        {...(action.id === NO_PREFERENCE ? {} : countProps(2, action.id))}
                         onClick={() => handleSingleSelect(action.id, wizardState.setSelectedAction, 2)}
                         index={i}
                       />
@@ -448,7 +491,7 @@ export function StandardSteps({
                       icon={env.icon}
                       description={env.description}
                       selected={wizardState.selectedEnvironment === env.id}
-                      count={getProductCount(3, env.id)}
+                      {...countProps(3, env.id)}
                       onClick={() => handleSingleSelect(env.id, wizardState.setSelectedEnvironment, 3)}
                       index={i}
                     />
@@ -472,7 +515,7 @@ export function StandardSteps({
                       description={duty.description}
                       icon={duty.icon}
                       selected={wizardState.selectedDuty === duty.id}
-                      count={duty.id === NO_PREFERENCE ? undefined : getProductCount(4, duty.id)}
+                      {...(duty.id === NO_PREFERENCE ? {} : countProps(4, duty.id))}
                       onClick={() => handleSingleSelect(duty.id, wizardState.setSelectedDuty, 4)}
                       index={i}
                     />
@@ -496,7 +539,7 @@ export function StandardSteps({
                       description={conn.description}
                       icon={conn.icon}
                       selected={wizardState.selectedConnection === conn.id}
-                      count={conn.id === NO_PREFERENCE ? undefined : getProductCount(5, conn.id)}
+                      {...(conn.id === NO_PREFERENCE ? {} : countProps(5, conn.id))}
                       onClick={() => handleSingleSelect(conn.id, wizardState.setSelectedConnection, 5)}
                       index={i}
                     />
@@ -520,7 +563,7 @@ export function StandardSteps({
                       description={cc.description}
                       icon={cc.icon}
                       selected={wizardState.selectedCircuitCount === cc.id}
-                      count={cc.id === NO_PREFERENCE ? undefined : getProductCount(6, cc.id)}
+                      {...(cc.id === NO_PREFERENCE ? {} : countProps(6, cc.id))}
                       onClick={() => handleSingleSelect(cc.id, wizardState.setSelectedCircuitCount, 6)}
                       index={i}
                     />
@@ -542,16 +585,16 @@ export function StandardSteps({
                     description="Safety guard prevents accidental activation."
                     icon={ShieldCheck}
                     selected={wizardState.selectedGuard === 'yes'}
-                    count={getProductCount(7, 'yes')}
+                    {...countProps(7, 'yes')}
                     onClick={() => handleSingleSelect('yes', wizardState.setSelectedGuard, 7)}
                     index={0}
                   />
                   <OptionCard
-                    label="No Guard Needed"
-                    description="No safety guard required."
+                    label="Not Required"
+                    description="Show switches with or without a guard."
                     icon={ShieldOff}
                     selected={wizardState.selectedGuard === 'no'}
-                    count={getProductCount(7, 'no')}
+                    {...countProps(7, 'no')}
                     onClick={() => handleSingleSelect('no', wizardState.setSelectedGuard, 7)}
                     index={1}
                   />
@@ -568,6 +611,8 @@ export function StandardSteps({
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
                   {(features || [])
+                    // The guard was already asked on its own step — don't ask twice
+                    .filter((f) => f.id !== 'shield')
                     .filter((f) => !f.hideFor?.includes(wizardState.selectedTechnology))
                     .map((feat, i) => {
                       const isSelected = wizardState.selectedFeatures.includes(feat.id);

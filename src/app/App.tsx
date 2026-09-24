@@ -14,7 +14,8 @@ import {
 import { Toaster, toast } from 'sonner';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
-import { ResultsPage } from '@/app/components/wizard/ResultsPage';
+import { ResultsPage, type PDFResults } from '@/app/components/wizard/ResultsPage';
+import { ConfirmResetDialog } from '@/app/components/ConfirmResetDialog';
 
 // Lazy load admin panel with fallback for environments like Figma Make
 const AdminContainer = lazy(() =>
@@ -57,11 +58,13 @@ function WizardApp() {
     handleBrowseAll: navBrowseAll,
     handleBack,
     handleContinue,
+    handleResumeOrContinue,
+    jumpToStep,
     handleViewMedicalProducts,
     totalSteps,
     getProgressStep,
     getDisplayStep,
-  } = useWizardNavigation({ wizardState, categories });
+  } = useWizardNavigation({ wizardState, categories, technologies });
 
   const {
     filterProducts,
@@ -144,6 +147,18 @@ function WizardApp() {
     clearWizardStateFromLocal();
   }, [wizardState.resetWizard]);
 
+  // Every Reset / Start over entry point asks first once there's anything to
+  // lose — a stray tap used to wipe all answers and saved progress.
+  const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+  const hasProgress = wizardState.step > 0 || Boolean(wizardState.selectedCategory);
+  const requestReset = useCallback(() => {
+    if (hasProgress) setConfirmResetOpen(true);
+    else handleReset();
+  }, [hasProgress, handleReset]);
+  const confirmResetDialog = (
+    <ConfirmResetDialog open={confirmResetOpen} onOpenChange={setConfirmResetOpen} onConfirm={handleReset} />
+  );
+
   // Start page shortcut → full catalog on the results page. Clears any
   // leftover search/filters so the catalog opens unfiltered.
   const handleBrowseAll = useCallback(() => {
@@ -156,11 +171,12 @@ function WizardApp() {
     navBrowseAll();
   }, [navBrowseAll]);
 
-  // Track no-results as a side effect
+  // Track no-results as a side effect — "no results" means the page is
+  // actually empty (no exact AND no close matches), same as the buyer sees.
   useEffect(() => {
     if (wizardState.step === 9) {
-      const filtered = filterProducts();
-      if (filtered.length === 0) {
+      const split = scoredProducts();
+      if (split.perfect.length === 0 && split.close.length === 0) {
         trackNoResults({
           application: wizardState.selectedApplication,
           technology: wizardState.selectedTechnology,
@@ -170,14 +186,18 @@ function WizardApp() {
         });
       }
     }
-  }, [filterProducts, wizardState.step]);
+  }, [scoredProducts, wizardState.step]);
 
-  const handleGeneratePDF = useCallback(async () => {
+  // `onScreen` = the results page's own lists (exact + close, after search
+  // and More Filters) so the PDF matches what the buyer is looking at.
+  // Without it (medical builder summary) fall back to strict matching.
+  const handleGeneratePDF = useCallback(async (onScreen?: PDFResults) => {
     try {
       const { generatePDF } = await import('@/app/utils/generatePDF');
       await generatePDF({
         wizardState,
-        matchedProducts: filterProducts(),
+        matchedProducts: onScreen ? onScreen.perfect : filterProducts(),
+        closeMatches: onScreen?.close,
         applications, technologies, actions, environments, features, duties,
       });
     } catch (err) {
@@ -193,6 +213,7 @@ function WizardApp() {
   // Medical flow
   if (wizardState.flow === 'medical') {
     return (
+      <>
       <MedicalFlow
         wizardState={wizardState}
         products={products}
@@ -201,8 +222,13 @@ function WizardApp() {
         onContinue={handleContinue}
         onViewStandardProducts={handleViewMedicalProducts}
         onGeneratePDF={handleGeneratePDF}
-        onReset={handleReset}
+        onReset={requestReset}
       />
+      {/* Toasts (PDF errors, quote copy confirmation) — previously only
+          mounted for the standard flow, so medical screens showed none */}
+      <Toaster position="top-right" />
+      {confirmResetDialog}
+      </>
     );
   }
 
@@ -214,7 +240,7 @@ function WizardApp() {
       <a href="#wizard-main" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-lg focus:text-sm focus:font-medium">
         Skip to content
       </a>
-      <Header onReset={handleReset} />
+      <Header onReset={requestReset} />
       <main id="wizard-main">
 
       {wizardState.step >= 0 && wizardState.step <= 8 && (
@@ -239,6 +265,8 @@ function WizardApp() {
           onBrowseAll={handleBrowseAll}
           onBack={handleBack}
           onContinue={handleContinue}
+          onResumeOrContinue={handleResumeOrContinue}
+          onJumpToStep={jumpToStep}
         />
       )}
 
@@ -257,8 +285,11 @@ function WizardApp() {
           getAlternativeProducts={getAlternativeProducts}
           needsCustomSolution={needsCustomSolution}
           onBack={handleBack}
-          onReset={handleReset}
+          onReset={requestReset}
           onGeneratePDF={handleGeneratePDF}
+          connections={connections}
+          circuitCounts={circuitCounts}
+          onJumpToStep={jumpToStep}
           clearDownstreamSelections={clearDownstreamSelections}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -277,6 +308,7 @@ function WizardApp() {
       </main>
     </div>
     <Toaster position="top-right" />
+    {confirmResetDialog}
     </>
   );
 }

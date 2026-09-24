@@ -3,7 +3,7 @@ import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { trackPDFDownload } from '@/app/utils/analytics';
 import { getLogoBase64 } from '@/app/utils/logoBase64';
-import { BUILDER_STEP_CONFIGS, optionLabel } from '@/app/data/options';
+import { BUILDER_STEP_CONFIGS, optionLabel, connections } from '@/app/data/options';
 import { hasPreference } from '@/app/utils/preference';
 
 // Only id/label are read — callers can pass options whose icon is a React
@@ -15,7 +15,10 @@ interface PDFOption {
 
 export interface GeneratePDFOptions {
   wizardState: WizardState;
+  /** Products shown as exact matches on screen, in on-screen order. */
   matchedProducts: Product[];
+  /** Close matches shown on screen, with the reasons they aren't exact. */
+  closeMatches?: { product: Product; reasons: string[] }[];
   applications: PDFOption[];
   technologies: PDFOption[];
   actions: PDFOption[];
@@ -54,6 +57,7 @@ function drawRow(doc: jsPDF, label: string, value: string, y: number, contentWid
 
 export async function generatePDF(opts: GeneratePDFOptions) {
   const { wizardState, matchedProducts, applications, technologies, actions, environments, features, duties } = opts;
+  const closeMatches = opts.closeMatches ?? [];
 
   const isCustomBuilder = wizardState.flow === 'medical' && wizardState.selectedMedicalPath === 'custom';
 
@@ -200,7 +204,8 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     const actionLabel = hasPreference(wizardState.selectedAction)
       ? actions.find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction
       : 'Any';
-    const envLabel = environments.find(e => e.id === wizardState.selectedEnvironment)?.label || wizardState.selectedEnvironment;
+    // optionLabel so "no preference" reads "Any", same as the answers bar
+    const envLabel = optionLabel(environments, wizardState.selectedEnvironment);
 
     const rows: [string, string][] = [
       ['Application', appLabel],
@@ -211,22 +216,17 @@ export async function generatePDF(opts: GeneratePDFOptions) {
 
     if (hasPreference(wizardState.selectedDuty)) {
       const dutyLabel = duties.find(d => d.id === wizardState.selectedDuty)?.label || wizardState.selectedDuty;
-      rows.push(['Duty Class', dutyLabel]);
+      rows.push(['Duty Rating', dutyLabel]);
     }
     if (wizardState.selectedMaterial) rows.push(['Material', wizardState.selectedMaterial]);
     if (hasPreference(wizardState.selectedConnection)) {
-      // Stored as an id like "screw-terminal" — print it human-readable
-      const connLabel = wizardState.selectedConnection
-        .split('-')
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
-      rows.push(['Connection', connLabel]);
+      rows.push(['Connection Type', optionLabel(connections, wizardState.selectedConnection)]);
     }
     if (hasPreference(wizardState.selectedCircuitCount)) {
       const n = wizardState.selectedCircuitCount;
       rows.push(['Circuits Controlled', `${n} ${n === '1' ? 'circuit' : 'circuits'}`]);
     }
-    if (wizardState.selectedGuard) rows.push(['Safety Guard', wizardState.selectedGuard === 'yes' ? 'Required' : 'Not needed']);
+    if (wizardState.selectedGuard) rows.push(['Safety Guard', wizardState.selectedGuard === 'yes' ? 'Required' : 'Not required']);
     if (wizardState.selectedFeatures.length > 0) {
       const featureLabels = wizardState.selectedFeatures
         .map(fId => features.find(f => f.id === fId)?.label || fId)
@@ -243,8 +243,17 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     });
   }
 
-  // ── Matched Products Section (skip for custom builder) ──
-  if (!isCustomBuilder && matchedProducts.length > 0) {
+  // ── Products Section (skip for custom builder) ──
+  // Mirrors the results page: exact matches first, then close matches with the
+  // reasons they differ — so a buyer with only close matches still gets them.
+  // (Plain ASCII punctuation in PDF strings: jsPDF's built-in Helvetica has no
+  // em dash glyph and silently drops it.)
+  const listed: { product: Product; reasons?: string[] }[] = [
+    ...matchedProducts.map(product => ({ product })),
+    ...closeMatches,
+  ];
+  const MAX_LISTED = 5;
+  if (!isCustomBuilder && listed.length > 0) {
     yPos += 6;
 
     doc.setFillColor(240, 245, 255);
@@ -252,13 +261,16 @@ export async function generatePDF(opts: GeneratePDFOptions) {
     doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(99, 102, 241);
-    doc.text(`Recommended Products (${matchedProducts.length})`, 20, yPos + 5.5);
+    const heading = matchedProducts.length > 0
+      ? `Recommended Products (${matchedProducts.length} exact${closeMatches.length ? `, ${closeMatches.length} close` : ''})`
+      : `Closest Matches (${closeMatches.length}): no exact match for every requirement`;
+    doc.text(heading, 20, yPos + 5.5);
     yPos += 14;
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'normal');
 
-    matchedProducts.slice(0, 5).forEach((product, idx) => {
+    listed.slice(0, MAX_LISTED).forEach(({ product, reasons }, idx) => {
       if (yPos > 240) {
         doc.addPage();
         yPos = 20;
@@ -272,6 +284,16 @@ export async function generatePDF(opts: GeneratePDFOptions) {
       doc.text(`${idx + 1}. ${title}`, 20, yPos);
       yPos += 6;
 
+      // Close match: say why it isn't exact
+      if (reasons && reasons.length > 0) {
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(180, 110, 20);
+        const lines = drawWrappedText(doc, `Close match: ${reasons.join('; ')}`, 25, yPos, contentWidth - 15, 4);
+        yPos += lines * 4 + 1;
+        doc.setFont('helvetica', 'normal');
+      }
+
       // Description — wrap to avoid overlap
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
@@ -282,11 +304,11 @@ export async function generatePDF(opts: GeneratePDFOptions) {
       // Specifications — each on its own line to avoid overlap
       doc.setFontSize(8.5);
       doc.setTextColor(60, 60, 60);
-      doc.text(`IP Rating: ${product.ip}  |  Duty: ${product.duty}  |  Material: ${product.material}`, 25, yPos);
+      doc.text(`IP Rating: ${product.ip}  |  Duty Rating: ${product.duty.charAt(0).toUpperCase() + product.duty.slice(1)}  |  Material: ${product.material}`, 25, yPos);
       yPos += 4.5;
 
       if (product.connector_type && product.connector_type !== 'undefined') {
-        doc.text(`Connection: ${product.connector_type.replace(/-/g, ' ')}`, 25, yPos);
+        doc.text(`Connection Type: ${optionLabel(connections, product.connector_type)}`, 25, yPos);
         yPos += 4.5;
       }
 
@@ -295,14 +317,16 @@ export async function generatePDF(opts: GeneratePDFOptions) {
         yPos += 4.5;
       }
 
-      doc.setTextColor(99, 102, 241);
-      doc.setFontSize(8);
-      doc.text(product.link, 25, yPos);
-      doc.setTextColor(0, 0, 0);
+      if (product.link) {
+        doc.setTextColor(99, 102, 241);
+        doc.setFontSize(8);
+        doc.text(product.link, 25, yPos);
+        doc.setTextColor(0, 0, 0);
+      }
       yPos += 7;
 
       // Separator between products
-      if (idx < Math.min(matchedProducts.length, 5) - 1) {
+      if (idx < Math.min(listed.length, MAX_LISTED) - 1) {
         doc.setDrawColor(230, 230, 230);
         doc.setLineWidth(0.2);
         doc.line(25, yPos - 2, pageWidth - 25, yPos - 2);
@@ -310,11 +334,11 @@ export async function generatePDF(opts: GeneratePDFOptions) {
       }
     });
 
-    if (matchedProducts.length > 5) {
+    if (listed.length > MAX_LISTED) {
       yPos += 2;
       doc.setFontSize(9);
       doc.setTextColor(100, 100, 100);
-      doc.text(`+ ${matchedProducts.length - 5} more products available`, 20, yPos);
+      doc.text(`+ ${listed.length - MAX_LISTED} more products (see the online results)`, 20, yPos);
       yPos += 6;
     }
   }
