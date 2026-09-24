@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, Fragment, lazy, Suspense } from 'react';
+import { ON_SITE } from '@/app/utils/embed';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, Search } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
@@ -206,7 +207,11 @@ export function StandardSteps({
     ? (applications || []).filter(app => app.parentCategory === wizardState.selectedCategory)
     : (applications || []);
 
-  const progressPercent = Math.round((getProgressStep(wizardState.step) / totalSteps) * 100);
+  // The industry pick counts as step 1, so the first question after it
+  // already shows progress ("Step 2 of 10") instead of "Step 1 · 0%".
+  const displayStep = getDisplayStep(wizardState.step) + 1;
+  const displayTotal = totalSteps + 1;
+  const progressPercent = Math.round(((displayStep - 1) / displayTotal) * 100);
 
   // Wizard companion easter egg — lazily loaded so the ASCII art stays out
   // of the main bundle until the user actually toggles it on. Stays mounted
@@ -221,7 +226,19 @@ export function StandardSteps({
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className="pt-20 pb-12 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
+      <div className={`${ON_SITE ? 'pt-14' : 'pt-20'} pb-12 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]`}>
+        {ON_SITE ? (
+          // The linemaster.com page already carries the "Product Finder"
+          // title, so embedded mode opens with just the prompt.
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="!text-2xl !font-semibold text-center mb-10"
+          >
+            Select your industry to begin. We'll guide you to the right footswitch.
+          </motion.p>
+        ) : (<>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -255,6 +272,7 @@ export function StandardSteps({
           <span className="!text-base font-semibold uppercase tracking-widest !text-muted-foreground">Choose Your Industry</span>
           <div className="h-px flex-1 bg-border" />
         </div>
+        </>)}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto" style={{ maxWidth: '960px' }}>
           {(categories || []).map((category, i) => (
@@ -339,14 +357,13 @@ export function StandardSteps({
       {/* Progress Bar */}
       <div className="mx-auto mb-14" style={{ maxWidth: '700px' }}>
         <div className="flex justify-between !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
-          <span className="uppercase">Step {getDisplayStep(wizardState.step)} of {totalSteps}</span>
-          <span className="tabular-nums">{progressPercent}%</span>
+          <span className="uppercase">Step {displayStep} of {displayTotal}</span>
         </div>
-        <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`Wizard progress: step ${getDisplayStep(wizardState.step)} of ${totalSteps}`}>
+        <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`Wizard progress: step ${displayStep} of ${displayTotal}`}>
           <motion.div
             className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full progress-glow"
             initial={{ width: 0 }}
-            animate={{ width: `${(getProgressStep(wizardState.step) / totalSteps) * 100}%` }}
+            animate={{ width: `${progressPercent}%` }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           />
         </div>
@@ -372,7 +389,7 @@ export function StandardSteps({
       </div>
 
       <div className="w-full" ref={stepContentRef} tabIndex={-1} style={{ outline: 'none' }}>
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mx-auto mb-4" style={{ maxWidth: '700px' }}>
           <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
             <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
           </Button>

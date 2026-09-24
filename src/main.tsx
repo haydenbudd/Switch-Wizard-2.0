@@ -9,6 +9,10 @@ const mountEl =
   document.getElementById("root");
 
 if (mountEl) {
+  // Embedded on linemaster.com: blend into the host page (see theme.css)
+  if (mountEl.id === "lm-wizard-root") {
+    document.getElementById("lm-product-finder")?.classList.add("lm-on-site");
+  }
   createRoot(mountEl).render(
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <App />

@@ -25,6 +25,8 @@ export default {
         if (selector === '.dark') return `${prefix}.lm-dark`;
         if (selector === '.dark body' || selector === '.dark html') return `${prefix}.lm-dark`;
         if (selector.startsWith('.dark ')) return selector.replace('.dark ', `${prefix}.lm-dark `);
+        // Embedded-on-linemaster.com state class, set on the wrapper itself
+        if (selector.startsWith('.lm-on-site')) return `${prefix}${selector}`;
         return prefixedSelector;
       },
     }),
