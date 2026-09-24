@@ -118,11 +118,7 @@ export const categories: Option[] = [
     id: 'medical',
     label: 'Medical & Healthcare',
     icon: Heart,
-    // A stock Gem next to a custom Aero Channel: the two paths inside Medical
-    image: [
-      'https://linemaster.com/cdn/images/products/161/161-a-shadow@400.png',
-      'https://linemaster.com/wp-content/uploads/2026/05/linemaster-switch-twin-areo-w-logo-1024x636.png',
-    ],
+    image: 'https://linemaster.com/wp-content/uploads/2026/05/linemaster-switch-twin-areo-w-logo-1024x636.png',
     nextChoices: ['Stock switches', 'Custom Aero / Crescent'],
     description: 'Surgical, diagnostic, patient care equipment',
     isMedical: true,
