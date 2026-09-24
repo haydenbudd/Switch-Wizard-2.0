@@ -100,6 +100,8 @@ export interface Option {
   hideFor?: string[];
   parentCategory?: string;
   sortOrder?: number;
+  /** Product photo shown on the start-screen industry cards */
+  image?: string;
 }
 
 export const categories: Option[] = [
@@ -107,12 +109,14 @@ export const categories: Option[] = [
     id: 'industrial',
     label: 'Industrial & Manufacturing',
     icon: Building2,
+    image: 'https://linemaster.com/wp-content/uploads/2025/04/hercules-full-shield.png',
     description: 'Heavy-duty, rugged industrial environments',
   },
   {
     id: 'medical',
     label: 'Medical & Healthcare',
     icon: Heart,
+    image: 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
     description: 'Surgical, diagnostic, patient care equipment',
     isMedical: true,
   },
@@ -120,6 +124,7 @@ export const categories: Option[] = [
     id: 'commercial',
     label: 'Commercial & Specialty',
     icon: Briefcase,
+    image: 'https://linemaster.com/wp-content/uploads/2025/04/clipper_duo.png',
     description: 'Automotive, creative, and general-purpose applications',
   },
 ];

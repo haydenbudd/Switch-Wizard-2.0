@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, Fragment, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, Fragment, lazy, Suspense, type ElementType } from 'react';
 import { ON_SITE } from '@/app/utils/embed';
+import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, Search } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
@@ -85,6 +86,33 @@ interface StandardStepsProps {
   onResumeOrContinue: () => void;
   /** Breadcrumb jump that remembers where the user came from. */
   onJumpToStep: (step: number) => void;
+}
+
+/**
+ * Start-screen industry card visual: a real Linemaster product photo, or the
+ * category icon if the photo can't load (offline, image CDN blocked).
+ */
+function CategoryVisual({ image, icon: Icon }: { image?: string; icon?: ElementType }) {
+  const [failed, setFailed] = useState(false);
+  if (image && !failed) {
+    return (
+      <div className="w-full h-24 md:h-32 mb-4 flex items-center justify-center shrink-0">
+        <img
+          src={getProxiedImageUrl(image, { width: 320 })}
+          srcSet={getProxiedImageSrcSet(image, 320)}
+          alt=""
+          loading="eager"
+          onError={() => setFailed(true)}
+          className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 mb-4 shrink-0">
+      {Icon && <Icon className="w-8 h-8" aria-hidden="true" />}
+    </div>
+  );
 }
 
 export function StandardSteps({
@@ -287,15 +315,13 @@ export function StandardSteps({
                 hoverEffect
                 interactive
                 aria-label={category.label}
-                className="p-8 md:p-10 h-full transition-all duration-300 group"
+                className="p-6 md:p-7 h-full transition-all duration-300 group"
                 onClick={() => onCategorySelect(category.id)}
               >
                 <div className="flex flex-col items-center text-center h-full min-w-0">
-                  <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:scale-105 mb-5 shrink-0">
-                    {category.icon && <category.icon className="w-8 h-8" aria-hidden="true" />}
-                  </div>
-                  <span className="!text-2xl !font-semibold tracking-tight mb-3 w-full">{category.label}</span>
-                  <p className="!text-base !text-muted-foreground mt-auto">
+                  <CategoryVisual image={category.image} icon={category.icon} />
+                  <span className="!text-2xl !font-semibold tracking-tight mb-2 w-full">{category.label}</span>
+                  <p className="!text-base !text-muted-foreground">
                     {category.description}
                   </p>
                 </div>
@@ -309,13 +335,12 @@ export function StandardSteps({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.45, duration: 0.5 }}
-          className="flex flex-col items-center gap-2 mt-10"
+          className="flex flex-col items-center gap-3 mt-8"
         >
-          <span className="!text-base !text-muted-foreground">Already know what you need?</span>
+          <span className="!text-lg !font-medium">Already know what you need?</span>
           <Button
-            variant="outline"
             onClick={onBrowseAll}
-            className="gap-2 !text-lg h-auto px-6 py-3 rounded-full group"
+            className="gap-2 !text-base sm:!text-lg h-auto max-w-full whitespace-normal text-center px-5 sm:px-7 py-3.5 rounded-full group shadow-md shadow-primary/20"
           >
             <Search className="w-5 h-5" aria-hidden="true" />
             Skip the questions: search &amp; compare all products
@@ -328,7 +353,7 @@ export function StandardSteps({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.8 }}
-          className="flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-20 pt-10 border-t border-border/50"
+          className="flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-14 pt-8 border-t border-border/50"
         >
           <div className="flex items-center gap-3 text-muted-foreground">
             <ShieldCheck className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
