@@ -282,6 +282,26 @@ export function StandardSteps({
     </Suspense>
   ) : null;
 
+  // "Linemaster Switch Wizard" label — clicking it summons the ASCII
+  // wizard easter egg. Kept (smaller) on linemaster.com, where the big
+  // heading is dropped, so the egg still has a trigger there.
+  const wizardEyebrow = (
+    <span
+      className={`inline-block font-medium text-muted-foreground tracking-wide uppercase cursor-pointer hover:text-primary focus-visible:text-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-md px-2 -mx-2 ${ON_SITE ? '!text-sm' : 'text-lg md:text-xl mb-3'}`}
+      onClick={() => setShowWizard(prev => !prev)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowWizard(prev => !prev); } }}
+      role="button"
+      tabIndex={0}
+      aria-pressed={showWizard}
+      aria-label={showWizard ? 'Hide Switch Wizard companion' : 'Show Switch Wizard companion'}
+    >
+      <span style={{ position: 'relative', display: 'inline-block' }}>
+        <WizardHat visible={showWizard} />
+        L
+      </span>inemaster Switch Wizard
+    </span>
+  );
+
   // Step 0: Category Selection
   if (wizardState.step === 0 && !wizardState.selectedCategory) {
     return (
@@ -296,6 +316,7 @@ export function StandardSteps({
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="!text-2xl !font-semibold text-center mb-10"
           >
+            <span className="block mb-2">{wizardEyebrow}</span>
             Select your industry to begin. We'll guide you to the right footswitch.
           </motion.p>
         ) : (<>
@@ -305,20 +326,7 @@ export function StandardSteps({
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="text-center mb-16"
         >
-          <p
-            className="text-lg md:text-xl font-medium text-muted-foreground mb-3 tracking-wide uppercase cursor-pointer hover:text-primary focus-visible:text-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-md px-2 -mx-2"
-            onClick={() => setShowWizard(prev => !prev)}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowWizard(prev => !prev); } }}
-            role="button"
-            tabIndex={0}
-            aria-pressed={showWizard}
-            aria-label={showWizard ? 'Hide Switch Wizard companion' : 'Show Switch Wizard companion'}
-          >
-            <span style={{ position: 'relative', display: 'inline-block' }}>
-              <WizardHat visible={showWizard} />
-              L
-            </span>inemaster Switch Wizard
-          </p>
+          {wizardEyebrow}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
             Find Your Solution
           </h1>
