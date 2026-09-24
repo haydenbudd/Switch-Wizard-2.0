@@ -50,6 +50,8 @@ interface ProductDetailModalProps {
   product: Product | null;
   open: boolean;
   onClose: () => void;
+  /** Hide the Top Choice badge (skip-the-questions catalog). */
+  hideTopChoice?: boolean;
 }
 
 function MaterialIcon({ material }: { material: string }) {
@@ -110,7 +112,7 @@ function DetailedSpecs({ specs }: { specs: Record<string, string> }) {
   );
 }
 
-export function ProductDetailModal({ product, open, onClose }: ProductDetailModalProps) {
+export function ProductDetailModal({ product, open, onClose, hideTopChoice }: ProductDetailModalProps) {
   // Radix Dialog handles focus trap, return-focus, scroll lock, and Escape
   // for free — no manual effects needed.
 
@@ -190,7 +192,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
             {/* Hero image */}
             <div className="relative bg-gradient-to-b from-secondary/80 to-transparent p-8 pb-6 flex items-center justify-center min-h-[220px]">
-              {product.flagship && (
+              {product.flagship && !hideTopChoice && (
                 <div className="absolute top-4 left-4">
                   <Badge className="bg-[var(--accent-warm)] !text-[var(--accent-warm-foreground)] border-transparent flex items-center gap-1 text-sm">
                     <Star className="w-6 h-6 fill-current" />

@@ -620,6 +620,7 @@ export function ResultsPage({
                     onCompareToggle={handleCompareToggle}
                     onViewDetails={setDetailProduct}
                     priority={i < 4}
+                    hideTopChoice={isBrowseAll}
                   />
                 ))}
               </div>
@@ -730,6 +731,7 @@ export function ResultsPage({
         product={detailProduct}
         open={detailProduct !== null}
         onClose={() => setDetailProduct(null)}
+        hideTopChoice={isBrowseAll}
       />
 
       {/* Compare Slide-up Panel */}

@@ -49,11 +49,14 @@ interface ProductCardProps {
   priority?: boolean;
   /** When this is a close match (not perfect), names of criteria it falls short on */
   differsOn?: string[];
+  /** Hide the Top Choice badge — e.g. in the skip-the-questions catalog,
+   *  where there are no answers to base a recommendation on. */
+  hideTopChoice?: boolean;
 }
 
-export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle, onViewDetails, priority, differsOn }: ProductCardProps) {
+export const ProductCard = memo(function ProductCard({ product, isComparing, onCompareToggle, onViewDetails, priority, differsOn, hideTopChoice }: ProductCardProps) {
   if (!product) return null;
-  const isFlagship = product.flagship;
+  const isFlagship = product.flagship && !hideTopChoice;
 
   return (
     <GlassCard

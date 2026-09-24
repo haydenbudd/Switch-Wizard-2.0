@@ -300,7 +300,7 @@ export function StandardSteps({
             className="gap-2 !text-lg h-auto px-6 py-3 rounded-full group"
           >
             <Search className="w-5 h-5" aria-hidden="true" />
-            Skip the questions — search &amp; compare all products
+            Skip the questions: search &amp; compare all products
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </Button>
         </motion.div>
