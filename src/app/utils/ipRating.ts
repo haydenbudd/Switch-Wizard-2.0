@@ -8,6 +8,7 @@
 const MEANING: Record<string, string> = {
   IPXX: 'No IP rating — for clean, dry, protected locations.',
   IP20: 'IP20: protected against fingers and small debris; no protection against water.',
+  IP41: 'IP41: protected against objects over 1 mm and vertically dripping water.',
   IP56: 'IP56: dust-protected and resists powerful water jets.',
   IP68: 'IP68: dust-tight and protected against continuous submersion.',
 };
@@ -15,6 +16,7 @@ const MEANING: Record<string, string> = {
 const SHORT: Record<string, string> = {
   IPXX: 'Not IP-rated',
   IP20: 'IP20 · indoor, not water-resistant',
+  IP41: 'IP41 · drip-resistant',
   IP56: 'IP56 · dust & water-jet resistant',
   IP68: 'IP68 · dust-tight, submersible',
 };
