@@ -1,7 +1,7 @@
 import { GlassCard } from '@/app/components/GlassCard';
 import { ProductCard } from '@/app/components/ProductCard';
 import { ProductDetailModal } from '@/app/components/ProductDetailModal';
-import { CompareProducts } from '@/app/components/wizard/CompareProducts';
+import { CompareProducts, MAX_COMPARE } from '@/app/components/wizard/CompareProducts';
 import { Button } from '@/app/components/ui/button';
 import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
@@ -32,8 +32,6 @@ import {
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { getProcessedProducts } from '@/app/utils/productFilters';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
-
-const MAX_COMPARE = 3;
 
 // Friendly names for the internal filter keys shown in the no-results
 // "remove this filter" recovery button
@@ -144,7 +142,7 @@ export function ResultsPage({
     setCompareIds(prev => {
       if (prev.includes(id)) return prev.filter(x => x !== id);
       if (prev.length >= MAX_COMPARE) {
-        toast.info(`Maximum ${MAX_COMPARE} products can be compared`);
+        toast.info(`You can compare up to ${MAX_COMPARE} products — remove one to add another`);
         return prev;
       }
       return [...prev, id];
@@ -740,6 +738,7 @@ export function ResultsPage({
         open={compareOpen}
         onOpenChange={setCompareOpen}
         onRemove={(id) => setCompareIds(prev => prev.filter(x => x !== id))}
+        onClear={() => { setCompareIds([]); setCompareOpen(false); }}
       />
 
       {/* Mobile Action Drawer */}
