@@ -3,7 +3,20 @@ import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { matchesEnvironment } from '@/app/utils/productFilters';
 import { scoreAndSplit, type SplitResults } from '@/app/utils/matchScore';
-import { hasPreference, NO_PREFERENCE } from '@/app/utils/preference';
+import { hasPreference } from '@/app/utils/preference';
+
+/** Wizard step index → the answer field it sets (step 8 = multi-select features). */
+const STEP_FIELDS = [
+  'selectedApplication', 'selectedTechnology', 'selectedAction', 'selectedEnvironment',
+  'selectedDuty', 'selectedConnection', 'selectedCircuitCount', 'selectedGuard', 'selectedFeatures',
+] as const;
+
+export interface OptionCount {
+  /** Products that would match every answer so far exactly. */
+  exact: number;
+  /** Products that would be close matches (differ on something). */
+  close: number;
+}
 
 interface UseProductFilteringOptions {
   wizardState: WizardState;
@@ -43,92 +56,21 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
     });
   }, [products, wizardState]);
 
-  // Pre-compute product counts for each option at each step in a single pass
-  const productCountMap = useMemo(() => {
-    const safeProducts = products || [];
-    const counts = new Map<string, number>();
-
-    // Helper to make composite keys
-    const key = (step: number, optionId: string) => `${step}:${optionId}`;
-
-    for (const p of safeProducts) {
-      const matchesApp = p.applications.includes(wizardState.selectedApplication);
-      if (!matchesApp) continue;
-
-      // Step 1: Technology
-      counts.set(key(1, p.technology), (counts.get(key(1, p.technology)) || 0) + 1);
-
-      const matchesTech = p.technology === wizardState.selectedTechnology;
-      if (!matchesTech) continue;
-
-      // Step 2: Action
-      for (const action of p.actions) {
-        counts.set(key(2, action), (counts.get(key(2, action)) || 0) + 1);
-      }
-      // "no_preference" matches everything at this filtering level
-      counts.set(key(2, NO_PREFERENCE), (counts.get(key(2, NO_PREFERENCE)) || 0) + 1);
-
-      const matchesAction =
-        !hasPreference(wizardState.selectedAction) ||
-        p.actions.includes(wizardState.selectedAction);
-      if (!matchesAction) continue;
-
-      // Step 3: Environment — check each env option against this product's IP
-      for (const env of ['open', 'dry', 'damp', 'wet', 'any']) {
-        if (matchesEnvironment(env, p.ip)) {
-          counts.set(key(3, env), (counts.get(key(3, env)) || 0) + 1);
-        }
-      }
-
-      const matchesEnv = matchesEnvironment(wizardState.selectedEnvironment, p.ip);
-      if (!matchesEnv) continue;
-
-      // Step 4: Duty
-      counts.set(key(4, p.duty), (counts.get(key(4, p.duty)) || 0) + 1);
-      // "no_preference" matches everything at this filtering level
-      counts.set(key(4, NO_PREFERENCE), (counts.get(key(4, NO_PREFERENCE)) || 0) + 1);
-
-      const matchesDuty =
-        !hasPreference(wizardState.selectedDuty) ||
-        p.duty === wizardState.selectedDuty;
-      if (!matchesDuty) continue;
-
-      // Step 5: Connection Type
-      if (p.connector_type) {
-        counts.set(key(5, p.connector_type), (counts.get(key(5, p.connector_type)) || 0) + 1);
-      }
-      // "no_preference" matches everything at this filtering level
-      counts.set(key(5, NO_PREFERENCE), (counts.get(key(5, NO_PREFERENCE)) || 0) + 1);
-
-      const matchesConnection = wizardState.selectedTechnology === 'pneumatic' || !hasPreference(wizardState.selectedConnection) || p.connector_type === wizardState.selectedConnection;
-      if (!matchesConnection) continue;
-
-      // Step 6: Circuit Count
-      if (p.circuitry) {
-        counts.set(key(6, p.circuitry), (counts.get(key(6, p.circuitry)) || 0) + 1);
-      }
-      // "no_preference" matches everything at this filtering level
-      counts.set(key(6, NO_PREFERENCE), (counts.get(key(6, NO_PREFERENCE)) || 0) + 1);
-
-      const matchesCircuit = !hasPreference(wizardState.selectedCircuitCount) || p.circuitry === wizardState.selectedCircuitCount;
-      if (!matchesCircuit) continue;
-
-      // Step 7: Guard
-      const hasShield = (p.features || []).includes('shield');
-      if (hasShield) {
-        counts.set(key(7, 'yes'), (counts.get(key(7, 'yes')) || 0) + 1);
-      }
-      // 'no' = no preference, all products count
-      counts.set(key(7, 'no'), (counts.get(key(7, 'no')) || 0) + 1);
+  // Per-option counts for the wizard cards, computed with the SAME scoring the
+  // results page uses — "if you pick this, how many exact and close matches
+  // would you get?" (later answers ignored). Previously these used strict
+  // filtering, so cards were greyed out as "No products available" even when
+  // picking them would have shown close matches.
+  const getProductCount = useCallback((step: number, optionId?: string): OptionCount => {
+    if (!optionId || step < 0 || step >= STEP_FIELDS.length) return { exact: 0, close: 0 };
+    const overrides: Record<string, unknown> = {};
+    for (let i = step + 1; i < STEP_FIELDS.length; i++) {
+      overrides[STEP_FIELDS[i]] = STEP_FIELDS[i] === 'selectedFeatures' ? [] : '';
     }
-
-    return counts;
-  }, [products, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedDuty, wizardState.selectedConnection, wizardState.selectedCircuitCount]);
-
-  const getProductCount = useCallback((step: number, optionId?: string) => {
-    if (!optionId) return 0;
-    return productCountMap.get(`${step}:${optionId}`) || 0;
-  }, [productCountMap]);
+    overrides[STEP_FIELDS[step]] = optionId;
+    const split = scoreAndSplit(products || [], { ...wizardState, ...overrides } as WizardState);
+    return { exact: split.perfect.length, close: split.close.length };
+  }, [products, wizardState]);
 
   const getAlternativeProducts = useCallback(() => {
     // "no_preference" never constrains results, so relaxing it is a no-op —
@@ -141,7 +83,8 @@ export function useProductFiltering({ wizardState, products }: UseProductFilteri
       const withoutFeatures = filterProducts({ selectedFeatures: [] });
       if (withoutFeatures.length > 0) return { products: withoutFeatures, relaxed: 'features' as const };
     }
-    if (wizardState.selectedGuard) {
+    // "no" means no preference — relaxing it can't add results
+    if (wizardState.selectedGuard === 'yes') {
       const withoutGuard = filterProducts({ selectedFeatures: [], selectedGuard: '' });
       if (withoutGuard.length > 0) return { products: withoutGuard, relaxed: 'guard' as const };
     }

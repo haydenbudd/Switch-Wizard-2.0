@@ -1,6 +1,10 @@
 import { memo } from 'react';
 import { ChevronRight } from 'lucide-react';
-import { optionLabel, type Option } from '@/app/data/options';
+import { optionLabel } from '@/app/data/options';
+
+/** Only id + label are read, so any option list shape works. */
+type LabeledOption = { id: string; label: string };
+type Option = LabeledOption;
 import type { WizardState } from '@/app/hooks/useWizardState';
 
 interface WizardBreadcrumbProps {
@@ -14,6 +18,10 @@ interface WizardBreadcrumbProps {
   circuitCounts: Option[];
   features: Option[];
   onJumpToStep: (step: number) => void;
+  /** Optional heading, e.g. on the results page. */
+  title?: string;
+  /** Wrap onto several lines (results page) instead of one scrolling row. */
+  wrap?: boolean;
 }
 
 // Compact summary value: multi-select arrays truncate to "first, second +N"
@@ -50,7 +58,7 @@ const CRUMB_CONFIG = [
  * handleSingleSelect machinery clears downstream for them.
  */
 export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBreadcrumbProps) {
-  const { wizardState, features, onJumpToStep } = props;
+  const { wizardState, features, onJumpToStep, title, wrap } = props;
 
   const optionSources: Record<(typeof CRUMB_CONFIG)[number]['source'], Option[]> = {
     applications: props.applications,
@@ -74,7 +82,7 @@ export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBrea
     crumbs.push({
       step: 7,
       label: 'Guard',
-      value: wizardState.selectedGuard === 'yes' ? 'Required' : 'Not needed',
+      value: wizardState.selectedGuard === 'yes' ? 'Required' : 'Not required',
     });
   }
   if (wizardState.selectedFeatures.length > 0) {
@@ -91,10 +99,13 @@ export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBrea
   return (
     <nav
       aria-label="Your wizard answers"
-      className="mx-auto mb-6"
-      style={{ maxWidth: '900px' }}
+      className={wrap ? 'mb-2' : 'mx-auto mb-6'}
+      style={wrap ? undefined : { maxWidth: '900px' }}
     >
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 px-1">
+      {title && (
+        <p className="!text-sm !font-medium !text-muted-foreground mb-2 px-1">{title}</p>
+      )}
+      <div className={wrap ? 'flex flex-wrap items-center gap-2 px-1' : 'flex items-center gap-2 overflow-x-auto pb-1 -mb-1 px-1'}>
         {crumbs.map((c, idx) => (
           <div key={c.step} className="flex items-center gap-2 shrink-0">
             {idx > 0 && (

@@ -38,13 +38,22 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
   }, [categories, clearDownstreamSelections, wizardState.setSelectedCategory, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
   const handleApplicationSelect = useCallback((id: string) => {
+    // Re-picking the same industry (e.g. after jumping back via the
+    // breadcrumb to check it) must not wipe every later answer.
+    if (id === wizardState.selectedApplication && wizardState.flow === 'standard') {
+      const target = wizardState.resumeStep ?? 1;
+      wizardState.setResumeStep(null);
+      wizardState.setStep(target);
+      return;
+    }
+    wizardState.setResumeStep(null);
     wizardState.setSelectedApplication(id);
     wizardState.setSelectedTechnology('');
     clearDownstreamSelections(0);
     wizardState.setFlow('standard');
     wizardState.setStep(1);
     trackWizardStep(0, 'standard', { application: id });
-  }, [clearDownstreamSelections, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
+  }, [clearDownstreamSelections, wizardState.selectedApplication, wizardState.flow, wizardState.resumeStep, wizardState.setResumeStep, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
   // Skip the questions entirely: land on the results page with no wizard
   // answers, which scores every product as a match (see scoreAndSplit) —
@@ -120,13 +129,48 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
     });
   }, [wizardState.step, wizardState.flow, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedFeatures, wizardState.setStep]);
 
+  // Advance from a step whose answer is unchanged: return to where the user
+  // was before they jumped back to edit, otherwise just go to the next step.
+  const handleResumeOrContinue = useCallback(() => {
+    if (wizardState.resumeStep !== null) {
+      const target = wizardState.resumeStep;
+      wizardState.setResumeStep(null);
+      wizardState.setStep(target);
+      return;
+    }
+    handleContinue();
+  }, [wizardState.resumeStep, wizardState.setResumeStep, wizardState.setStep, handleContinue]);
+
+  // Breadcrumb / results-page "edit this answer" jump. Remembers where the
+  // user came from so an unchanged answer takes them straight back.
+  const jumpToStep = useCallback((target: number) => {
+    // Medical stock results live on the standard results page but their
+    // questions live in the medical flow — route edits there instead of
+    // into standard steps the buyer never saw.
+    if (wizardState.selectedApplication === 'medical') {
+      wizardState.setResumeStep(null);
+      if (target <= 1) {
+        wizardState.setFlow('standard');
+        wizardState.setStep(0);
+        wizardState.setSelectedCategory('');
+        wizardState.setSelectedApplication('');
+      } else {
+        wizardState.setFlow('medical');
+        wizardState.setStep(target >= 3 ? 3 : 2);
+      }
+      return;
+    }
+    if (target < wizardState.step) wizardState.setResumeStep(wizardState.step);
+    wizardState.setStep(target);
+  }, [wizardState.selectedApplication, wizardState.step, wizardState.setResumeStep, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
+
   const handleViewMedicalProducts = useCallback(() => {
-    wizardState.setSelectedTechnology('electrical');
+    // No technology filter: wired and wireless medical switches both qualify
+    wizardState.setSelectedTechnology('');
     wizardState.setStep(9);
     wizardState.setFlow('standard');
     trackWizardStep(9, 'standard', {
       application: wizardState.selectedApplication,
-      technology: 'electrical',
       action: wizardState.selectedAction,
       environment: wizardState.selectedEnvironment,
       source: 'medical_bypass'
@@ -164,6 +208,8 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
     handleBrowseAll,
     handleBack,
     handleContinue,
+    handleResumeOrContinue,
+    jumpToStep,
     handleViewMedicalProducts,
     totalSteps,
     getProgressStep,

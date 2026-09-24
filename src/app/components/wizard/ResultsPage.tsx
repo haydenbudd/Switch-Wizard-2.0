@@ -10,6 +10,8 @@ import { buildShareUrl } from '@/app/utils/shareUrl';
 import { toast } from 'sonner';
 import { EnhancedSearch } from '@/app/components/EnhancedSearch';
 import { FilterChip } from '@/app/components/FilterChip';
+import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
+import { resultsQuoteMailto } from '@/app/utils/quote';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -51,6 +53,12 @@ interface LabeledOption {
   label: string;
 }
 
+/** The results page's on-screen lists, handed to the PDF generator. */
+export interface PDFResults {
+  perfect: Product[];
+  close: { product: Product; reasons: string[] }[];
+}
+
 interface ResultsPageProps {
   wizardState: WizardState;
   products: Product[];
@@ -66,7 +74,11 @@ interface ResultsPageProps {
   needsCustomSolution: boolean;
   onBack: () => void;
   onReset: () => void;
-  onGeneratePDF: () => void;
+  onGeneratePDF: (onScreen?: PDFResults) => void;
+  connections: LabeledOption[];
+  circuitCounts: LabeledOption[];
+  /** Edit an earlier answer (breadcrumb chip) — returns here if unchanged. */
+  onJumpToStep: (step: number) => void;
   clearDownstreamSelections: (step: number) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
@@ -98,6 +110,9 @@ export function ResultsPage({
   onBack,
   onReset,
   onGeneratePDF,
+  connections,
+  circuitCounts,
+  onJumpToStep,
   clearDownstreamSelections,
   searchTerm,
   setSearchTerm,
@@ -313,28 +328,39 @@ export function ResultsPage({
   // catalog — no "recommended" framing, no PDF summary or share link.
   const isBrowseAll = wizardState.flow === 'standard' && !wizardState.selectedApplication;
 
-  // Only show the filter-chip bar when there's at least one chip to display —
-  // an empty bar reading just "Filters:" is confusing.
+  // On-page refinements (search box + More Filters). The wizard's own answers
+  // are shown separately in the "Your answers" bar, where each one can be
+  // edited in place rather than removed.
   const hasActiveFilters = Boolean(
-    wizardState.selectedApplication ||
-    wizardState.selectedTechnology ||
-    wizardState.selectedAction ||
-    (wizardState.selectedEnvironment && wizardState.selectedEnvironment !== 'any') ||
     searchTerm ||
     dutyFilter.length > 0 ||
     materialFilter.length > 0 ||
-    technologyFilter.length > 0
+    technologyFilter.length > 0 ||
+    cordedFilter !== 'all'
   );
 
-  // Build mailto for custom solution / contact engineering
-  const contactSubject = encodeURIComponent('Custom Foot Switch Inquiry');
-  const contactBody = encodeURIComponent(
-    `Hello,\n\nI'm looking for a foot switch with the following requirements:\n\n` +
-    `Application: ${wizardState.selectedApplication || 'N/A'}\n` +
-    `Technology: ${wizardState.selectedTechnology || 'N/A'}\n` +
-    `Features: ${wizardState.selectedFeatures.join(', ') || 'N/A'}\n\n` +
-    `Please contact me to discuss options.\n\nThank you.`
-  );
+  const clearOnPageFilters = () => {
+    setSearchTerm('');
+    setDutyFilter([]);
+    setMaterialFilter([]);
+    setTechnologyFilter([]);
+    setCordedFilter('all');
+  };
+
+  // Quote request: readable answers + the products in play (the compare
+  // selection if there is one, otherwise the top results).
+  const quoteHref = resultsQuoteMailto({
+    wizardState,
+    sources: { applications, technologies, actions, environments, duties, connections, circuitCounts, features },
+    products: compareProducts.length > 0 ? compareProducts : finalResults,
+    needsCustom: needsCustomSolution,
+  });
+
+  // What the PDF should list — exactly what's on screen
+  const pdfResults: PDFResults = {
+    perfect: finalPerfect,
+    close: finalClose.map(product => ({ product, reasons: differsOnMap.get(product.id) ?? [] })),
+  };
 
   return (
     <div className="w-full py-8 pb-32" style={{ paddingLeft: '5%', paddingRight: '5%' }}>
@@ -368,12 +394,18 @@ export function ResultsPage({
                   <Link className="w-6 h-6" aria-hidden="true" />
                   <span className="hidden sm:inline">Copy Link</span>
                 </Button>
-                <Button variant="outline" onClick={onGeneratePDF} className="gap-2 !text-base" aria-label="Download results as PDF">
+                <Button variant="outline" onClick={() => onGeneratePDF(pdfResults)} className="gap-2 !text-base" aria-label="Download results as PDF">
                   <Download className="w-6 h-6" aria-hidden="true" />
                   <span className="hidden sm:inline">Download PDF</span>
                 </Button>
               </>
             )}
+            <Button asChild className="gap-2 !text-base" aria-label="Request a quote by email">
+              <a href={quoteHref}>
+                <Mail className="w-6 h-6" aria-hidden="true" />
+                <span className="hidden sm:inline">Request a Quote</span>
+              </a>
+            </Button>
             <Button variant="ghost" onClick={onReset} className="gap-2 !text-base" aria-label="Reset wizard and start over">
               <RefreshCw className="w-6 h-6" aria-hidden="true" />
               <span className="hidden sm:inline">Reset</span>
@@ -381,35 +413,29 @@ export function ResultsPage({
           </div>
         </div>
 
-        {/* Active Filters Display */}
+        {/* The buyer's wizard answers — every one of them, each tappable to
+            edit that step (unchanged answers bring them straight back). */}
+        {!isBrowseAll && (
+          <WizardBreadcrumb
+            wizardState={wizardState}
+            applications={applications}
+            technologies={technologies}
+            actions={actions}
+            environments={environments}
+            duties={duties}
+            connections={connections}
+            circuitCounts={circuitCounts}
+            features={features}
+            onJumpToStep={onJumpToStep}
+            title="Your answers — tap one to change it"
+            wrap
+          />
+        )}
+
+        {/* On-page refinements */}
         {hasActiveFilters && (
         <div className="flex flex-wrap gap-2 items-center glass-card p-3 rounded-xl">
           <span className="text-base !font-medium !text-muted-foreground mr-2">Filters:</span>
-
-          {wizardState.selectedApplication && (
-            <FilterChip
-              label={(applications || []).find(a => a.id === wizardState.selectedApplication)?.label || wizardState.selectedApplication}
-              onRemove={() => removeWizardFilter('application')}
-            />
-          )}
-          {wizardState.selectedTechnology && (
-            <FilterChip
-              label={(technologies || []).find(t => t.id === wizardState.selectedTechnology)?.label || wizardState.selectedTechnology}
-              onRemove={() => removeWizardFilter('technology')}
-            />
-          )}
-          {wizardState.selectedAction && (
-            <FilterChip
-              label={(actions || []).find(a => a.id === wizardState.selectedAction)?.label || wizardState.selectedAction}
-              onRemove={() => removeWizardFilter('action')}
-            />
-          )}
-          {wizardState.selectedEnvironment && wizardState.selectedEnvironment !== 'any' && (
-            <FilterChip
-              label={(environments || []).find(e => e.id === wizardState.selectedEnvironment)?.label || wizardState.selectedEnvironment}
-              onRemove={() => removeWizardFilter('environment')}
-            />
-          )}
 
           {searchTerm && (
             <FilterChip label={`Search: "${searchTerm}"`} onRemove={() => setSearchTerm('')} className="bg-blue-100 !text-blue-800 dark:bg-blue-900/30 dark:!text-blue-300" />
@@ -419,6 +445,9 @@ export function ResultsPage({
             <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 !text-orange-800 dark:bg-orange-900/30 dark:!text-orange-300" />
           )}
 
+          {cordedFilter !== 'all' && (
+            <FilterChip label={`Wiring: ${cordedFilter === 'corded' ? 'Cord included' : 'You wire it'}`} onRemove={() => setCordedFilter('all')} className="bg-sky-100 !text-sky-800 dark:bg-sky-900/30 dark:!text-sky-300" />
+          )}
           {technologyFilter.length > 0 && (
             <FilterChip label={`Technology: ${technologyFilter.map(techLabel).join(', ')}`} onRemove={() => setTechnologyFilter([])} className="bg-violet-100 !text-violet-800 dark:bg-violet-900/30 dark:!text-violet-300" />
           )}
@@ -555,6 +584,21 @@ export function ResultsPage({
       {/* Results — Perfect Matches + Close Matches */}
       {finalResults.length > 0 ? (
         <>
+          {/* Custom cable / connector can't be matched from stock — always
+              surface the quote path, not only when results are empty. */}
+          {needsCustomSolution && (
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-3 rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4">
+              <div className="flex-1">
+                <p className="!font-semibold !text-blue-900 dark:!text-blue-200">Custom cable or connector requested</p>
+                <p className="text-sm !text-blue-800/80 dark:!text-blue-300/80">
+                  These are built to order. The switches below are the closest stock bases — ask us to quote them with your custom cable or connector.
+                </p>
+              </div>
+              <Button asChild className="gap-2 shrink-0">
+                <a href={quoteHref}><Mail className="w-5 h-5" aria-hidden="true" /> Request a Quote</a>
+              </Button>
+            </div>
+          )}
           {/* Perfect-match section: only show the explicit header when there
               are ALSO close matches below it; otherwise the heading is just
               noise above the only set of cards on the page. */}
@@ -626,25 +670,27 @@ export function ResultsPage({
                 <p className="!text-muted-foreground mb-6">
                   Try a different series name or part number, or clear your filters.
                 </p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSearchTerm('');
-                    setDutyFilter([]);
-                    setMaterialFilter([]);
-                    setTechnologyFilter([]);
-                    setCordedFilter('all');
-                  }}
-                >
+                <Button variant="outline" onClick={clearOnPageFilters}>
                   Clear search &amp; filters
                 </Button>
               </>
             ) : (
             <>
-            <h3 className="text-xl font-semibold mb-2">No exact matches found</h3>
-            <p className="!text-muted-foreground mb-6">
-              We couldn't find any products matching all your criteria. Try removing some filters or viewing our full catalog.
-            </p>
+            <h3 className="text-xl font-semibold mb-2">No matching products</h3>
+            {hasActiveFilters ? (
+              <>
+                {/* The search box / More Filters emptied the page — undoing
+                    those is the fix, not relaxing the wizard answers. */}
+                <p className="!text-muted-foreground mb-6">
+                  Your search or filters removed every result.
+                </p>
+                <Button onClick={clearOnPageFilters} className="mb-6">Clear search &amp; filters</Button>
+              </>
+            ) : (
+              <p className="!text-muted-foreground mb-6">
+                Nothing in our stock catalog fits these answers. Adjust an answer above, or ask us about a custom switch.
+              </p>
+            )}
 
             {/* Custom Solution CTA */}
             {needsCustomSolution && (
@@ -653,15 +699,13 @@ export function ResultsPage({
                 <p className="text-sm !text-blue-600/80 dark:!text-blue-400/80 mb-3">
                   Your requirements for {wizardState.selectedFeatures.join(', ')} might require a custom build.
                 </p>
-                <a href={`mailto:sales@linemaster.com?subject=${contactSubject}&body=${contactBody}`}>
-                  <Button size="sm" className="w-full gap-2">
-                    <Mail className="w-6 h-6" /> Contact Us
-                  </Button>
-                </a>
+                <Button asChild size="sm" className="w-full gap-2">
+                  <a href={quoteHref}><Mail className="w-6 h-6" /> Contact Us</a>
+                </Button>
               </GlassCard>
             )}
 
-            {alternatives && (
+            {alternatives && !hasActiveFilters && alternatives.products.length > 0 && (
               <div className="space-y-4">
                 <p className="text-sm !text-muted-foreground">
                   {alternatives.products.length} {alternatives.products.length === 1 ? 'product' : 'products'} available if you adjust your filters
@@ -696,7 +740,9 @@ export function ResultsPage({
       />
 
       {/* Mobile Action Drawer */}
-      <div className="fixed bottom-6 right-6 md:hidden z-40">
+      {/* Sits above the Compare bar when it's showing, otherwise the bar
+          (fixed to the bottom, z-50) covers the only Back/PDF/Reset access. */}
+      <div className={`fixed right-6 md:hidden z-40 transition-[bottom] duration-300 ${compareProducts.length > 0 ? 'bottom-28' : 'bottom-6'}`}>
         <Button
           size="icon"
           className="h-12 w-12 rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90"
@@ -719,6 +765,11 @@ export function ResultsPage({
                 <ArrowLeft className="w-6 h-6" /> Go Back
               </Button>
             </DrawerClose>
+            <DrawerClose asChild>
+              <Button asChild className="w-full gap-2 justify-start">
+                <a href={quoteHref}><Mail className="w-6 h-6" /> Request a Quote</a>
+              </Button>
+            </DrawerClose>
             {!isBrowseAll && (
               <>
                 <DrawerClose asChild>
@@ -727,7 +778,7 @@ export function ResultsPage({
                   </Button>
                 </DrawerClose>
                 <DrawerClose asChild>
-                  <Button variant="outline" className="w-full gap-2 justify-start" onClick={onGeneratePDF}>
+                  <Button variant="outline" className="w-full gap-2 justify-start" onClick={() => onGeneratePDF(pdfResults)}>
                     <Download className="w-6 h-6" /> Download PDF
                   </Button>
                 </DrawerClose>

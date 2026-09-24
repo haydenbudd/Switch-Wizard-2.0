@@ -78,18 +78,6 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
         </button>
       )}
 
-      {/* Close-match "Differs on" pill */}
-      {differsOn && differsOn.length > 0 && (
-        <div className="absolute top-4 right-4 z-20 max-w-[60%]">
-          <Badge
-            variant="outline"
-            className="bg-amber-50 dark:bg-amber-900/20 !text-amber-800 dark:!text-amber-300 border-amber-200 dark:border-amber-700/50 text-xs tracking-wide normal-case shadow-sm"
-            title={`Doesn't fully match: ${differsOn.join(', ')}`}
-          >
-            Differs on: {differsOn.join(', ')}
-          </Badge>
-        </div>
-      )}
 
       {/* Product Image Area */}
       <div className="relative aspect-[4/3] -mx-6 -mt-6 mb-4 bg-gradient-to-b from-secondary/80 to-transparent p-6 flex items-center justify-center overflow-hidden">
@@ -116,7 +104,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
 
         {/* Featured/Flagship Badge — bottom corner of the image so it can't
             collide with the Compare pill on narrow (4-column) cards. Hidden
-            for close matches so "Differs on" is the first thing read. */}
+            for close matches so the "Close match" reasons are the focus. */}
         {isFlagship && !differsOn?.length && (
           <div className="absolute bottom-3 right-3 z-20">
             <Badge className="bg-[var(--accent-warm)] text-[var(--accent-warm-foreground)] border-transparent backdrop-blur-sm shadow-sm shadow-[var(--accent-warm)]/20 flex items-center gap-1 text-sm tracking-wide uppercase">
@@ -148,6 +136,18 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
             </span>
           </div>
         </div>
+
+        {/* Close match: plain-language reasons it isn't an exact fit. Lives in
+            the card body (not an image-corner pill) so longer phrases like
+            "Not rated for Wet / Washdown (IP20)" stay readable. */}
+        {differsOn && differsOn.length > 0 && (
+          <div className="mb-3 rounded-lg border border-amber-200 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-900/20 px-3 py-2">
+            <span className="block text-xs font-semibold uppercase tracking-wide !text-amber-800 dark:!text-amber-300">Close match</span>
+            <ul className="mt-0.5 text-sm !text-amber-900 dark:!text-amber-200 leading-snug">
+              {differsOn.map(reason => <li key={reason}>{reason}</li>)}
+            </ul>
+          </div>
+        )}
 
         <p className="text-base !text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
           {product.description.startsWith(product.series)

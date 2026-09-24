@@ -14,7 +14,7 @@ import {
 import { Toaster, toast } from 'sonner';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
-import { ResultsPage } from '@/app/components/wizard/ResultsPage';
+import { ResultsPage, type PDFResults } from '@/app/components/wizard/ResultsPage';
 
 // Lazy load admin panel with fallback for environments like Figma Make
 const AdminContainer = lazy(() =>
@@ -57,6 +57,8 @@ function WizardApp() {
     handleBrowseAll: navBrowseAll,
     handleBack,
     handleContinue,
+    handleResumeOrContinue,
+    jumpToStep,
     handleViewMedicalProducts,
     totalSteps,
     getProgressStep,
@@ -156,11 +158,12 @@ function WizardApp() {
     navBrowseAll();
   }, [navBrowseAll]);
 
-  // Track no-results as a side effect
+  // Track no-results as a side effect — "no results" means the page is
+  // actually empty (no exact AND no close matches), same as the buyer sees.
   useEffect(() => {
     if (wizardState.step === 9) {
-      const filtered = filterProducts();
-      if (filtered.length === 0) {
+      const split = scoredProducts();
+      if (split.perfect.length === 0 && split.close.length === 0) {
         trackNoResults({
           application: wizardState.selectedApplication,
           technology: wizardState.selectedTechnology,
@@ -170,14 +173,18 @@ function WizardApp() {
         });
       }
     }
-  }, [filterProducts, wizardState.step]);
+  }, [scoredProducts, wizardState.step]);
 
-  const handleGeneratePDF = useCallback(async () => {
+  // `onScreen` = the results page's own lists (exact + close, after search
+  // and More Filters) so the PDF matches what the buyer is looking at.
+  // Without it (medical builder summary) fall back to strict matching.
+  const handleGeneratePDF = useCallback(async (onScreen?: PDFResults) => {
     try {
       const { generatePDF } = await import('@/app/utils/generatePDF');
       await generatePDF({
         wizardState,
-        matchedProducts: filterProducts(),
+        matchedProducts: onScreen ? onScreen.perfect : filterProducts(),
+        closeMatches: onScreen?.close,
         applications, technologies, actions, environments, features, duties,
       });
     } catch (err) {
@@ -239,6 +246,8 @@ function WizardApp() {
           onBrowseAll={handleBrowseAll}
           onBack={handleBack}
           onContinue={handleContinue}
+          onResumeOrContinue={handleResumeOrContinue}
+          onJumpToStep={jumpToStep}
         />
       )}
 
@@ -259,6 +268,9 @@ function WizardApp() {
           onBack={handleBack}
           onReset={handleReset}
           onGeneratePDF={handleGeneratePDF}
+          connections={connections}
+          circuitCounts={circuitCounts}
+          onJumpToStep={jumpToStep}
           clearDownstreamSelections={clearDownstreamSelections}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}

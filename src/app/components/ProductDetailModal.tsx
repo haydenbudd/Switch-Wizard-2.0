@@ -4,11 +4,13 @@ import { Button } from '@/app/components/ui/button';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { getPortalContainer } from '@/app/utils/portalContainer';
+import { productQuoteMailto } from '@/app/utils/quote';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   X,
   ExternalLink,
+  Mail,
   Zap,
   Wind,
   Shield,
@@ -295,19 +297,25 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                   page, so a single button covers both. (A hardcoded series →
                   PDF map used to live here; the URLs rotted as linemaster.com
                   reorganized uploads, so it was removed rather than maintained.) */}
-              {product.link && (
-                <div className="flex">
-                  <Button
-                    asChild
-                    className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
-                  >
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  asChild
+                  className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
+                >
+                  <a href={productQuoteMailto(product)}>
+                    <Mail className="w-6 h-6" />
+                    Request a Quote
+                  </a>
+                </Button>
+                {product.link && (
+                  <Button asChild variant="outline" className="flex-1 gap-2 !text-base">
                     <a href={product.link} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="w-6 h-6" />
                       View Product Page &amp; Datasheet
                     </a>
                   </Button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </MotionDiv>
         </DialogPrimitive.Content>

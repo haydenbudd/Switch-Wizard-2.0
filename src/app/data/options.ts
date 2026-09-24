@@ -387,9 +387,9 @@ export const guards: Option[] = [
   },
   {
     id: 'no',
-    label: 'No Guard Needed',
+    label: 'Not Required',
     icon: ShieldOff,
-    description: 'No safety guard required.',
+    description: 'Show switches with or without a guard.',
   },
 ];
 
@@ -610,7 +610,9 @@ export const BUILDER_STEP_CONFIGS: BuilderStepConfig[] = [
 /** Look up a display label from an option array by id.
  *  The "no preference" sentinel reads as "Any" in compact summary contexts
  *  (breadcrumb chips, PDF rows) — option cards use option.label directly. */
-export function optionLabel(options: Option[], id: string): string {
-  if (id === 'no_preference') return 'Any';
+export function optionLabel(options: ReadonlyArray<{ id: string; label: string }>, id: string): string {
+  // Both "no preference" ids read the same everywhere (the environment step
+  // uses 'any'; every other step uses 'no_preference').
+  if (id === 'no_preference' || id === 'any') return 'Any';
   return options.find(o => o.id === id)?.label ?? id;
 }
