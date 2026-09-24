@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, Fragment, lazy, Suspense, type ElementType } from 'react';
+import { cn } from '@/app/components/ui/utils';
 import { ON_SITE } from '@/app/utils/embed';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, Search } from 'lucide-react';
@@ -485,7 +486,12 @@ export function StandardSteps({
                       : 'Choose the specific use case for your footswitch'}
                   </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full">
+                <div className={cn(
+                  "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full mx-auto",
+                  // Fewer than three options (Commercial has two): narrower,
+                  // centered grid instead of a half-empty left-aligned row
+                  filteredApplications.length >= 3 ? "lg:grid-cols-3" : "max-w-4xl"
+                )}>
                   {filteredApplications.map((app, i) => (
                     <OptionCard
                       key={app.id}
