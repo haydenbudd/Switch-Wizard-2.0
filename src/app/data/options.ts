@@ -127,7 +127,11 @@ export const categories: Option[] = [
     id: 'commercial',
     label: 'Commercial & Specialty',
     icon: Briefcase,
-    image: 'https://linemaster.com/wp-content/uploads/2025/04/clipper_duo.png',
+    // Gem and Treadlite II: the go-to switches for tattoo and general use
+    image: [
+      'https://linemaster.com/cdn/images/products/161/161-a-shadow@400.png',
+      'https://linemaster.com/cdn/images/products/378/378-a-shadow@400.png',
+    ],
     description: 'Specialty trades and everyday general-purpose use',
   },
 ];
