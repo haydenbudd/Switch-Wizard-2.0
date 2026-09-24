@@ -200,6 +200,7 @@ function WizardApp() {
   // Medical flow
   if (wizardState.flow === 'medical') {
     return (
+      <>
       <MedicalFlow
         wizardState={wizardState}
         products={products}
@@ -210,6 +211,10 @@ function WizardApp() {
         onGeneratePDF={handleGeneratePDF}
         onReset={handleReset}
       />
+      {/* Toasts (PDF errors, quote copy confirmation) — previously only
+          mounted for the standard flow, so medical screens showed none */}
+      <Toaster position="top-right" />
+      </>
     );
   }
 

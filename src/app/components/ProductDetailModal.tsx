@@ -4,7 +4,7 @@ import { Button } from '@/app/components/ui/button';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { getPortalContainer } from '@/app/utils/portalContainer';
-import { productQuoteMailto } from '@/app/utils/quote';
+import { productQuoteText, quoteLinkProps } from '@/app/utils/quote';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -302,7 +302,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
                   asChild
                   className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
                 >
-                  <a href={productQuoteMailto(product)}>
+                  <a {...quoteLinkProps(productQuoteText(product))}>
                     <Mail className="w-6 h-6" />
                     Request a Quote
                   </a>

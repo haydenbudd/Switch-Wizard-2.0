@@ -16,7 +16,7 @@ import {
 } from '@/app/data/options';
 import type { Option } from '@/app/data/options';
 import { NO_PREFERENCE, hasPreference } from '@/app/utils/preference';
-import { buildMailto } from '@/app/utils/quote';
+import { configQuoteText, quoteLinkProps } from '@/app/utils/quote';
 
 const MotionDiv = motion.div;
 
@@ -333,22 +333,8 @@ export function MedicalFlow({
       if (cfg !== treadleCfg) pushCfg(cfg);
     }
 
-    const quoteHref = buildMailto(
-      'Semi-custom medical foot switch quote request',
-      [
-        'Hello,',
-        '',
-        "I'd like a quote for a semi-custom medical foot switch configured as follows:",
-        '',
-        ...configEntries.map(({ label, value }) => `- ${label}: ${value}`),
-        '',
-        'Quantity: ',
-        'Company: ',
-        'Phone: ',
-        '',
-        'Thank you.',
-      ].join('\n'),
-    );
+    // Contact page + configuration copied for its message box
+    const quoteLink = quoteLinkProps(configQuoteText(configEntries));
 
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
@@ -381,14 +367,14 @@ export function MedicalFlow({
             <Download className="w-4 h-4 mr-2" aria-hidden="true" />
             Download Summary (PDF)
           </Button>
-          {/* Pre-filled with the configuration so the buyer doesn't have to
-              download the PDF and attach it themselves */}
+          {/* Opens the contact page and copies the configuration so the buyer
+              doesn't have to retype it or attach the PDF */}
           <Button
             asChild
             variant="outline"
             className="border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
           >
-            <a href={quoteHref}>
+            <a {...quoteLink}>
               <Mail className="w-4 h-4 mr-2" aria-hidden="true" />
               Request a Quote
             </a>

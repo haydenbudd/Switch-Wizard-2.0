@@ -1,9 +1,7 @@
 import type { Product } from '@/app/lib/api';
 import type { WizardState } from '@/app/hooks/useWizardState';
+import { toast } from 'sonner';
 import { optionLabel } from '@/app/data/options';
-
-/** Where quote / engineering requests go. */
-export const SALES_EMAIL = 'sales@linemaster.com';
 
 type Labeled = ReadonlyArray<{ id: string; label: string }>;
 
@@ -44,48 +42,68 @@ export function productLine(p: Product): string {
   return p.part_number ? `${p.series} (#${p.part_number})` : p.series;
 }
 
-/** mailto: link with a readable, pre-filled body. */
-export function buildMailto(subject: string, body: string): string {
-  return `mailto:${SALES_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
+/**
+ * Linemaster's contact page. It can't be pre-filled from a link, so the
+ * Request a Quote buttons copy the buyer's details to the clipboard for them
+ * to paste into the message box (see quoteLinkProps).
+ */
+export const CONTACT_URL = 'https://linemaster.com/contact/';
 
-/** Quote request for the results page: answers + the products in play. */
-export function resultsQuoteMailto(opts: {
+/** Quote request text for the results page: answers + the products in play. */
+export function resultsQuoteText(opts: {
   wizardState: WizardState;
   sources: AnswerSources;
   products: Product[];
   needsCustom: boolean;
 }): string {
   const rows = answerRows(opts.wizardState, opts.sources);
-  const lines: string[] = ['Hello,', '', "I'd like a quote for a Linemaster foot switch."];
+  const lines: string[] = ["Quote request - Linemaster foot switch"];
   if (rows.length > 0) {
     lines.push('', 'My requirements:', ...rows.map(([k, v]) => `- ${k}: ${v}`));
   }
   if (opts.needsCustom) {
-    lines.push('', 'I need a custom cable length and/or connector — please advise on options.');
+    lines.push('', 'I need a custom cable length and/or connector - please advise on options.');
   }
   if (opts.products.length > 0) {
     lines.push('', "Products I'm considering:", ...opts.products.slice(0, 8).map(p => `- ${productLine(p)}`));
   }
-  lines.push('', 'Quantity: ', 'Company: ', 'Phone: ', '', 'Thank you.');
-  return buildMailto('Foot switch quote request', lines.join('\n'));
+  return lines.join('\n');
 }
 
-/** Quote request for a single product (detail modal). */
-export function productQuoteMailto(p: Product): string {
-  const lines = [
-    'Hello,',
-    '',
-    "I'd like a quote for the following Linemaster foot switch:",
+/** Quote request text for a single product (detail modal). */
+export function productQuoteText(p: Product): string {
+  return [
+    'Quote request - Linemaster foot switch',
     '',
     `- ${productLine(p)}`,
     ...(p.link ? [`- ${p.link}`] : []),
+  ].join('\n');
+}
+
+/** Quote request text for a semi-custom medical configuration. */
+export function configQuoteText(rows: { label: string; value: string }[]): string {
+  return [
+    'Quote request - semi-custom medical foot switch',
     '',
-    'Quantity: ',
-    'Company: ',
-    'Phone: ',
-    '',
-    'Thank you.',
-  ];
-  return buildMailto(`Quote request: ${productLine(p)}`, lines.join('\n'));
+    ...rows.map(({ label, value }) => `- ${label}: ${value}`),
+  ].join('\n');
+}
+
+/**
+ * Props for an <a> that opens the contact page in a new tab (so the buyer
+ * keeps their results) and copies `details` to the clipboard on the way.
+ * Clipboard access can be unavailable (http pages, denied permission) —
+ * the link still opens; only the helper toast is skipped.
+ */
+export function quoteLinkProps(details: string) {
+  return {
+    href: CONTACT_URL,
+    target: '_blank',
+    rel: 'noopener noreferrer',
+    onClick: () => {
+      navigator.clipboard?.writeText(details)
+        .then(() => toast.success('Your details are copied — paste them into the message box on the contact page.', { duration: 8000 }))
+        .catch(() => {});
+    },
+  };
 }

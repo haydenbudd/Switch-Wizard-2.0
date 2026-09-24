@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 import { EnhancedSearch } from '@/app/components/EnhancedSearch';
 import { FilterChip } from '@/app/components/FilterChip';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
-import { resultsQuoteMailto } from '@/app/utils/quote';
+import { resultsQuoteText, quoteLinkProps } from '@/app/utils/quote';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -347,14 +347,15 @@ export function ResultsPage({
     setCordedFilter('all');
   };
 
-  // Quote request: readable answers + the products in play (the compare
-  // selection if there is one, otherwise the top results).
-  const quoteHref = resultsQuoteMailto({
+  // Quote request → Linemaster contact page (new tab). The buyer's answers +
+  // products in play (compare selection, else top results) are copied to the
+  // clipboard for the contact form's message box.
+  const quoteLink = quoteLinkProps(resultsQuoteText({
     wizardState,
     sources: { applications, technologies, actions, environments, duties, connections, circuitCounts, features },
     products: compareProducts.length > 0 ? compareProducts : finalResults,
     needsCustom: needsCustomSolution,
-  });
+  }));
 
   // What the PDF should list — exactly what's on screen
   const pdfResults: PDFResults = {
@@ -400,8 +401,8 @@ export function ResultsPage({
                 </Button>
               </>
             )}
-            <Button asChild className="gap-2 !text-base" aria-label="Request a quote by email">
-              <a href={quoteHref}>
+            <Button asChild className="gap-2 !text-base" aria-label="Request a quote (opens the Linemaster contact page)">
+              <a {...quoteLink}>
                 <Mail className="w-6 h-6" aria-hidden="true" />
                 <span className="hidden sm:inline">Request a Quote</span>
               </a>
@@ -595,7 +596,7 @@ export function ResultsPage({
                 </p>
               </div>
               <Button asChild className="gap-2 shrink-0">
-                <a href={quoteHref}><Mail className="w-5 h-5" aria-hidden="true" /> Request a Quote</a>
+                <a {...quoteLink}><Mail className="w-5 h-5" aria-hidden="true" /> Request a Quote</a>
               </Button>
             </div>
           )}
@@ -700,7 +701,7 @@ export function ResultsPage({
                   Your requirements for {wizardState.selectedFeatures.join(', ')} might require a custom build.
                 </p>
                 <Button asChild size="sm" className="w-full gap-2">
-                  <a href={quoteHref}><Mail className="w-6 h-6" /> Contact Us</a>
+                  <a {...quoteLink}><Mail className="w-6 h-6" /> Contact Us</a>
                 </Button>
               </GlassCard>
             )}
@@ -767,7 +768,7 @@ export function ResultsPage({
             </DrawerClose>
             <DrawerClose asChild>
               <Button asChild className="w-full gap-2 justify-start">
-                <a href={quoteHref}><Mail className="w-6 h-6" /> Request a Quote</a>
+                <a {...quoteLink}><Mail className="w-6 h-6" /> Request a Quote</a>
               </Button>
             </DrawerClose>
             {!isBrowseAll && (
