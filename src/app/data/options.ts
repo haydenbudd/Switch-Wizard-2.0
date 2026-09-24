@@ -560,7 +560,7 @@ export const outputTypes: Option[] = [
 
 export const wiredWirelessOptions: Option[] = [
   { id: 'wired', label: 'Wired', icon: Cable, description: 'Traditional wired connection.' },
-  { id: 'wireless', label: 'Wireless', icon: Radio, description: 'RF wireless — no cords.' },
+  { id: 'wireless', label: 'Wireless', icon: Radio, description: 'RF or BLE wireless — no cords.' },
 ];
 
 export const toeLoopOptions: Option[] = [
