@@ -46,7 +46,22 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
     trackWizardStep(0, 'standard', { application: id });
   }, [clearDownstreamSelections, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
+  // Skip the questions entirely: land on the results page with no wizard
+  // answers, which scores every product as a match (see scoreAndSplit) —
+  // i.e. the full catalog with search, More Filters, and Compare.
+  const handleBrowseAll = useCallback(() => {
+    wizardState.resetWizard();
+    wizardState.setStep(9);
+    trackWizardStep(9, 'standard', { source: 'browse_all' });
+  }, [wizardState.resetWizard, wizardState.setStep]);
+
   const handleBack = useCallback(() => {
+    // Browse-all mode (no application chosen) has no wizard steps behind it
+    if (wizardState.step === 9 && wizardState.flow === 'standard' && !wizardState.selectedApplication) {
+      wizardState.setStep(0);
+      wizardState.setSelectedCategory('');
+      return;
+    }
     if (wizardState.step === 0 && wizardState.selectedCategory) {
       wizardState.setSelectedCategory('');
       wizardState.setSelectedApplication('');
@@ -146,6 +161,7 @@ export function useWizardNavigation({ wizardState, categories }: UseWizardNaviga
     clearDownstreamSelections,
     handleCategorySelect,
     handleApplicationSelect,
+    handleBrowseAll,
     handleBack,
     handleContinue,
     handleViewMedicalProducts,

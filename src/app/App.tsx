@@ -54,6 +54,7 @@ function WizardApp() {
     clearDownstreamSelections,
     handleCategorySelect,
     handleApplicationSelect,
+    handleBrowseAll: navBrowseAll,
     handleBack,
     handleContinue,
     handleViewMedicalProducts,
@@ -130,6 +131,7 @@ function WizardApp() {
   const [dutyFilter, setDutyFilter] = useState<string[]>([]);
   const [cordedFilter, setCordedFilter] = useState<'all' | 'corded' | 'cordless'>('all');
   const [materialFilter, setMaterialFilter] = useState<string[]>([]);
+  const [technologyFilter, setTechnologyFilter] = useState<string[]>([]);
 
   const handleReset = useCallback(() => {
     wizardState.resetWizard();
@@ -138,8 +140,21 @@ function WizardApp() {
     setDutyFilter([]);
     setCordedFilter('all');
     setMaterialFilter([]);
+    setTechnologyFilter([]);
     clearWizardStateFromLocal();
   }, [wizardState.resetWizard]);
+
+  // Start page shortcut → full catalog on the results page. Clears any
+  // leftover search/filters so the catalog opens unfiltered.
+  const handleBrowseAll = useCallback(() => {
+    setSearchTerm('');
+    setSortBy('relevance');
+    setDutyFilter([]);
+    setCordedFilter('all');
+    setMaterialFilter([]);
+    setTechnologyFilter([]);
+    navBrowseAll();
+  }, [navBrowseAll]);
 
   // Track no-results as a side effect
   useEffect(() => {
@@ -221,6 +236,7 @@ function WizardApp() {
           clearDownstreamSelections={clearDownstreamSelections}
           onCategorySelect={handleCategorySelect}
           onApplicationSelect={handleApplicationSelect}
+          onBrowseAll={handleBrowseAll}
           onBack={handleBack}
           onContinue={handleContinue}
         />
@@ -254,6 +270,8 @@ function WizardApp() {
           setCordedFilter={setCordedFilter}
           materialFilter={materialFilter}
           setMaterialFilter={setMaterialFilter}
+          technologyFilter={technologyFilter}
+          setTechnologyFilter={setTechnologyFilter}
         />
       )}
       </main>
