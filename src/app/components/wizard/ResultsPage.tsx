@@ -78,6 +78,8 @@ interface ResultsPageProps {
   setCordedFilter: (val: 'all' | 'corded' | 'cordless') => void;
   materialFilter: string[];
   setMaterialFilter: React.Dispatch<React.SetStateAction<string[]>>;
+  technologyFilter: string[];
+  setTechnologyFilter: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export function ResultsPage({
@@ -106,7 +108,9 @@ export function ResultsPage({
   cordedFilter,
   setCordedFilter,
   materialFilter,
-  setMaterialFilter
+  setMaterialFilter,
+  technologyFilter,
+  setTechnologyFilter,
 }: ResultsPageProps) {
   // Guard against undefined props in environments like Figma Make
   if (!wizardState || !filterProducts) return null;
@@ -154,18 +158,30 @@ export function ResultsPage({
 
   const finalPerfect = useMemo(() => {
     return getProcessedProducts(perfectProducts, {
-      searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy,
+      searchTerm, dutyFilter, materialFilter, technologyFilter, cordedFilter, sortBy,
     });
-  }, [perfectProducts, searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy]);
+  }, [perfectProducts, searchTerm, dutyFilter, materialFilter, technologyFilter, cordedFilter, sortBy]);
 
   const finalClose = useMemo(() => {
     return getProcessedProducts(closeProducts, {
-      searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy,
+      searchTerm, dutyFilter, materialFilter, technologyFilter, cordedFilter, sortBy,
     });
-  }, [closeProducts, searchTerm, dutyFilter, materialFilter, cordedFilter, sortBy]);
+  }, [closeProducts, searchTerm, dutyFilter, materialFilter, technologyFilter, cordedFilter, sortBy]);
 
   // Single combined list used by share-link badges and image preloading
   const finalResults = useMemo(() => [...finalPerfect, ...finalClose], [finalPerfect, finalClose]);
+
+  // Technologies present before any on-page filtering, so ticking one
+  // doesn't make the others vanish from the list. In the guided flow the
+  // wizard's technology answer is a hard filter, leaving a single value —
+  // the section then hides itself (only shown when there's a real choice).
+  const availableTechnologies = useMemo(() => {
+    const techs = new Set([...perfectProducts, ...closeProducts].map(p => p.technology).filter(Boolean));
+    // Same order as the wizard's Technology step; unknown values sort last
+    const rank = (t: string) => { const i = ['electrical', 'pneumatic', 'wireless'].indexOf(t); return i === -1 ? 99 : i; };
+    return Array.from(techs).sort((a, b) => rank(a) - rank(b));
+  }, [perfectProducts, closeProducts]);
+  const techLabel = (id: string) => (technologies || []).find(t => t.id === id)?.label || id;
 
   // Derive available materials across both halves so the filter dropdown
   // can offer materials present in close matches too
@@ -306,7 +322,8 @@ export function ResultsPage({
     (wizardState.selectedEnvironment && wizardState.selectedEnvironment !== 'any') ||
     searchTerm ||
     dutyFilter.length > 0 ||
-    materialFilter.length > 0
+    materialFilter.length > 0 ||
+    technologyFilter.length > 0
   );
 
   // Build mailto for custom solution / contact engineering
@@ -402,6 +419,9 @@ export function ResultsPage({
             <FilterChip label={`Duty: ${dutyFilter.join(', ')}`} onRemove={() => setDutyFilter([])} className="bg-orange-100 !text-orange-800 dark:bg-orange-900/30 dark:!text-orange-300" />
           )}
 
+          {technologyFilter.length > 0 && (
+            <FilterChip label={`Technology: ${technologyFilter.map(techLabel).join(', ')}`} onRemove={() => setTechnologyFilter([])} className="bg-violet-100 !text-violet-800 dark:bg-violet-900/30 dark:!text-violet-300" />
+          )}
           {materialFilter.length > 0 && (
             <FilterChip label={`Material: ${materialFilter.join(', ')}`} onRemove={() => setMaterialFilter([])} className="bg-emerald-100 !text-emerald-800 dark:bg-emerald-900/30 dark:!text-emerald-300" />
           )}
@@ -450,12 +470,34 @@ export function ResultsPage({
                 >
                   <SlidersHorizontal className="w-6 h-6" aria-hidden="true" />
                   <span className="hidden sm:inline">More Filters</span>
-                  {(dutyFilter.length > 0 || cordedFilter !== 'all' || materialFilter.length > 0) && (
+                  {(dutyFilter.length > 0 || cordedFilter !== 'all' || materialFilter.length > 0 || technologyFilter.length > 0) && (
                     <span className="w-2 h-2 rounded-full bg-blue-500" aria-hidden="true" />
                   )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-72">
+                {availableTechnologies.length > 1 && (
+                  <>
+                    <DropdownMenuLabel className="!text-lg">Technology</DropdownMenuLabel>
+                    {availableTechnologies.map(tech => (
+                      <div key={tech} className="flex items-center px-2 py-2 hover:bg-accent cursor-pointer"
+                        role="checkbox"
+                        aria-checked={technologyFilter.includes(tech)}
+                        aria-label={techLabel(tech)}
+                        tabIndex={0}
+                        onClick={makeToggleHandler(setTechnologyFilter, tech)}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') makeToggleHandler(setTechnologyFilter, tech)(e); }}
+                      >
+                        <div className={`w-5 h-5 border rounded mr-2 flex items-center justify-center ${technologyFilter.includes(tech) ? 'bg-primary border-primary !text-white' : ''}`} aria-hidden="true">
+                          {technologyFilter.includes(tech) && <Check className="w-4 h-4" />}
+                        </div>
+                        <span className="text-lg">{techLabel(tech)}</span>
+                      </div>
+                    ))}
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+
                 {/* Labeled "Wiring" (not "Connection Type") to avoid clashing
                     with the wizard step of that name, which means terminals */}
                 <DropdownMenuLabel className="!text-lg">Wiring</DropdownMenuLabel>
@@ -590,6 +632,7 @@ export function ResultsPage({
                     setSearchTerm('');
                     setDutyFilter([]);
                     setMaterialFilter([]);
+                    setTechnologyFilter([]);
                     setCordedFilter('all');
                   }}
                 >

@@ -5,6 +5,8 @@ export interface FilterOptions {
   dutyFilter: string[];
   cordedFilter: 'all' | 'corded' | 'cordless';
   materialFilter: string[];
+  /** Technology ids (electrical / pneumatic / wireless). Empty = all. */
+  technologyFilter?: string[];
   sortBy: 'relevance' | 'duty' | 'ip';
   selectedEnvironment?: string;
 }
@@ -40,6 +42,11 @@ export const filterProductsByDuty = (products: Product[], dutyFilter: string[]):
 export const filterProductsByMaterial = (products: Product[], materialFilter: string[]): Product[] => {
   if (materialFilter.length === 0) return products;
   return products.filter(p => materialFilter.includes(p.material));
+};
+
+export const filterProductsByTechnology = (products: Product[], technologyFilter: string[] = []): Product[] => {
+  if (technologyFilter.length === 0) return products;
+  return products.filter(p => technologyFilter.includes(p.technology));
 };
 
 export const filterProductsByConnection = (products: Product[], cordedFilter: 'all' | 'corded' | 'cordless'): Product[] => {
@@ -133,6 +140,7 @@ export const getProcessedProducts = (products: Product[], options: FilterOptions
   filtered = filterProductsBySearch(filtered, options.searchTerm);
   filtered = filterProductsByDuty(filtered, options.dutyFilter);
   filtered = filterProductsByMaterial(filtered, options.materialFilter);
+  filtered = filterProductsByTechnology(filtered, options.technologyFilter);
   filtered = filterProductsByConnection(filtered, options.cordedFilter);
   filtered = sortProducts(filtered, options.sortBy, options.selectedEnvironment);
   return filtered;

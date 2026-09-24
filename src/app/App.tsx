@@ -131,6 +131,7 @@ function WizardApp() {
   const [dutyFilter, setDutyFilter] = useState<string[]>([]);
   const [cordedFilter, setCordedFilter] = useState<'all' | 'corded' | 'cordless'>('all');
   const [materialFilter, setMaterialFilter] = useState<string[]>([]);
+  const [technologyFilter, setTechnologyFilter] = useState<string[]>([]);
 
   const handleReset = useCallback(() => {
     wizardState.resetWizard();
@@ -139,6 +140,7 @@ function WizardApp() {
     setDutyFilter([]);
     setCordedFilter('all');
     setMaterialFilter([]);
+    setTechnologyFilter([]);
     clearWizardStateFromLocal();
   }, [wizardState.resetWizard]);
 
@@ -150,6 +152,7 @@ function WizardApp() {
     setDutyFilter([]);
     setCordedFilter('all');
     setMaterialFilter([]);
+    setTechnologyFilter([]);
     navBrowseAll();
   }, [navBrowseAll]);
 
@@ -267,6 +270,8 @@ function WizardApp() {
           setCordedFilter={setCordedFilter}
           materialFilter={materialFilter}
           setMaterialFilter={setMaterialFilter}
+          technologyFilter={technologyFilter}
+          setTechnologyFilter={setTechnologyFilter}
         />
       )}
       </main>
