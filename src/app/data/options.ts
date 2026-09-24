@@ -100,8 +100,10 @@ export interface Option {
   hideFor?: string[];
   parentCategory?: string;
   sortOrder?: number;
-  /** Product photo shown on the start-screen industry cards */
-  image?: string;
+  /** Product photo(s) shown on the start-screen industry cards */
+  image?: string | string[];
+  /** "Next, choose from" chips for an industry card with no sub-applications (Medical) */
+  nextChoices?: string[];
 }
 
 export const categories: Option[] = [
@@ -116,7 +118,12 @@ export const categories: Option[] = [
     id: 'medical',
     label: 'Medical & Healthcare',
     icon: Heart,
-    image: 'https://linemaster.com/wp-content/uploads/2025/04/gem.png',
+    // A stock Gem next to a custom Aero Channel: the two paths inside Medical
+    image: [
+      'https://linemaster.com/cdn/images/products/161/161-a-shadow@400.png',
+      'https://linemaster.com/wp-content/uploads/2026/05/linemaster-switch-twin-areo-w-logo-1024x636.png',
+    ],
+    nextChoices: ['Stock switches', 'Custom Aero / Crescent'],
     description: 'Surgical, diagnostic, patient care equipment',
     isMedical: true,
   },
@@ -125,7 +132,7 @@ export const categories: Option[] = [
     label: 'Commercial & Specialty',
     icon: Briefcase,
     image: 'https://linemaster.com/wp-content/uploads/2025/04/clipper_duo.png',
-    description: 'Automotive, creative, and general-purpose applications',
+    description: 'Specialty trades and everyday general-purpose use',
   },
 ];
 

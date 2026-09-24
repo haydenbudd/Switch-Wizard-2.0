@@ -92,25 +92,54 @@ interface StandardStepsProps {
  * Start-screen industry card visual: a real Linemaster product photo, or the
  * category icon if the photo can't load (offline, image CDN blocked).
  */
-function CategoryVisual({ image, icon: Icon }: { image?: string; icon?: ElementType }) {
+function CategoryVisual({ image, icon: Icon }: { image?: string | string[]; icon?: ElementType }) {
   const [failed, setFailed] = useState(false);
-  if (image && !failed) {
+  const images = image ? (Array.isArray(image) ? image : [image]) : [];
+  if (images.length && !failed) {
+    const width = images.length > 1 ? 200 : 320;
     return (
-      <div className="w-full h-24 md:h-32 mb-4 flex items-center justify-center shrink-0">
-        <img
-          src={getProxiedImageUrl(image, { width: 320 })}
-          srcSet={getProxiedImageSrcSet(image, 320)}
-          alt=""
-          loading="eager"
-          onError={() => setFailed(true)}
-          className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
-        />
+      <div className="w-full h-24 md:h-32 mb-4 flex items-center justify-center gap-2 shrink-0">
+        {images.map(src => (
+          <img
+            key={src}
+            src={getProxiedImageUrl(src, { width })}
+            srcSet={getProxiedImageSrcSet(src, width)}
+            alt=""
+            loading="eager"
+            onError={() => setFailed(true)}
+            // Side-by-side photos share the width in proportion to their
+            // aspect ratio, so a square and a wide photo end up the same height
+            onLoad={images.length > 1 ? (e) => {
+              const img = e.currentTarget;
+              if (img.naturalHeight) img.style.flexGrow = String(img.naturalWidth / img.naturalHeight);
+            } : undefined}
+            className={`max-h-full object-contain transition-transform duration-300 group-hover:scale-105 ${images.length > 1 ? 'flex-1 basis-0 min-w-0' : 'max-w-full'}`}
+          />
+        ))}
       </div>
     );
   }
   return (
     <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 mb-4 shrink-0">
       {Icon && <Icon className="w-8 h-8" aria-hidden="true" />}
+    </div>
+  );
+}
+
+/**
+ * What picking an industry leads to, so the follow-up Application question
+ * doesn't feel like being asked the same thing twice.
+ */
+function CategoryPreview({ apps }: { apps: string[] }) {
+  if (apps.length < 2) return null;
+  return (
+    <div className="mt-4 w-full">
+      <p className="!text-xs !font-semibold uppercase tracking-wider !text-muted-foreground mb-2">Next, choose from</p>
+      <ul className="flex flex-wrap justify-center gap-1.5" aria-label="Applications in this industry">
+        {apps.map(a => (
+          <li key={a} className="!text-sm px-2.5 py-0.5 rounded-full bg-primary/8 !text-primary">{a}</li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -239,6 +268,8 @@ export function StandardSteps({
   // already shows progress ("Step 2 of 10") instead of "Step 1 · 0%".
   const displayStep = getDisplayStep(wizardState.step) + 1;
   const displayTotal = totalSteps + 1;
+  const selectedCategoryLabel = (categories || []).find(c => c.id === wizardState.selectedCategory)?.label;
+
   const progressPercent = Math.round(((displayStep - 1) / displayTotal) * 100);
 
   // Wizard companion easter egg — lazily loaded so the ASCII art stays out
@@ -324,6 +355,9 @@ export function StandardSteps({
                   <p className="!text-base !text-muted-foreground">
                     {category.description}
                   </p>
+                  <CategoryPreview
+                    apps={category.nextChoices ?? (applications || []).filter(a => a.parentCategory === category.id).map(a => a.label)}
+                  />
                 </div>
               </GlassCard>
             </motion.div>
@@ -380,7 +414,7 @@ export function StandardSteps({
     <Fragment>
     <div className="pt-16 pb-16 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
       {/* Progress Bar */}
-      <div className="mx-auto mb-14" style={{ maxWidth: '700px' }}>
+      <div className="mx-auto mb-8" style={{ maxWidth: '700px' }}>
         <div className="flex justify-between !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
           <span className="uppercase">Step {displayStep} of {displayTotal}</span>
         </div>
@@ -443,11 +477,15 @@ export function StandardSteps({
             {/* Step 0 Phase 2: Application Selection */}
             {wizardState.step === 0 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</h2>
-                  <p className="!text-lg !text-muted-foreground">Choose the specific use case for your footswitch</p>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</h2>
+                  <p className="!text-lg !text-muted-foreground">
+                    {selectedCategoryLabel
+                      ? <>Within <span className="!font-semibold !text-foreground">{selectedCategoryLabel}</span>, which is closest to your use?</>
+                      : 'Choose the specific use case for your footswitch'}
+                  </p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 w-full">
                   {filteredApplications.map((app, i) => (
                     <OptionCard
                       key={app.id}
@@ -457,6 +495,7 @@ export function StandardSteps({
                       selected={wizardState.selectedApplication === app.id}
                       onClick={() => onApplicationSelect(app.id)}
                       index={i}
+                      layout="row"
                     />
                   ))}
                 </div>
@@ -466,8 +505,8 @@ export function StandardSteps({
             {/* Step 1: Technology */}
             {wizardState.step === 1 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Technology</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Select Technology</h2>
                   <p className="!text-lg !text-muted-foreground">Choose the switching mechanism for your application</p>
                   <p className="!text-sm !text-muted-foreground/80 mt-3 italic">
                     Pneumatic and Wireless skip the wiring and circuit questions — 2 fewer steps.
@@ -495,8 +534,8 @@ export function StandardSteps({
             {/* Step 2: Action */}
             {wizardState.step === 2 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</h2>
                   <p className="!text-lg !text-muted-foreground">How should the switch activate and deactivate?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select action type">
@@ -521,8 +560,8 @@ export function StandardSteps({
             {/* Step 3: Environment */}
             {wizardState.step === 3 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</h2>
                   <p className="!text-lg !text-muted-foreground">Where will the switch be used?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
@@ -545,8 +584,8 @@ export function StandardSteps({
             {/* Step 4: Duty Rating */}
             {wizardState.step === 4 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</h2>
                   <p className="!text-lg !text-muted-foreground">How heavy will the usage be?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
@@ -569,8 +608,8 @@ export function StandardSteps({
             {/* Step 5: Connection Type */}
             {wizardState.step === 5 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Connection Type</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Connection Type</h2>
                   <p className="!text-lg !text-muted-foreground">How should the switch connect to your equipment?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
@@ -593,8 +632,8 @@ export function StandardSteps({
             {/* Step 6: Circuits Controlled */}
             {wizardState.step === 6 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</h2>
                   <p className="!text-lg !text-muted-foreground">How many circuits do you need to control?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
@@ -617,8 +656,8 @@ export function StandardSteps({
             {/* Step 7: Safety Guard */}
             {wizardState.step === 7 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</h2>
                   <p className="!text-lg !text-muted-foreground">Do you need protection against accidental activation?</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
@@ -647,8 +686,8 @@ export function StandardSteps({
             {/* Step 8: Additional Features (Multi-select) */}
             {wizardState.step === 8 && (
               <div className="space-y-6">
-                <div className="text-center mb-10">
-                  <h2 className="!text-4xl !font-bold tracking-tight block mb-2">Additional Features</h2>
+                <div className="text-center mb-7">
+                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Additional Features</h2>
                   <p className="!text-lg !text-muted-foreground">Select any that apply, or skip to view results.</p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
