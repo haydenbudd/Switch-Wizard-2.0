@@ -1,4 +1,5 @@
 import type { Product } from '@/app/lib/api';
+import { ON_SITE } from '@/app/utils/embed';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/app/components/ui/badge';
 import { X, ExternalLink, ChevronUp, ChevronDown, GitCompareArrows, Mail, Trash2 } from 'lucide-react';
@@ -144,8 +145,9 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
 
   // Label column + one column per product. Fixed widths keep 4 products
   // readable; the table scrolls sideways (labels pinned) on narrow screens.
-  const labelWidth = isNarrow ? 112 : 180;
-  const tableMinWidth = labelWidth + products.length * (isNarrow ? 190 : 230);
+  // (136 + 4 x 190 = 896px, so four products fit a ~1100px window)
+  const labelWidth = isNarrow ? 112 : 136;
+  const tableMinWidth = labelWidth + products.length * (isNarrow ? 190 : 190);
 
   return (
     <AnimatePresence>
@@ -156,7 +158,10 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
         className="fixed bottom-0 left-0 right-0 z-50"
       >
-        <div className="mx-auto max-w-7xl px-2 sm:px-4 pb-2 sm:pb-4">
+        {/* On linemaster.com the site's own floating buttons (cookie settings
+            bottom-left, PDF bottom-right) sit in the page corners — keep the
+            bar clear of them */}
+        <div className={`mx-auto max-w-7xl px-2 sm:px-4 pb-2 sm:pb-4 ${ON_SITE ? '!pb-20 md:!pb-4 md:px-24' : ''}`}>
           <div className="rounded-2xl border border-border/60 bg-background/95 backdrop-blur-xl shadow-2xl shadow-black/20 overflow-hidden">
 
             {/* Bar — always visible */}
@@ -177,8 +182,9 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
                   Compare <span className="tabular-nums">{products.length}/{MAX_COMPARE}</span>
                 </span>
 
-                {/* Mini product avatars */}
-                <span className="hidden sm:flex -space-x-2" aria-hidden="true">
+                {/* Mini product avatars — hidden while the table (with its own
+                    product headers) is open, where they'd just look misaligned */}
+                <span className={`${expanded ? 'hidden' : 'hidden sm:flex'} -space-x-2`} aria-hidden="true">
                   {products.map(p => (
                     <span
                       key={p.id}
@@ -271,7 +277,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
                         <tr className="border-b border-border/60">
                           <th className="sticky left-0 z-30 bg-background" aria-label="Spec" />
                           {products.map(product => (
-                            <th key={product.id} scope="col" className="p-3 align-top font-normal">
+                            <th key={product.id} scope="col" className="p-3 align-top font-normal [overflow-wrap:anywhere]">
                               <div className="relative flex flex-col items-center gap-2 text-center">
                                 <button
                                   type="button"
@@ -347,7 +353,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
                                   }
                                   const color = row.color?.(product);
                                   return (
-                                    <td key={product.id} className="px-3 py-2.5 text-center align-top" title={row.title?.(product)}>
+                                    <td key={product.id} className="px-3 py-2.5 text-center align-top [overflow-wrap:anywhere]" title={row.title?.(product)}>
                                       {color ? (
                                         <Badge variant="secondary" className={`!text-sm font-normal px-2.5 py-0.5 whitespace-normal rounded-[8px] ${color}`}>
                                           {value}

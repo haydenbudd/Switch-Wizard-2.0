@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, ChevronLeft, Download, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, ChevronLeft, Download, ExternalLink, ArrowRight } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
@@ -511,9 +511,16 @@ export function MedicalFlow({
                   <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
                   Back
                 </Button>
-                <span className="text-sm text-muted-foreground">
-                  Select an option to continue
-                </span>
+                {wizardState.selectedMedicalPath ? (
+                  // Came back to this screen with a path already chosen
+                  <Button onClick={onContinue} className="gap-1">
+                    Continue <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </Button>
+                ) : (
+                  <span className="text-sm text-muted-foreground">
+                    Select an option to continue
+                  </span>
+                )}
               </div>
             </GlassCard>
           </div>

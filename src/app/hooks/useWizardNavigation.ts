@@ -61,6 +61,27 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
       wizardState.setStep(target);
       return;
     }
+    // Changing the application from the answers row: keep the later answers
+    // and return to where the user was — unless their technology isn't
+    // offered for the new application, in which case ask that next.
+    if (wizardState.resumeStep !== null && wizardState.flow === 'standard' && wizardState.selectedApplication) {
+      wizardState.setSelectedApplication(id);
+      const onlyTech = onlyTechnologyFor(id);
+      const techStillValid = (technologies || []).some(
+        t => t.id === wizardState.selectedTechnology && t.availableFor?.includes(id)
+      );
+      if (onlyTech) wizardState.setSelectedTechnology(onlyTech);
+      if (onlyTech || techStillValid) {
+        const target = wizardState.resumeStep;
+        wizardState.setResumeStep(null);
+        wizardState.setStep(target);
+      } else {
+        wizardState.setSelectedTechnology('');
+        wizardState.setStep(1);
+      }
+      trackWizardStep(0, 'standard', { application: id, source: 'edit' });
+      return;
+    }
     wizardState.setResumeStep(null);
     wizardState.setSelectedApplication(id);
     clearDownstreamSelections(0);
@@ -69,7 +90,7 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
     wizardState.setSelectedTechnology(onlyTech ?? '');
     wizardState.setStep(onlyTech ? 2 : 1);
     trackWizardStep(0, 'standard', { application: id });
-  }, [clearDownstreamSelections, onlyTechnologyFor, wizardState.selectedApplication, wizardState.flow, wizardState.resumeStep, wizardState.setResumeStep, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
+  }, [clearDownstreamSelections, onlyTechnologyFor, technologies, wizardState.selectedTechnology, wizardState.selectedApplication, wizardState.flow, wizardState.resumeStep, wizardState.setResumeStep, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
   // Skip the questions entirely: land on the results page with no wizard
   // answers, which scores every product as a match (see scoreAndSplit) —

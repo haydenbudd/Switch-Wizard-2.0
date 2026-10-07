@@ -203,6 +203,9 @@ export function scoreAndSplit(products: Product[], state: WizardState): SplitRes
   const passesHardFilter = (p: Product) => {
     if (state.selectedTechnology && p.technology !== state.selectedTechnology) return false;
     if (hasPreference(state.selectedAction) && !p.actions.includes(state.selectedAction)) return false;
+    // Medical is a hard requirement (approvals / cleanability), not a
+    // preference: an industrial switch is never a "close match" for it
+    if (state.selectedApplication === 'medical' && !p.applications.includes('medical')) return false;
     return true;
   };
 

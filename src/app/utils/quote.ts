@@ -47,7 +47,8 @@ export function productLine(p: Product): string {
  * Request a Quote buttons copy the buyer's details to the clipboard for them
  * to paste into the message box (see quoteLinkProps).
  */
-export const CONTACT_URL = 'https://linemaster.com/contact/';
+// Same page as the site header's "Request a Quote" button
+export const CONTACT_URL = 'https://linemaster.com/request-a-quote/';
 
 /** Quote request text for the results page: answers + the products in play. */
 export function resultsQuoteText(opts: {
@@ -97,12 +98,15 @@ export function configQuoteText(rows: { label: string; value: string }[]): strin
  */
 export function quoteLinkProps(details: string) {
   return {
-    href: CONTACT_URL,
+    // The details also ride along as ?comments=, which pre-fills the form's
+    // Message box once its Contact Form 7 tag reads it
+    // ([textarea* comments default:get]); until then the clipboard copy covers it.
+    href: `${CONTACT_URL}?comments=${encodeURIComponent(details)}`,
     target: '_blank',
     rel: 'noopener noreferrer',
     onClick: () => {
       navigator.clipboard?.writeText(details)
-        .then(() => toast.success('Your details are copied — paste them into the message box on the contact page.', { duration: 8000 }))
+        .then(() => toast.success('Your details are copied — paste them into the Message box on the quote form.', { duration: 8000 }))
         .catch(() => {});
     },
   };
