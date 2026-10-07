@@ -376,7 +376,7 @@ export async function generatePDF(opts: GeneratePDFOptions) {
   doc.text('Tel: (860) 974-1000 | linemaster.com', 15, footerY + 10);
 
   doc.setTextColor(99, 102, 241);
-  doc.text('Contact us: linemaster.com/contact/', 15, footerY + 15);
+  doc.text('Request a quote: linemaster.com/request-a-quote/', 15, footerY + 15);
 
   const filename = isCustomBuilder
     ? `linemaster-custom-config-${Date.now()}.pdf`

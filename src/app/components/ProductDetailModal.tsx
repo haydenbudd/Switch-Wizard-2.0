@@ -31,7 +31,7 @@ import {
   ToggleLeft,
   Star,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   colorClasses,
   getTechColor,
@@ -113,8 +113,17 @@ function DetailedSpecs({ specs }: { specs: Record<string, string> }) {
 }
 
 export function ProductDetailModal({ product, open, onClose, hideTopChoice }: ProductDetailModalProps) {
-  // Radix Dialog handles focus trap, return-focus, scroll lock, and Escape
-  // for free — no manual effects needed.
+  // Radix Dialog handles focus trap, scroll lock and Escape. Return focus is
+  // manual: the dialog is opened from a card, not a Radix Trigger, so Radix
+  // has nowhere to send focus back to and keyboard users landed on <body>.
+  // Captured during render, before Radix's focus trap (a child effect) moves
+  // focus into the dialog.
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const wasOpen = useRef(false);
+  if (open && !wasOpen.current && typeof document !== 'undefined') {
+    returnFocusRef.current = document.activeElement as HTMLElement | null;
+  }
+  wasOpen.current = open;
 
   if (!product) return null;
 
@@ -168,6 +177,10 @@ export function ProductDetailModal({ product, open, onClose, hideTopChoice }: Pr
 
             {/* Content — Radix provides focus trap, Escape, return focus */}
             <DialogPrimitive.Content
+              onCloseAutoFocus={(e) => {
+                const el = returnFocusRef.current;
+                if (el && el.isConnected) { e.preventDefault(); el.focus(); }
+              }}
               asChild
               forceMount
               aria-label={`${product.series} product details`}

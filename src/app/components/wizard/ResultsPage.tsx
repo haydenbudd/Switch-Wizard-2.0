@@ -92,6 +92,23 @@ interface ResultsPageProps {
   setTechnologyFilter: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+const PAGE_SIZE = 24;
+
+const SORT_LABELS = { relevance: 'Relevance', duty: 'Duty Rating', ip: 'IP Rating' } as const;
+
+function ShowMore({ shown, total, onMore }: { shown: number; total: number; onMore: () => void }) {
+  if (shown >= total) return null;
+  const next = Math.min(PAGE_SIZE, total - shown);
+  return (
+    <div className="flex flex-col items-center gap-2 mt-8">
+      <span className="!text-sm !text-muted-foreground tabular-nums">Showing {shown} of {total}</span>
+      <Button variant="outline" onClick={onMore} className="!text-base px-6">
+        Show {next} more
+      </Button>
+    </div>
+  );
+}
+
 export function ResultsPage({
   wizardState,
   products,
@@ -131,6 +148,9 @@ export function ResultsPage({
   // Comparison state
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [compareOpen, setCompareOpen] = useState(false);
+  // Render results a page at a time (browse-all is 200+ cards otherwise)
+  const [perfectLimit, setPerfectLimit] = useState(PAGE_SIZE);
+  const [closeLimit, setCloseLimit] = useState(PAGE_SIZE);
 
   // Product detail modal state
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
@@ -348,6 +368,22 @@ export function ResultsPage({
   // Quote request → Linemaster contact page (new tab). The buyer's answers +
   // products in play (compare selection, else top results) are copied to the
   // clipboard for the contact form's message box.
+  // One "Top Choice" per results page: the best-scoring perfect match (not
+  // one per series, which badged 1 card on one run and 3 of 5 on another).
+  // None in the skip-the-questions catalog — there are no answers to rank by.
+  const topChoiceId = useMemo(() => {
+    if (isBrowseAll || finalPerfect.length < 2) return null;
+    const shown = new Set(finalPerfect.map(p => p.id));
+    const best = split.perfect.find(sp => shown.has(sp.product.id));
+    return best?.product.id ?? null;
+  }, [isBrowseAll, split.perfect, finalPerfect]);
+
+  // New search / filter / sort → start back at the first page
+  useEffect(() => {
+    setPerfectLimit(PAGE_SIZE);
+    setCloseLimit(PAGE_SIZE);
+  }, [finalPerfect, finalClose]);
+
   const quoteLink = quoteLinkProps(resultsQuoteText({
     wizardState,
     sources: { applications, technologies, actions, environments, duties, connections, circuitCounts, features },
@@ -399,7 +435,7 @@ export function ResultsPage({
                 </Button>
               </>
             )}
-            <Button asChild className="gap-2 !text-base" aria-label="Request a quote (opens the Linemaster contact page)">
+            <Button asChild className="gap-2 !text-base" aria-label="Request a quote (opens the Linemaster quote form)">
               <a {...quoteLink}>
                 <Mail className="w-6 h-6" aria-hidden="true" />
                 <span className="hidden sm:inline">Request a Quote</span>
@@ -471,15 +507,15 @@ export function ResultsPage({
                 <Button
                   variant="outline"
                   className="gap-2 whitespace-nowrap !text-base"
-                  aria-label={`Sort by ${sortBy}`}
+                  aria-label={`Sort by ${SORT_LABELS[sortBy]}`}
                 >
                   <ArrowUp className="w-6 h-6" aria-hidden="true" />
                   <span className="hidden sm:inline">
-                    Sort: <span className="font-semibold capitalize">{sortBy}</span>
+                    Sort: <span className="font-semibold">{SORT_LABELS[sortBy]}</span>
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-[224px]">
+              <DropdownMenuContent align="end" className="min-w-[300px]">
                 <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as 'relevance' | 'duty' | 'ip')}>
                   <DropdownMenuRadioItem value="relevance" className="!text-lg py-2">Relevance</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="duty" className="!text-lg py-2">Duty Rating (Heavy First)</DropdownMenuRadioItem>
@@ -610,7 +646,7 @@ export function ResultsPage({
                 </div>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                {finalPerfect.map((product, i) => (
+                {finalPerfect.slice(0, perfectLimit).map((product, i) => (
                   <ProductCard
                     key={product.id}
                     product={product}
@@ -618,10 +654,11 @@ export function ResultsPage({
                     onCompareToggle={handleCompareToggle}
                     onViewDetails={setDetailProduct}
                     priority={i < 4}
-                    hideTopChoice={isBrowseAll}
+                    hideTopChoice={product.id !== topChoiceId}
                   />
                 ))}
               </div>
+              <ShowMore shown={perfectLimit} total={finalPerfect.length} onMore={() => setPerfectLimit(n => n + PAGE_SIZE)} />
             </>
           )}
 
@@ -642,7 +679,7 @@ export function ResultsPage({
                 </p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                {finalClose.map((product, i) => (
+                {finalClose.slice(0, closeLimit).map((product, i) => (
                   <ProductCard
                     key={product.id}
                     product={product}
@@ -654,6 +691,7 @@ export function ResultsPage({
                   />
                 ))}
               </div>
+              <ShowMore shown={closeLimit} total={finalClose.length} onMore={() => setCloseLimit(n => n + PAGE_SIZE)} />
             </div>
           )}
         </>
@@ -700,7 +738,7 @@ export function ResultsPage({
                   Your requirements for {wizardState.selectedFeatures.join(', ')} might require a custom build.
                 </p>
                 <Button asChild size="sm" className="w-full gap-2">
-                  <a {...quoteLink}><Mail className="w-6 h-6" /> Contact Us</a>
+                  <a {...quoteLink}><Mail className="w-6 h-6" /> Request a Quote</a>
                 </Button>
               </GlassCard>
             )}
@@ -729,7 +767,7 @@ export function ResultsPage({
         product={detailProduct}
         open={detailProduct !== null}
         onClose={() => setDetailProduct(null)}
-        hideTopChoice={isBrowseAll}
+        hideTopChoice={detailProduct?.id !== topChoiceId}
       />
 
       {/* Compare Slide-up Panel */}

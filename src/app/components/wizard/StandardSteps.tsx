@@ -195,7 +195,8 @@ export function StandardSteps({
   useEffect(() => {
     const title = stepTitles[wizardState.step];
     if (title && wizardState.step > 0) {
-      setStepAnnouncement(`Step ${getDisplayStep(wizardState.step)} of ${totalSteps}: ${title}`);
+      // Same numbering as the visible counter (industry pick = step 1)
+      setStepAnnouncement(`Step ${getDisplayStep(wizardState.step) + 1} of ${totalSteps + 1}: ${title}`);
       // Move focus to the step content area after transition
       setTimeout(() => stepContentRef.current?.focus(), 350);
     }
@@ -234,8 +235,18 @@ export function StandardSteps({
       return;
     }
     setter(value);
+    // Editing one answer from the answers row (resumeStep set): keep every
+    // later answer and go straight back. Only answers the new choice makes
+    // meaningless are dropped — Pneumatic / Wireless skip wiring + circuits.
+    if (wizardState.resumeStep !== null) {
+      if (stepIndex === 1 && (value === 'pneumatic' || value === 'wireless')) {
+        wizardState.setSelectedConnection('');
+        wizardState.setSelectedCircuitCount('');
+      }
+      onResumeOrContinue();
+      return;
+    }
     clearDownstreamSelections(stepIndex);
-    wizardState.setResumeStep(null);
     onContinue();
   };
 

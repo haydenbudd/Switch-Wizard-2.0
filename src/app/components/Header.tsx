@@ -26,9 +26,14 @@ export function Header({ onReset }: HeaderProps) {
 
   useEffect(() => {
     const container = document.getElementById('lm-product-finder');
-    const dark = IS_EMBEDDED
-      ? container?.classList.contains('lm-dark') ?? false
-      : document.documentElement.classList.contains('dark');
+    // linemaster.com is light-only and its toggle is hidden: never pick up a
+    // host-page "dark" class. This Header remounts when the Medical flow
+    // opens, which is where the wizard was seen flipping to dark on its own.
+    const dark = ON_SITE
+      ? false
+      : IS_EMBEDDED
+        ? container?.classList.contains('lm-dark') ?? false
+        : document.documentElement.classList.contains('dark');
     setIsDark(dark);
     // Sync the scoping container on mount
     container?.classList.toggle('lm-dark', dark);

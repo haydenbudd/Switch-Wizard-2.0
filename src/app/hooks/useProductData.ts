@@ -249,7 +249,7 @@ export function useProductData(): ProductData {
 
     const seen = new Set<string>();
     const derived = products
-      .filter(p => p.circuitry && p.circuitry !== 'undefined')
+      .filter(p => p.circuitry && p.circuitry !== 'undefined' && p.circuitry !== '0')
       .filter(p => {
         if (seen.has(p.circuitry!)) return false;
         seen.add(p.circuitry!);
