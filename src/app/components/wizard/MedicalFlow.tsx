@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
 import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, ChevronLeft, Download, ExternalLink, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, Download, ExternalLink, ArrowRight } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
 import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from '@/app/components/Header';
+import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
 import {
   pedalDesigns,
   NumberIcon,
@@ -168,12 +169,7 @@ export function MedicalFlow({
 
   const renderOptionStep = (title: string, subtitle: string, options: Option[], columns: number, selectedValue: string, setter: (id: string) => void) => (
     <div className="space-y-6">
-      <div className="text-center space-y-2 mb-8">
-        <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-          {title}
-        </h2>
-        <p className="text-muted-foreground">{subtitle}</p>
-      </div>
+      <StepHeading title={title} subtitle={subtitle} />
       <div className={cn(
         "grid gap-6 max-w-3xl mx-auto",
         columns <= 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
@@ -205,12 +201,7 @@ export function MedicalFlow({
           ];
           return (
             <div className="space-y-6">
-              <div className="text-center space-y-2 mb-8">
-                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                  Select Channel Type
-                </h2>
-                <p className="text-muted-foreground">Choose the housing style for your custom footswitch.</p>
-              </div>
+              <StepHeading title="Select Channel Type" subtitle="Choose the housing style for your custom footswitch." />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 {channelCards.map((ch) => (
                   <div
@@ -258,19 +249,17 @@ export function MedicalFlow({
       case 4: // Number of buttons (special — dynamic options)
         return (
           <div className="space-y-6">
-            <div className="text-center space-y-2 mb-8">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                Number of Buttons
-              </h2>
-              <p className="text-muted-foreground">
+            <StepHeading
+              title="Number of Buttons"
+              subtitle={<>
                 How many buttons does your switch need?
                 <span className="block text-xs mt-1 text-red-400">
                   {wizardState.selectedChannel === 'aero'
                     ? `Aero with ${optionLabel(pedalDesigns, wizardState.selectedPedalDesign).toLowerCase()} supports up to ${maxButtons} button${maxButtons > 1 ? 's' : ''}`
                     : `Crescent supports up to ${maxButtons} buttons`}
                 </span>
-              </p>
-            </div>
+              </>}
+            />
             <div className={cn(
               "grid gap-6 max-w-3xl mx-auto",
               buttonCountOptions.length <= 2 ? "grid-cols-1 md:grid-cols-2" :
@@ -338,15 +327,12 @@ export function MedicalFlow({
 
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
-        <div className="text-center space-y-2 mb-8">
-          <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+        <div className="text-center mb-4">
+          <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
             <Check className="w-8 h-8 text-red-600" aria-hidden="true" />
           </div>
-          <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-            Your Custom Switch Configuration
-          </h2>
-          <p className="text-muted-foreground">Review your selections below.</p>
         </div>
+        <StepHeading title="Your Custom Switch Configuration" subtitle="Review your selections below." />
 
         <MedicalGlassCard className="p-6 md:p-8">
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -531,12 +517,7 @@ export function MedicalFlow({
         if (!isCustomPath) {
           return (
             <div className="space-y-6">
-              <div className="text-center space-y-2 mb-8">
-                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                  Action Type
-                </h2>
-                <p className="text-muted-foreground">How should the footswitch activate?</p>
-              </div>
+              <StepHeading title="Action Type" subtitle="How should the footswitch activate?" />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
                 {MEDICAL_ACTIONS.map((action, i) => (
@@ -563,12 +544,7 @@ export function MedicalFlow({
           // Stock path: Environment Selection
           return (
             <div className="space-y-6">
-              <div className="text-center space-y-2 mb-8">
-                <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-500">
-                  Operating Environment
-                </h2>
-                <p className="text-muted-foreground">Where will the footswitch be used?</p>
-              </div>
+              <StepHeading title="Operating Environment" subtitle="Where will the footswitch be used?" />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                 {MEDICAL_ENVIRONMENTS.map((env, i) => (
@@ -637,30 +613,17 @@ export function MedicalFlow({
       <Header onReset={onReset} />
       <div className="container mx-auto px-4 pt-24 pb-20 relative z-10">
 
-        {/* Progress Bar */}
-        <div className="max-w-4xl mx-auto mb-14">
-          <div className="flex justify-between text-xs font-medium text-muted-foreground mb-2.5 tracking-wide">
-            <span className="uppercase">Step {builderDisplayStep} of {builderDisplayTotal}</span>
-            <span className="text-xs text-red-500 font-semibold tracking-widest uppercase">{label}</span>
-          </div>
-          <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`${label} wizard progress: step ${builderDisplayStep} of ${builderDisplayTotal}`}>
-            <MotionDiv
-              className="h-full bg-gradient-to-r from-red-600 to-rose-500 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercent}%` }}
-              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            />
-          </div>
-        </div>
+        <StepProgress
+          displayStep={builderDisplayStep}
+          displayTotal={builderDisplayTotal}
+          progressPercent={progressPercent}
+          accent="medical"
+          label={label}
+          ariaLabel={`${label} wizard progress: step ${builderDisplayStep} of ${builderDisplayTotal}`}
+        />
+        <StepNavRow onBack={onBack} />
 
         <div className="max-w-4xl mx-auto">
-          {/* Inline navigation */}
-          <div className="flex items-center justify-between mb-8">
-            <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
-              <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
-            </Button>
-          </div>
-
           {/* Content Area with Animation */}
           <AnimatePresence mode="wait">
             <MotionDiv

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, Fragment, lazy, Suspense, type ElementType
 import { cn } from '@/app/components/ui/utils';
 import { ON_SITE } from '@/app/utils/embed';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
-import { ArrowRight, ChevronLeft, Check, ShieldCheck, ShieldOff, Award, Flag, Search } from 'lucide-react';
+import { ArrowRight, Check, ShieldCheck, ShieldOff, Award, Flag, Search } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
 import { Option } from '@/app/data/options';
@@ -12,6 +12,7 @@ import { Button } from '@/app/components/ui/button';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import type { OptionCount } from '@/app/hooks/useProductFiltering';
 import { motion, AnimatePresence } from 'motion/react';
+import { StepProgress, StepNavRow } from '@/app/components/wizard/StepFrame';
 
 const LazyWizardCompanion = lazy(() => import('@/app/components/wizard/WizardCompanion'));
 
@@ -433,20 +434,7 @@ export function StandardSteps({
   return (
     <Fragment>
     <div className="pt-16 pb-16 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
-      {/* Progress Bar */}
-      <div className="mx-auto mb-8" style={{ maxWidth: '700px' }}>
-        <div className="flex justify-between !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
-          <span className="uppercase">Step {displayStep} of {displayTotal}</span>
-        </div>
-        <div className="h-1.5 bg-border rounded-full overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={`Wizard progress: step ${displayStep} of ${displayTotal}`}>
-          <motion.div
-            className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full progress-glow"
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercent}%` }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          />
-        </div>
-      </div>
+      <StepProgress displayStep={displayStep} displayTotal={displayTotal} progressPercent={progressPercent} />
 
       {/* Clickable breadcrumb of prior answers — tap any chip to jump back */}
       <WizardBreadcrumb
@@ -468,23 +456,23 @@ export function StandardSteps({
       </div>
 
       <div className="w-full" ref={stepContentRef} tabIndex={-1} style={{ outline: 'none' }}>
-        <div className="flex items-center justify-between mx-auto mb-4" style={{ maxWidth: '700px' }}>
-          <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
-            <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
-          </Button>
-          {wizardState.step === 8 ? (
-            <Button variant="ghost" onClick={onResumeOrContinue} className="text-muted-foreground hover:text-foreground">
-              Skip <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
-            </Button>
-          ) : currentAnswer ? (
-            // Step already answered (user came back to review it): let them
-            // move on without re-clicking a card.
-            <Button variant="outline" onClick={onResumeOrContinue} className="gap-1">
-              {wizardState.resumeStep === 9 ? 'Back to results' : 'Continue'}
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Button>
-          ) : null}
-        </div>
+        <StepNavRow
+          onBack={onBack}
+          rightAction={
+            wizardState.step === 8 ? (
+              <Button variant="ghost" onClick={onResumeOrContinue} className="text-muted-foreground hover:text-foreground">
+                Skip <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
+              </Button>
+            ) : currentAnswer ? (
+              // Step already answered (user came back to review it): let them
+              // move on without re-clicking a card.
+              <Button variant="outline" onClick={onResumeOrContinue} className="gap-1">
+                {wizardState.resumeStep === 9 ? 'Back to results' : 'Continue'}
+                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            ) : null
+          }
+        />
 
         <AnimatePresence mode="wait">
           <motion.div
