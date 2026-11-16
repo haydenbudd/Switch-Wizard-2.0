@@ -28,7 +28,8 @@ export function StepProgress({
 }: StepProgressProps) {
   return (
     <div className="mx-auto mb-8" style={{ maxWidth: '700px' }}>
-      <div className="flex justify-between !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
+      {/* items-baseline: the 12px label shares the 16px step text's baseline */}
+      <div className="flex justify-between items-baseline !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
         <span className="uppercase">Step {displayStep} of {displayTotal}</span>
         {label && <span className="text-xs text-red-500 font-semibold tracking-widest uppercase">{label}</span>}
       </div>
@@ -65,8 +66,6 @@ export function StepNavRow({ onBack, rightAction }: { onBack: () => void; rightA
     </div>
   );
 }
-
-
 
 /** Standard step heading (centered title + optional subtitle). */
 export function StepHeading({

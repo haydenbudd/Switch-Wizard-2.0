@@ -408,7 +408,7 @@ export function ResultsPage({
       <div className="flex flex-col gap-6 mb-8">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label={isBrowseAll ? 'Back to start' : 'Go back to wizard'} className="flex h-12 w-12">
+            <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label={isBrowseAll ? 'Back to start' : 'Go back to wizard'} className="flex shrink-0 h-12 w-12">
               <ArrowLeft className="w-7 h-7" aria-hidden="true" />
             </Button>
             <h2 className="!text-3xl !font-bold !text-foreground">
@@ -781,7 +781,7 @@ export function ResultsPage({
 
       {/* Mobile Action Drawer */}
       {/* Sits above the Compare bar when it's showing, otherwise the bar
-          (fixed to the bottom, z-50) covers the only Back/PDF/Reset access. */}
+          (fixed to the bottom, z-50) covers the phone PDF/Reset access. */}
       <div className={`fixed right-6 md:hidden z-40 transition-[bottom] duration-300 ${compareProducts.length > 0 ? 'bottom-28' : 'bottom-6'}`}>
         <Button
           size="icon"
