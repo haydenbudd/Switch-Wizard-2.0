@@ -9,6 +9,7 @@ import { cn } from '@/app/components/ui/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from '@/app/components/Header';
 import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
+import { OptionGrid } from '@/app/components/wizard/OptionGrid';
 import {
   pedalDesigns,
   NumberIcon,
@@ -170,10 +171,7 @@ export function MedicalFlow({
   const renderOptionStep = (title: string, subtitle: string, options: Option[], columns: number, selectedValue: string, setter: (id: string) => void) => (
     <div className="space-y-6">
       <StepHeading title={title} subtitle={subtitle} />
-      <div className={cn(
-        "grid gap-6 max-w-3xl mx-auto",
-        columns <= 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
-      )}>
+      <OptionGrid md={columns <= 2 ? 2 : 3} className="max-w-3xl mx-auto">
         {options.map((opt, i) => (
           <OptionCard
             key={opt.id}
@@ -185,7 +183,7 @@ export function MedicalFlow({
             index={i}
           />
         ))}
-      </div>
+      </OptionGrid>
     </div>
   );
 
@@ -260,11 +258,10 @@ export function MedicalFlow({
                 </span>
               </>}
             />
-            <div className={cn(
-              "grid gap-6 max-w-3xl mx-auto",
-              buttonCountOptions.length <= 2 ? "grid-cols-1 md:grid-cols-2" :
-              buttonCountOptions.length === 4 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
-            )}>
+            <OptionGrid
+              md={buttonCountOptions.length <= 2 || buttonCountOptions.length === 4 ? 2 : 3}
+              className="max-w-3xl mx-auto"
+            >
               {buttonCountOptions.map((opt, i) => (
                 <OptionCard
                   key={opt.id}
@@ -276,7 +273,7 @@ export function MedicalFlow({
                   index={i}
                 />
               ))}
-            </div>
+            </OptionGrid>
           </div>
         );
 
