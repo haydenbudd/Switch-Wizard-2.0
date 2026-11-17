@@ -147,8 +147,8 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
         {differsOn && differsOn.length > 0 && (
           <div className="mb-3 rounded-lg border border-amber-200 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-900/20 px-3 py-2">
             <span className="block text-xs font-semibold uppercase tracking-wide !text-amber-800 dark:!text-amber-300">Close match</span>
-            <ul className="mt-0.5 text-sm !text-amber-900 dark:!text-amber-200 leading-snug">
-              {differsOn.map(reason => <li key={reason}>{reason}</li>)}
+            <ul className="mt-0.5 !list-none !pl-0 text-sm !text-amber-900 dark:!text-amber-200 leading-snug">
+              {differsOn.map(reason => <li key={reason} className="!list-none">{reason}</li>)}
             </ul>
           </div>
         )}

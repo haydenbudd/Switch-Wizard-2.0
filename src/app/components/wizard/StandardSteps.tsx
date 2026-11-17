@@ -32,7 +32,13 @@ const STEP_ANSWER: Record<number, (s: WizardState) => string> = {
 // Magic wand cursor as inline SVG data URI
 const WAND_CURSOR = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cline x1='4' y1='28' x2='18' y2='14' stroke='%23a78bfa' stroke-width='2.5' stroke-linecap='round'/%3E%3Cpath d='M18,14 L20,10 L24,12 L22,16 Z' fill='%23fbbf24'/%3E%3Ccircle cx='26' cy='4' r='1.5' fill='%23fbbf24'/%3E%3Ccircle cx='29' cy='9' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='24' cy='2' r='1' fill='%23fbbf24'/%3E%3Ccircle cx='30' cy='5' r='0.8' fill='%23fff'/%3E%3Ccircle cx='27' cy='1' r='0.8' fill='%23fff'/%3E%3C/svg%3E") 4 28, auto`;
 
-// Wizard hat SVG for the "L" in Linemaster — hangs crooked off the top of the L
+// Where the hat's brim sits, measured down from the top of the L's line box
+const HAT_BRIM_FROM_TOP = '0.1em';
+
+// Wizard hat SVG for the "L" in Linemaster — sits crooked on top of the L.
+// Sized and placed in em so it fits the label at any font size (20px on
+// GitHub Pages, 14px on linemaster.com): its brim rests just above the L's
+// cap height instead of covering the letter, tilt included.
 const WizardHat = ({ visible }: { visible: boolean }) => (
   <AnimatePresence>
     {visible && (
@@ -42,13 +48,14 @@ const WizardHat = ({ visible }: { visible: boolean }) => (
         animate={{ scale: 1, opacity: 1, rotate: -12 }}
         exit={{ scale: 0, opacity: 0, rotate: 15 }}
         transition={{ type: 'spring', damping: 10, stiffness: 250 }}
-        width="22"
-        height="18"
         viewBox="0 0 24 20"
+        aria-hidden="true"
         style={{
           position: 'absolute',
-          top: '-8px',
-          left: '-2px',
+          width: '1.1em',
+          height: '0.9em',
+          left: '-0.1em',
+          bottom: `calc(100% - ${HAT_BRIM_FROM_TOP})`,
           transformOrigin: '70% 100%',
           pointerEvents: 'none',
         }}
@@ -138,9 +145,11 @@ function CategoryPreview({ apps }: { apps: string[] }) {
   return (
     <div className="mt-4 w-full">
       <p className="!text-xs !font-semibold uppercase tracking-wider !text-muted-foreground mb-2">Next, choose from</p>
-      <ul className="flex flex-wrap justify-center gap-1.5" aria-label="Applications in this industry">
+      {/* !list-none: linemaster.com's theme puts bullets on every ul/li, and
+          unlayered host CSS beats Tailwind's layered preflight/utilities */}
+      <ul className="flex flex-wrap justify-center gap-1.5 !list-none !pl-0" aria-label="Applications in this industry">
         {apps.map(a => (
-          <li key={a} className="!text-sm px-2.5 py-0.5 rounded-full bg-primary/8 !text-primary">{a}</li>
+          <li key={a} className="!list-none !text-sm px-2.5 py-0.5 rounded-full bg-primary/8 !text-primary">{a}</li>
         ))}
       </ul>
     </div>
