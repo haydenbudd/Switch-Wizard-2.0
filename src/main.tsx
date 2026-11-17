@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { ThemeProvider } from "next-themes";
 import App from "./app/App.tsx";
+import { ON_SITE } from "./app/utils/embed";
 import "./styles/index.css";
 
 function mount() {
@@ -21,11 +22,13 @@ function mount() {
   mountEl.setAttribute("data-lm-mounted", "");
 
   // Embedded on linemaster.com: blend into the host page (see theme.css)
-  if (mountEl.id === "lm-wizard-root") {
+  if (ON_SITE) {
     document.getElementById("lm-product-finder")?.classList.add("lm-on-site");
   }
   createRoot(mountEl).render(
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+    // Embedded: always light (the site has no dark mode and the toggle is
+    // hidden), so a stored "dark" from an earlier visit can't apply
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme={ON_SITE ? "light" : undefined}>
       <App />
     </ThemeProvider>
   );
