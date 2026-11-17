@@ -679,7 +679,7 @@ export function StandardSteps({
             {wizardState.step === 8 && (
               <div className="space-y-6">
                 <StepHeading title="Additional Features" subtitle="Select any that apply, or skip to view results." />
-                <OptionGrid sm={2} gapRem={1.25} className="max-w-3xl mx-auto">
+                <OptionGrid sm={2} gap={5} className="max-w-3xl mx-auto">
                   {(features || [])
                     // The guard was already asked on its own step — don't ask twice
                     .filter((f) => f.id !== 'shield')

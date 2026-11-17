@@ -22,8 +22,10 @@ interface OptionGridProps {
   /** Columns from the sm and md breakpoints up (one column below sm). */
   sm?: Cols;
   md?: Cols;
-  /** Gap between cards, in rem (1.5 = Tailwind gap-6). */
-  gapRem?: number;
+  /** Gap between cards as a Tailwind spacing step (6 = gap-6 = 24px). Set in
+   *  px, like the rest of the embed (theme.css pins --spacing to 4px), so a
+   *  host page's smaller root font-size can't shrink it. */
+  gap?: 5 | 6;
   className?: string;
   role?: string;
   'aria-label'?: string;
@@ -34,17 +36,20 @@ interface OptionGridProps {
  * Option-card layout that looks like a CSS grid but centers a partly filled
  * last row (e.g. 5 options in 3 columns puts the last 2 in the middle rather
  * than flush left). Cards in a row stretch to the tallest one, like a grid.
+ * Card widths come from calc() and can be 1/64px narrower than grid tracks.
  */
-export function OptionGrid({ sm, md, gapRem = 1.5, className, role, 'aria-label': ariaLabel, children }: OptionGridProps) {
+export function OptionGrid({ sm, md, gap = 6, className, role, 'aria-label': ariaLabel, children }: OptionGridProps) {
   const itemWidth = cn('w-full', sm && SM_WIDTH[sm], md && MD_WIDTH[md]);
   return (
     <div
       className={cn('flex flex-wrap justify-center gap-[var(--og-gap)]', className)}
-      style={{ '--og-gap': `${gapRem}rem` } as CSSProperties}
+      style={{ '--og-gap': `${gap * 4}px` } as CSSProperties}
       role={role}
       aria-label={ariaLabel}
     >
-      {Children.map(children, (child) => child && <div className={itemWidth}>{child}</div>)}
+      {/* Each card sits in a one-cell grid so it stretches to the row height
+          whatever its own height styles — as it did as a grid item */}
+      {Children.map(children, (child) => child && <div className={cn('grid', itemWidth)}>{child}</div>)}
     </div>
   );
 }
