@@ -12,7 +12,7 @@ import { Button } from '@/app/components/ui/button';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import type { OptionCount } from '@/app/hooks/useProductFiltering';
 import { motion, AnimatePresence } from 'motion/react';
-import { StepProgress, StepNavRow } from '@/app/components/wizard/StepFrame';
+import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
 
 const LazyWizardCompanion = lazy(() => import('@/app/components/wizard/WizardCompanion'));
 
@@ -485,14 +485,12 @@ export function StandardSteps({
             {/* Step 0 Phase 2: Application Selection */}
             {wizardState.step === 0 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Select Your Application</h2>
-                  <p className="!text-lg !text-muted-foreground">
-                    {selectedCategoryLabel
-                      ? <>Within <span className="!font-semibold !text-foreground">{selectedCategoryLabel}</span>, which is closest to your use?</>
-                      : 'Choose the specific use case for your footswitch'}
-                  </p>
-                </div>
+                <StepHeading
+                  title="Select Your Application"
+                  subtitle={selectedCategoryLabel
+                    ? <>Within <span className="!font-semibold !text-foreground">{selectedCategoryLabel}</span>, which is closest to your use?</>
+                    : 'Choose the specific use case for your footswitch'}
+                />
                 <div className={cn(
                   "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 w-full mx-auto",
                   // Fewer than three options (Commercial has two): narrower,
@@ -518,13 +516,11 @@ export function StandardSteps({
             {/* Step 1: Technology */}
             {wizardState.step === 1 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Select Technology</h2>
-                  <p className="!text-lg !text-muted-foreground">Choose the switching mechanism for your application</p>
+                <StepHeading title="Select Technology" subtitle="Choose the switching mechanism for your application">
                   <p className="!text-sm !text-muted-foreground/80 mt-3 italic">
                     Pneumatic and Wireless skip the wiring and circuit questions — 2 fewer steps.
                   </p>
-                </div>
+                </StepHeading>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
                     .filter((t) => t.availableFor?.includes(wizardState.selectedApplication))
@@ -547,10 +543,7 @@ export function StandardSteps({
             {/* Step 2: Action */}
             {wizardState.step === 2 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Select Action Type</h2>
-                  <p className="!text-lg !text-muted-foreground">How should the switch activate and deactivate?</p>
-                </div>
+                <StepHeading title="Select Action Type" subtitle="How should the switch activate and deactivate?" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
@@ -573,10 +566,7 @@ export function StandardSteps({
             {/* Step 3: Environment */}
             {wizardState.step === 3 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Operating Environment</h2>
-                  <p className="!text-lg !text-muted-foreground">Where will the switch be used?</p>
-                </div>
+                <StepHeading title="Operating Environment" subtitle="Where will the switch be used?" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
                   {(environments || []).map((env, i) => (
                     <OptionCard
@@ -597,10 +587,7 @@ export function StandardSteps({
             {/* Step 4: Duty Rating */}
             {wizardState.step === 4 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Duty Rating</h2>
-                  <p className="!text-lg !text-muted-foreground">How heavy will the usage be?</p>
-                </div>
+                <StepHeading title="Duty Rating" subtitle="How heavy will the usage be?" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
@@ -621,10 +608,7 @@ export function StandardSteps({
             {/* Step 5: Connection Type */}
             {wizardState.step === 5 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Connection Type</h2>
-                  <p className="!text-lg !text-muted-foreground">How should the switch connect to your equipment?</p>
-                </div>
+                <StepHeading title="Connection Type" subtitle="How should the switch connect to your equipment?" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
                   {(connections || []).map((conn, i) => (
                     <OptionCard
@@ -645,10 +629,7 @@ export function StandardSteps({
             {/* Step 6: Circuits Controlled */}
             {wizardState.step === 6 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Circuits Controlled</h2>
-                  <p className="!text-lg !text-muted-foreground">How many circuits do you need to control?</p>
-                </div>
+                <StepHeading title="Circuits Controlled" subtitle="How many circuits do you need to control?" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
                   {(circuitCounts || []).map((cc, i) => (
                     <OptionCard
@@ -669,10 +650,7 @@ export function StandardSteps({
             {/* Step 7: Safety Guard */}
             {wizardState.step === 7 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Safety Guard</h2>
-                  <p className="!text-lg !text-muted-foreground">Do you need protection against accidental activation?</p>
-                </div>
+                <StepHeading title="Safety Guard" subtitle="Do you need protection against accidental activation?" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
                   <OptionCard
                     label="Yes, Add Guard"
@@ -699,10 +677,7 @@ export function StandardSteps({
             {/* Step 8: Additional Features (Multi-select) */}
             {wizardState.step === 8 && (
               <div className="space-y-6">
-                <div className="text-center mb-7">
-                  <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">Additional Features</h2>
-                  <p className="!text-lg !text-muted-foreground">Select any that apply, or skip to view results.</p>
-                </div>
+                <StepHeading title="Additional Features" subtitle="Select any that apply, or skip to view results." />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
                   {(features || [])
                     // The guard was already asked on its own step — don't ask twice

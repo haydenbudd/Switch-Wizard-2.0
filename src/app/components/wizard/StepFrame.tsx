@@ -67,20 +67,24 @@ export function StepNavRow({ onBack, rightAction }: { onBack: () => void; rightA
   );
 }
 
-/** Standard step heading (centered title + optional subtitle). */
+/** Standard step heading (centered title + optional subtitle and extra lines). */
 export function StepHeading({
   title,
   subtitle,
   className,
+  children,
 }: {
   title: ReactNode;
   subtitle?: ReactNode;
   className?: string;
+  /** Extra lines under the subtitle, e.g. a short note */
+  children?: ReactNode;
 }) {
   return (
     <div className={cn('text-center mb-7', className)}>
       <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">{title}</h2>
       {subtitle && <p className="!text-lg !text-muted-foreground">{subtitle}</p>}
+      {children}
     </div>
   );
 }
