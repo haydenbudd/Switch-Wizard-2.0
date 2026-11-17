@@ -1,4 +1,5 @@
 import { GlassCard } from '@/app/components/GlassCard';
+import { ON_SITE } from '@/app/utils/embed';
 import { ProductCard } from '@/app/components/ProductCard';
 import { ProductDetailModal } from '@/app/components/ProductDetailModal';
 import { CompareProducts, MAX_COMPARE } from '@/app/components/wizard/CompareProducts';
@@ -781,8 +782,11 @@ export function ResultsPage({
 
       {/* Mobile Action Drawer */}
       {/* Sits above the Compare bar when it's showing, otherwise the bar
-          (fixed to the bottom, z-50) covers the phone PDF/Reset access. */}
-      <div className={`fixed right-6 md:hidden z-40 transition-[bottom] duration-300 ${compareProducts.length > 0 ? 'bottom-28' : 'bottom-6'}`}>
+          (fixed to the bottom, z-50) covers the phone PDF/Reset access. On
+          the website the collapsed bar is lifted 72px higher (clear of the
+          site's corner buttons), so this button goes higher too (px, not rem:
+          the host page's root font-size is smaller). */}
+      <div className={`fixed right-6 md:hidden z-40 transition-[bottom] duration-300 ${compareProducts.length > 0 ? (ON_SITE ? 'bottom-[160px]' : 'bottom-28') : 'bottom-6'}`}>
         <Button
           size="icon"
           className="h-12 w-12 rounded-full shadow-xl shadow-primary/25 bg-primary hover:bg-primary/90"

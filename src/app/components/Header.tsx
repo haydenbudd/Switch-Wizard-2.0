@@ -47,7 +47,10 @@ export function Header({ onReset }: HeaderProps) {
   }, [isDark, setTheme]);
 
   return (
-    <header className="sticky top-0 z-50 pt-3 pb-1">
+    // Not sticky on linemaster.com: the site's own header is fixed to the top
+    // of the window (88px, z-index 999), so a pill stuck to the top would sit
+    // underneath it. It stays at the top of the finder instead.
+    <header className={`${ON_SITE ? 'relative' : 'sticky top-0'} z-50 pt-3 pb-1`}>
       <div className="mx-auto px-4">
         {/* Pill toolbar — top right */}
         <nav aria-label="Wizard controls" className="group absolute top-3 right-4 flex items-center gap-0.5 rounded-full glass-card px-1 py-1">
