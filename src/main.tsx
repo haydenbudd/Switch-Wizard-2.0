@@ -27,8 +27,17 @@ function mount() {
   }
   createRoot(mountEl).render(
     // Embedded: always light (the site has no dark mode and the toggle is
-    // hidden), so a stored "dark" from an earlier visit can't apply
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} forcedTheme={ON_SITE ? "light" : undefined}>
+    // hidden), so a stored "dark" from an earlier visit can't apply. And
+    // leave the host page's <html> alone: a "light" class there matched
+    // linemaster.com's own .light{font-weight:300} and thinned its header
+    // and footer text, so use a namespaced data attribute instead.
+    <ThemeProvider
+      attribute={ON_SITE ? "data-lm-theme" : "class"}
+      enableColorScheme={!ON_SITE}
+      defaultTheme="light"
+      enableSystem={false}
+      forcedTheme={ON_SITE ? "light" : undefined}
+    >
       <App />
     </ThemeProvider>
   );

@@ -156,13 +156,17 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="fixed bottom-0 left-0 right-0 z-50"
+        // Only the card itself takes taps: the transparent padding around it
+        // (80px tall on website phones) must not block the page underneath
+        className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
       >
         {/* On linemaster.com the site's own floating buttons (cookie settings
             bottom-left, PDF bottom-right) sit in the page corners — keep the
-            bar clear of them */}
-        <div className={`mx-auto max-w-7xl px-2 sm:px-4 pb-2 sm:pb-4 ${ON_SITE ? '!pb-20 md:!pb-4 md:px-24' : ''}`}>
-          <div className="rounded-2xl border border-border/60 bg-background/95 backdrop-blur-xl shadow-2xl shadow-black/20 overflow-hidden">
+            collapsed bar clear of them. Not while the table is open: lifted,
+            it would reach up under the site's fixed header.
+            px-[8px] rather than px-2: the site has .px-2{…!important}. */}
+        <div className={`mx-auto max-w-7xl px-[8px] sm:px-4 pb-2 sm:pb-4 ${ON_SITE ? (expanded ? 'md:px-24' : '!pb-20 md:!pb-4 md:px-24') : ''}`}>
+          <div className="pointer-events-auto rounded-2xl border border-border/60 bg-background/95 backdrop-blur-xl shadow-2xl shadow-black/20 overflow-hidden">
 
             {/* Bar — always visible */}
             <div className="flex items-center justify-between gap-3 px-3 sm:px-6 py-3">
@@ -265,7 +269,10 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
                     </span>
                   </div>
 
-                  <div className="max-h-[70vh] overflow-auto">
+                  {/* On the website, keep the open panel below the site's
+                      88px fixed header on short screens too (px, not rem: the host
+                      page's root font-size is smaller) */}
+                  <div className={`${ON_SITE ? 'max-h-[min(70vh,calc(100dvh-260px))]' : 'max-h-[70vh]'} overflow-auto`}>
                     <table className="w-full border-collapse table-fixed" style={{ minWidth: tableMinWidth }}>
                       <colgroup>
                         <col style={{ width: labelWidth }} />

@@ -336,7 +336,8 @@ export function StandardSteps({
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="!text-2xl !font-semibold text-center mb-10"
+            // ! margins: the site's theme sets p{margin:0 0 10px}
+            className="!text-2xl !font-semibold text-center !mt-0 !mb-10"
           >
             <span className="block mb-2">{wizardEyebrow}</span>
             Select your industry to begin. We'll guide you to the right footswitch.
