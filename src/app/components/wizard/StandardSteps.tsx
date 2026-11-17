@@ -13,6 +13,7 @@ import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import type { OptionCount } from '@/app/hooks/useProductFiltering';
 import { motion, AnimatePresence } from 'motion/react';
 import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
+import { OptionGrid } from '@/app/components/wizard/OptionGrid';
 
 const LazyWizardCompanion = lazy(() => import('@/app/components/wizard/WizardCompanion'));
 
@@ -521,7 +522,7 @@ export function StandardSteps({
                     Pneumatic and Wireless skip the wiring and circuit questions — 2 fewer steps.
                   </p>
                 </StepHeading>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select technology">
+                <OptionGrid md={3} className="w-full" role="radiogroup" aria-label="Select technology">
                   {(technologies || [])
                     .filter((t) => t.availableFor?.includes(wizardState.selectedApplication))
                     .map((tech, i) => (
@@ -536,7 +537,7 @@ export function StandardSteps({
                         index={i}
                       />
                     ))}
-                </div>
+                </OptionGrid>
               </div>
             )}
 
@@ -544,7 +545,7 @@ export function StandardSteps({
             {wizardState.step === 2 && (
               <div className="space-y-6">
                 <StepHeading title="Select Action Type" subtitle="How should the switch activate and deactivate?" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select action type">
+                <OptionGrid sm={2} md={4} className="w-full" role="radiogroup" aria-label="Select action type">
                   {(actions || [])
                     .filter((a) => a.availableFor?.includes(wizardState.selectedTechnology))
                     .map((action, i) => (
@@ -559,7 +560,7 @@ export function StandardSteps({
                         index={i}
                       />
                     ))}
-                </div>
+                </OptionGrid>
               </div>
             )}
 
@@ -567,7 +568,7 @@ export function StandardSteps({
             {wizardState.step === 3 && (
               <div className="space-y-6">
                 <StepHeading title="Operating Environment" subtitle="Where will the switch be used?" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select operating environment">
+                <OptionGrid sm={2} md={3} className="w-full" role="radiogroup" aria-label="Select operating environment">
                   {(environments || []).map((env, i) => (
                     <OptionCard
                       key={env.id}
@@ -580,7 +581,7 @@ export function StandardSteps({
                       index={i}
                     />
                   ))}
-                </div>
+                </OptionGrid>
               </div>
             )}
 
@@ -588,7 +589,7 @@ export function StandardSteps({
             {wizardState.step === 4 && (
               <div className="space-y-6">
                 <StepHeading title="Duty Rating" subtitle="How heavy will the usage be?" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select duty rating">
+                <OptionGrid sm={2} md={4} className="w-full" role="radiogroup" aria-label="Select duty rating">
                   {(duties || []).map((duty, i) => (
                     <OptionCard
                       key={duty.id}
@@ -601,7 +602,7 @@ export function StandardSteps({
                       index={i}
                     />
                   ))}
-                </div>
+                </OptionGrid>
               </div>
             )}
 
@@ -609,7 +610,7 @@ export function StandardSteps({
             {wizardState.step === 5 && (
               <div className="space-y-6">
                 <StepHeading title="Connection Type" subtitle="How should the switch connect to your equipment?" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 w-full" role="radiogroup" aria-label="Select connection type">
+                <OptionGrid sm={2} md={4} className="w-full" role="radiogroup" aria-label="Select connection type">
                   {(connections || []).map((conn, i) => (
                     <OptionCard
                       key={conn.id}
@@ -622,7 +623,7 @@ export function StandardSteps({
                       index={i}
                     />
                   ))}
-                </div>
+                </OptionGrid>
               </div>
             )}
 
@@ -630,7 +631,7 @@ export function StandardSteps({
             {wizardState.step === 6 && (
               <div className="space-y-6">
                 <StepHeading title="Circuits Controlled" subtitle="How many circuits do you need to control?" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full" role="radiogroup" aria-label="Select circuit count">
+                <OptionGrid sm={2} md={3} className="w-full" role="radiogroup" aria-label="Select circuit count">
                   {(circuitCounts || []).map((cc, i) => (
                     <OptionCard
                       key={cc.id}
@@ -643,7 +644,7 @@ export function StandardSteps({
                       index={i}
                     />
                   ))}
-                </div>
+                </OptionGrid>
               </div>
             )}
 
@@ -678,7 +679,7 @@ export function StandardSteps({
             {wizardState.step === 8 && (
               <div className="space-y-6">
                 <StepHeading title="Additional Features" subtitle="Select any that apply, or skip to view results." />
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+                <OptionGrid sm={2} gapRem={1.25} className="max-w-3xl mx-auto">
                   {(features || [])
                     // The guard was already asked on its own step — don't ask twice
                     .filter((f) => f.id !== 'shield')
@@ -719,7 +720,7 @@ export function StandardSteps({
                         </GlassCard>
                       );
                     })}
-                </div>
+                </OptionGrid>
                 <div className="flex justify-center pt-6">
                   <Button
                     size="lg"
