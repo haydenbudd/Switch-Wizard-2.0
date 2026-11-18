@@ -50,7 +50,7 @@ export default function MobileActionsDrawer({
             </Button>
           </DrawerClose>
           <DrawerClose asChild>
-            <Button asChild className="w-full gap-2 justify-start">
+            <Button asChild variant="quote" className="w-full gap-2 justify-start">
               <a {...quoteLink}><Mail className="w-6 h-6" /> Request a Quote</a>
             </Button>
           </DrawerClose>

@@ -433,7 +433,7 @@ export function ResultsPage({
                 </Button>
               </>
             )}
-            <Button asChild className="gap-2 !text-base" aria-label="Request a quote (opens the Linemaster quote form)">
+            <Button asChild variant="quote" className="gap-2 !text-sm" aria-label="Request a quote (opens the Linemaster quote form)">
               <a {...quoteLink}>
                 <Mail className="w-6 h-6" aria-hidden="true" />
                 <span className="hidden sm:inline">Request a Quote</span>
@@ -491,7 +491,7 @@ export function ResultsPage({
         )}
 
         {/* Toolbar */}
-        <div className="!flex !flex-row !flex-nowrap gap-4 items-center sticky top-16 z-30 glass-card p-4 rounded-2xl" style={{ display: 'flex', flexWrap: 'nowrap' }}>
+        <div className="!flex !flex-row !flex-nowrap gap-4 items-center sticky top-16 z-30 glass-card p-4 rounded-[10px]" style={{ display: 'flex', flexWrap: 'nowrap' }}>
           <EnhancedSearch
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -627,7 +627,7 @@ export function ResultsPage({
                   These are built to order. The switches below are the closest stock bases — ask us to quote them with your custom cable or connector.
                 </p>
               </div>
-              <Button asChild className="gap-2 shrink-0">
+              <Button asChild variant="quote" className="gap-2 shrink-0">
                 <a {...quoteLink}><Mail className="w-5 h-5" aria-hidden="true" /> Request a Quote</a>
               </Button>
             </div>
@@ -735,7 +735,7 @@ export function ResultsPage({
                 <p className="text-sm !text-blue-600/80 dark:!text-blue-400/80 mb-3">
                   Your requirements for {wizardState.selectedFeatures.join(', ')} might require a custom build.
                 </p>
-                <Button asChild size="sm" className="w-full gap-2">
+                <Button asChild size="sm" variant="quote" className="w-full gap-2">
                   <a {...quoteLink}><Mail className="w-6 h-6" /> Request a Quote</a>
                 </Button>
               </GlassCard>

@@ -312,10 +312,7 @@ export function ProductDetailModal({ product, open, onClose, hideTopChoice }: Pr
                   PDF map used to live here; the URLs rotted as linemaster.com
                   reorganized uploads, so it was removed rather than maintained.) */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  asChild
-                  className="flex-1 gap-2 !text-base bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15"
-                >
+                <Button asChild variant="quote" className="flex-1 gap-2 !text-sm">
                   <a {...quoteLinkProps(productQuoteText(product))}>
                     <Mail className="w-6 h-6" />
                     Request a Quote

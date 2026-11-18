@@ -132,10 +132,10 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
               </span>
             )}
           </div>
-          <div className="text-base !text-primary/80 font-medium mb-1 capitalize flex items-center gap-2">
+          <div className="text-base !text-brand-steel font-medium mb-1 capitalize flex items-center gap-2">
             {product.technology}
             <span className="w-1 h-1 rounded-full bg-current opacity-50" aria-hidden="true" />
-            <span className={product.duty === 'heavy' ? 'text-[var(--accent-warm)]' : ''}>
+            <span>
               {product.duty} Duty
             </span>
           </div>
@@ -145,9 +145,9 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
             the card body (not an image-corner pill) so longer phrases like
             "Not rated for Wet / Washdown (IP20)" stay readable. */}
         {differsOn && differsOn.length > 0 && (
-          <div className="mb-3 rounded-lg border border-amber-200 dark:border-amber-700/50 bg-amber-50 dark:bg-amber-900/20 px-3 py-2">
-            <span className="block text-xs font-semibold uppercase tracking-wide !text-amber-800 dark:!text-amber-300">Close match</span>
-            <ul className="mt-0.5 !list-none !pl-0 text-sm !text-amber-900 dark:!text-amber-200 leading-snug">
+          <div className="mb-3 rounded-lg border border-orange-200 dark:border-orange-700/50 bg-orange-50/70 dark:bg-orange-900/20 px-3 py-2">
+            <span className="block text-xs font-semibold uppercase tracking-wide !text-orange-800 dark:!text-orange-300">Close match</span>
+            <ul className="mt-0.5 !list-none !pl-0 text-sm !text-orange-950 dark:!text-orange-200 leading-snug">
               {differsOn.map(reason => <li key={reason} className="!list-none">{reason}</li>)}
             </ul>
           </div>
@@ -188,12 +188,13 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
         {/* Footer Actions */}
         <div className="mt-auto pt-4 flex items-center gap-2 border-t border-border/50">
           <Button
-            className="w-full group/btn bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg shadow-primary/15 !text-white text-primary-foreground border-0 transition-all duration-300"
+            variant="steel"
+            className="w-full group/btn transition-all duration-300"
             onClick={(e) => { e.stopPropagation(); onViewDetails?.(product); }}
             aria-label={`View details for ${product.series}`}
           >
             View Details
-            <ArrowRight className="w-6 h-6 ml-2 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
+            <ArrowRight className="w-5 h-5 ml-1 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
           </Button>
         </div>
       </div>

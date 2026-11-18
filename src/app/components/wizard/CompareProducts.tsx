@@ -386,7 +386,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
                           {products.map(product => (
                             <td key={product.id} className="px-3 py-3">
                               <div className="flex flex-col items-stretch gap-2">
-                                <Button asChild size="sm" className="gap-1.5 !text-sm">
+                                <Button asChild size="sm" variant="quote" className="gap-1.5 !text-sm">
                                   <a {...quoteLinkProps(productQuoteText(product))}>
                                     <Mail className="w-4 h-4" aria-hidden="true" /> Request a Quote
                                   </a>

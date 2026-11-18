@@ -347,7 +347,9 @@ export function StandardSteps({
   // heading is dropped, so the egg still has a trigger there.
   const wizardEyebrow = (
     <span
-      className={`inline-block font-medium text-muted-foreground tracking-wide uppercase cursor-pointer hover:text-primary focus-visible:text-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-md px-2 -mx-2 ${ON_SITE ? '!text-sm' : 'text-lg md:text-xl mb-3'}`}
+      // Bold steel blue eyebrow, like "PRESPEC Program" on linemaster.com.
+      // On the navy front-page band it uses a lighter blue (lm-hero-band).
+      className={`inline-block !font-bold !text-brand-steel cursor-pointer hover:!text-primary focus-visible:!text-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-md px-2 -mx-2 ${ON_SITE ? '!text-base' : '!text-lg md:!text-xl mb-3'}`}
       onClick={() => setShowWizard(prev => !prev)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowWizard(prev => !prev); } }}
       role="button"
@@ -366,10 +368,11 @@ export function StandardSteps({
   if (wizardState.step === STEP.APPLICATION && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className={`${ON_SITE ? 'pt-14' : 'pt-20'} pb-12 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]`}>
+      <div className={`${ON_SITE ? 'pt-14' : ''} pb-12`}>
         {ON_SITE ? (
           // The linemaster.com page already carries the "Product Finder"
           // title, so embedded mode opens with just the prompt.
+          <div className="px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
           <p
             style={{ '--enter-y': '16px' } as React.CSSProperties}
             // ! margins: the site's theme sets p{margin:0 0 10px}
@@ -378,30 +381,32 @@ export function StandardSteps({
             <span className="block mb-2">{wizardEyebrow}</span>
             Select your industry to begin. We'll guide you to the right footswitch.
           </p>
-        ) : (<>
-        <div
-          className="lm-enter text-center mb-16"
-          style={{ '--enter-y': '24px', '--enter-dur': '0.6s' } as React.CSSProperties}
-        >
-          {wizardEyebrow}
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
-            Find Your Solution
-          </h1>
-          <p className="!text-xl !text-muted-foreground" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
-            Select your industry to begin. We'll guide you to the right footswitch.
-          </p>
+          </div>
+        ) : (
+        // Navy band with a faint blueprint grid, after the PreSpec page's
+        // hero. GitHub Pages only: on linemaster.com the page has its own
+        // header. -mt-4 pulls it up under the (transparent) toolbar row.
+        <div className="lm-hero-band -mt-4 px-4 pt-24 pb-36 md:pb-40">
+          <div
+            className="lm-enter text-center"
+            style={{ '--enter-y': '24px', '--enter-dur': '0.6s' } as React.CSSProperties}
+          >
+            {wizardEyebrow}
+            <h1 className="!text-5xl md:!text-6xl !font-bold !tracking-[-0.01em] mb-5 leading-tight !text-white">
+              Find Your Solution
+            </h1>
+            <p className="!text-xl !text-white/85" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
+              Select your industry to begin. We'll guide you to the right footswitch.
+            </p>
+          </div>
         </div>
+        )}
 
-        <div className="flex items-center gap-4 w-full mb-8" aria-hidden="true">
-          <div className="h-px flex-1 bg-border" />
-          <span className="!text-base font-semibold uppercase tracking-widest !text-muted-foreground">Choose Your Industry</span>
-          <div className="h-px flex-1 bg-border" />
-        </div>
-        </>)}
-
+        <div className="px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
         {/* Tighter gap in the narrow 3-column range (768-1023px) so the cards
-            are wide enough for "Custom Aero / Crescent" on one line */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-5 lg:gap-8 mx-auto" style={{ maxWidth: '960px' }}>
+            are wide enough for "Custom Aero / Crescent" on one line. On
+            GitHub Pages the cards overlap the bottom of the navy band. */}
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-5 lg:gap-8 mx-auto${ON_SITE ? '' : ' relative z-10 -mt-24 md:-mt-28'}`} style={{ maxWidth: '960px' }}>
           {(categories || []).map((category, i) => (
             // Each card spans 4 rows of the outer grid and shares them through
             // CSS subgrid (photo / title / description / next choices), so
@@ -420,7 +425,7 @@ export function StandardSteps({
               >
                 <CategoryVisual image={category.image} icon={category.icon} />
                 {/* Slightly smaller in the narrow 3-column range (768-1023px) */}
-                <span className="!text-2xl md:!text-xl lg:!text-2xl !font-semibold tracking-tight mb-2 w-full">
+                <span className="!text-2xl md:!text-xl lg:!text-2xl !font-semibold tracking-[-0.01em] mb-2 w-full">
                   <CategoryTitle label={category.label} />
                 </span>
                 <p className="!my-0 !text-base !text-muted-foreground text-balance">
@@ -441,8 +446,9 @@ export function StandardSteps({
         >
           <span className="!text-lg !font-medium">Already know what you need?</span>
           <Button
+            variant="cta"
             onClick={onBrowseAll}
-            className="gap-2 !text-base sm:!text-lg h-auto max-w-full whitespace-normal text-center px-5 sm:px-7 py-3.5 rounded-full group shadow-md shadow-primary/20"
+            className="gap-2 !text-sm h-auto max-w-full whitespace-normal text-center px-5 sm:px-7 py-3.5 group"
           >
             <Search className="w-5 h-5" aria-hidden="true" />
             Skip the questions: search &amp; compare all products
@@ -467,6 +473,7 @@ export function StandardSteps({
             <Award className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
             <span className="!text-lg !font-medium">70+ Years of Excellence</span>
           </div>
+        </div>
         </div>
 
       </div>
@@ -766,8 +773,9 @@ export function StandardSteps({
                 <div className="flex justify-center pt-6">
                   <Button
                     size="lg"
+                    variant="cta"
                     onClick={onContinue}
-                    className="px-10 bg-gradient-to-r from-primary to-primary/85 hover:from-primary/90 hover:to-primary/75 shadow-lg shadow-primary/15 transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-0.5"
+                    className="px-10 transition-all duration-300 hover:-translate-y-0.5"
                   >
                     View Results <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
