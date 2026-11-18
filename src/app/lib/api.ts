@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { transformRow, type StockSwitchRow } from './transformProduct';
+import { markFlagships } from './publicRest';
 
 export interface Product {
   id: string;
@@ -65,26 +66,7 @@ export async function fetchProducts(): Promise<Product[]> {
 
   if (!data || data.length === 0) return [];
 
-  const products = (data as StockSwitchRow[]).map(transformRow);
-
-  // Mark one flagship "Top Choice" per series — best duty + IP + features
-  const dutyScore: Record<string, number> = { heavy: 3, medium: 2, light: 1 };
-  const ipScore = (ip: string) => (ip === 'IPXX' ? 0 : parseInt(ip.replace(/\D/g, '') || '0'));
-  const score = (p: Product) =>
-    (dutyScore[p.duty] ?? 0) * 100 + ipScore(p.ip) * 10 + (p.features?.length ?? 0);
-
-  const bestBySeries = new Map<string, Product>();
-  for (const p of products) {
-    const existing = bestBySeries.get(p.series);
-    if (!existing || score(p) > score(existing)) {
-      bestBySeries.set(p.series, p);
-    }
-  }
-  for (const p of bestBySeries.values()) {
-    p.flagship = true;
-  }
-
-  return products;
+  return markFlagships((data as StockSwitchRow[]).map(transformRow));
 }
 
 export async function fetchProduct(id: string): Promise<Product> {
