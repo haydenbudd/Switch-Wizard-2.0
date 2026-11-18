@@ -16,6 +16,7 @@ import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage, type PDFResults } from '@/app/components/wizard/ResultsPage';
 import { ConfirmResetDialog } from '@/app/components/ConfirmResetDialog';
+import { STEP } from '@/app/utils/wizardSteps';
 
 // Lazy load admin panel with fallback for environments like Figma Make
 const AdminContainer = lazy(() =>
@@ -61,6 +62,7 @@ function WizardApp() {
     handleResumeOrContinue,
     jumpToStep,
     handleViewMedicalProducts,
+    stepContext,
     totalSteps,
     getProgressStep,
     getDisplayStep,
@@ -88,7 +90,7 @@ function WizardApp() {
     const shared = parseShareParams(window.location.search);
     if (shared) {
       // Share URLs always land on the results page
-      s.applyPartial({ ...shared, step: 9 } as Partial<WizardSnapshot>);
+      s.applyPartial({ ...shared, step: STEP.RESULTS } as Partial<WizardSnapshot>);
       return;
     }
 
@@ -118,7 +120,7 @@ function WizardApp() {
   // no-ops when none are present), so this is safe for organic users and
   // preserves the host page's params (e.g. WordPress ?page_id=).
   useEffect(() => {
-    if (wizardState.step === 9) {
+    if (wizardState.step === STEP.RESULTS) {
       updateUrlWithState(wizardState);
     } else {
       clearShareParams();
@@ -174,7 +176,7 @@ function WizardApp() {
   // Track no-results as a side effect — "no results" means the page is
   // actually empty (no exact AND no close matches), same as the buyer sees.
   useEffect(() => {
-    if (wizardState.step === 9) {
+    if (wizardState.step === STEP.RESULTS) {
       const split = scoredProducts();
       if (split.perfect.length === 0 && split.close.length === 0) {
         trackNoResults({
@@ -217,7 +219,7 @@ function WizardApp() {
       <MedicalFlow
         wizardState={wizardState}
         products={products}
-        totalSteps={totalSteps}
+        stepContext={stepContext}
         onBack={handleBack}
         onContinue={handleContinue}
         onViewStandardProducts={handleViewMedicalProducts}
@@ -242,7 +244,7 @@ function WizardApp() {
       <Header onReset={requestReset} />
       <main id="wizard-main">
 
-      {wizardState.step >= 0 && wizardState.step <= 8 && (
+      {wizardState.step >= STEP.APPLICATION && wizardState.step < STEP.RESULTS && (
         <StandardSteps
           wizardState={wizardState}
           categories={categories}
@@ -269,7 +271,7 @@ function WizardApp() {
         />
       )}
 
-      {wizardState.step === 9 && (
+      {wizardState.step === STEP.RESULTS && (
         <ResultsPage
           wizardState={wizardState}
           products={products}

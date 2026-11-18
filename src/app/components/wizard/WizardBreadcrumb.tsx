@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { ChevronRight } from 'lucide-react';
 import { optionLabel } from '@/app/data/options';
+import { STEP } from '@/app/utils/wizardSteps';
 
 /** Only id + label are read, so any option list shape works. */
 type LabeledOption = { id: string; label: string };
@@ -44,13 +45,13 @@ interface Crumb {
 // Guard and Features
 // have bespoke value formats and are appended separately below.
 const CRUMB_CONFIG = [
-  { step: 0, label: 'Application', field: 'selectedApplication', source: 'applications' },
-  { step: 1, label: 'Technology', field: 'selectedTechnology', source: 'technologies' },
-  { step: 2, label: 'Action Type', field: 'selectedAction', source: 'actions' },
-  { step: 3, label: 'Environment', field: 'selectedEnvironment', source: 'environments' },
-  { step: 4, label: 'Duty Rating', field: 'selectedDuty', source: 'duties' },
-  { step: 5, label: 'Connection Type', field: 'selectedConnection', source: 'connections' },
-  { step: 6, label: 'Circuits Controlled', field: 'selectedCircuitCount', source: 'circuitCounts' },
+  { step: STEP.APPLICATION, label: 'Application', field: 'selectedApplication', source: 'applications' },
+  { step: STEP.TECHNOLOGY, label: 'Technology', field: 'selectedTechnology', source: 'technologies' },
+  { step: STEP.ACTION, label: 'Action Type', field: 'selectedAction', source: 'actions' },
+  { step: STEP.ENVIRONMENT, label: 'Environment', field: 'selectedEnvironment', source: 'environments' },
+  { step: STEP.DUTY, label: 'Duty Rating', field: 'selectedDuty', source: 'duties' },
+  { step: STEP.CONNECTION, label: 'Connection Type', field: 'selectedConnection', source: 'connections' },
+  { step: STEP.CIRCUITS, label: 'Circuits Controlled', field: 'selectedCircuitCount', source: 'circuitCounts' },
 ] as const;
 
 /**
@@ -82,14 +83,14 @@ export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBrea
 
   if (wizardState.selectedGuard) {
     crumbs.push({
-      step: 7,
+      step: STEP.GUARD,
       label: 'Safety Guard',
       value: wizardState.selectedGuard === 'yes' ? 'Required' : 'Not required',
     });
   }
   if (wizardState.selectedFeatures.length > 0) {
     crumbs.push({
-      step: 8,
+      step: STEP.FEATURES,
       label: 'Features',
       value: formatMulti(wizardState.selectedFeatures, features),
     });

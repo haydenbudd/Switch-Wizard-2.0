@@ -16,6 +16,13 @@ import {
   BUILDER_STEP_CONFIGS,
   optionLabel,
 } from '@/app/data/options';
+import {
+  MEDICAL_STEP,
+  getSequenceKey,
+  stepPosition,
+  visibleSteps,
+  type StepContext,
+} from '@/app/utils/wizardSteps';
 import type { Option } from '@/app/data/options';
 import { NO_PREFERENCE, hasPreference } from '@/app/utils/preference';
 import { configQuoteText, quoteLinkProps } from '@/app/utils/quote';
@@ -44,34 +51,13 @@ const MEDICAL_ENVIRONMENTS = [
 interface MedicalFlowProps {
   wizardState: WizardState;
   products: Product[];
-  totalSteps: number;
+  /** Answers the step order's skip rules read (Crescent skips the treadle step). */
+  stepContext: StepContext;
   onBack: () => void;
   onContinue: () => void;
   onViewStandardProducts: () => void;
   onGeneratePDF: () => void;
   onReset: () => void;
-}
-
-// Stock path display: action(1) + environment(2). The fork before it is an
-// unnumbered "choose a path" screen, so both paths count from 1.
-const STOCK_DISPLAY_TOTAL = 2;
-
-// Custom builder steps (after fork):
-// channel(2) + pedal(3) + buttons(4) + output(5) + wired(6) + toe(7) + treadle(8, aero only) + labeling(9) + LEDs(10) + summary(11)
-const CUSTOM_BUILDER_STEPS = 10; // 10 steps for Aero, 9 for Crescent (skip treadle)
-
-// Map from raw wizard step to builder display step, accounting for treadle skip
-function getCustomDisplayStep(rawStep: number, channel: string): number {
-  // Steps 2-11 map to builder display steps 1-10
-  const builderStep = rawStep - 1; // step 2 → display 1, step 3 → display 2, etc.
-  if (channel === 'crescent' && rawStep > 8) {
-    return builderStep - 1; // shift down by 1 after treadle skip
-  }
-  return builderStep;
-}
-
-function getCustomDisplayTotal(channel: string): number {
-  return channel === 'crescent' ? CUSTOM_BUILDER_STEPS - 1 : CUSTOM_BUILDER_STEPS;
 }
 
 // Get max button count based on channel and pedal design
@@ -100,7 +86,7 @@ const SETTER_MAP: Record<string, string> = {
 export function MedicalFlow({
   wizardState,
   products,
-  totalSteps,
+  stepContext,
   onBack,
   onContinue,
   onViewStandardProducts,
@@ -127,7 +113,6 @@ export function MedicalFlow({
     if (envId === 'wet') return base.filter(p => p.ip === 'IP68').length;
     return base.length; // 'any' = no filter
   };
-  const displayStep = wizardState.step - 1; // action(2)=1, environment(3)=2
 
   // No artificial setTimeout delays — AnimatePresence already provides the
   // visual handoff to the next step, and waiting just makes clicks feel laggy.
@@ -595,13 +580,12 @@ export function MedicalFlow({
   }
 
   // Custom builder and stock steps use progress bar layout
-  const isBuilder = isCustomPath && wizardState.step >= 2;
-  const builderDisplayStep = isBuilder
-    ? getCustomDisplayStep(wizardState.step, wizardState.selectedChannel)
-    : displayStep;
-  const builderDisplayTotal = isBuilder
-    ? getCustomDisplayTotal(wizardState.selectedChannel)
-    : STOCK_DISPLAY_TOTAL;
+  // The fork is an unnumbered "choose a path" screen, so both paths count
+  // from 1 after it: Stock is Action, Environment; Custom is the builder.
+  const isBuilder = isCustomPath && wizardState.step >= MEDICAL_STEP.CHANNEL;
+  const sequenceKey = getSequenceKey(wizardState.flow, wizardState.selectedMedicalPath);
+  const builderDisplayStep = stepPosition(sequenceKey, wizardState.step, stepContext);
+  const builderDisplayTotal = visibleSteps(sequenceKey, stepContext).length - 1;
   const progressPercent = Math.round((builderDisplayStep / builderDisplayTotal) * 100);
   const label = isBuilder ? 'Custom Builder' : 'Medical';
 
