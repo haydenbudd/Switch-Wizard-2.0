@@ -20,6 +20,7 @@ import {
   circuitCounts as staticCircuitCounts,
 } from '@/app/data/options';
 import { products as staticProducts } from '@/app/data/products';
+import { fetchPublicProducts } from '@/app/lib/publicRest';
 import { NO_PREFERENCE } from '@/app/utils/preference';
 
 // Extend Option to allow component icons (e.g. Lucide icons)
@@ -105,10 +106,9 @@ export function useProductData(): ProductData {
       setLoading(true);
       setError(null);
 
-      // Dynamic import keeps @supabase/supabase-js out of the eager bundle —
-      // the wizard renders instantly on static data while this chunk loads.
-      const { fetchProducts } = await import('@/app/lib/api');
-      const productsData = await fetchProducts();
+      // Plain REST fetch (no @supabase/supabase-js) — the wizard renders
+      // instantly on static data while this loads.
+      const productsData = await fetchPublicProducts(signal);
 
       if (signal?.aborted) return;
       // Use API products if available, otherwise keep static fallback

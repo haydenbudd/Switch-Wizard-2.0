@@ -11,7 +11,7 @@ import { WizardState } from '@/app/hooks/useWizardState';
 import { Button } from '@/app/components/ui/button';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import type { OptionCount } from '@/app/hooks/useProductFiltering';
-import { motion, AnimatePresence } from 'motion/react';
+import { usePresence } from '@/app/hooks/usePresence';
 import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
 import { OptionGrid } from '@/app/components/wizard/OptionGrid';
 import { STEP, skipsWiringSteps } from '@/app/utils/wizardSteps';
@@ -40,18 +40,23 @@ const HAT_BRIM_FROM_TOP = '0.1em';
 // Sized and placed in em so it fits the label at any font size (20px on
 // GitHub Pages, 14px on linemaster.com): its brim rests just above the L's
 // cap height instead of covering the letter, tilt included.
-const WizardHat = ({ visible }: { visible: boolean }) => (
-  <AnimatePresence>
-    {visible && (
-      <motion.svg
-        key="wizard-hat"
-        initial={{ scale: 0, opacity: 0, rotate: 15 }}
-        animate={{ scale: 1, opacity: 1, rotate: -12 }}
-        exit={{ scale: 0, opacity: 0, rotate: 15 }}
-        transition={{ type: 'spring', damping: 10, stiffness: 250 }}
+const WizardHat = ({ visible }: { visible: boolean }) => {
+  const { mounted, exiting } = usePresence(visible, 200);
+  if (!mounted) return null;
+  return (
+      <svg
+        className={exiting ? 'lm-exit' : 'lm-enter'}
         viewBox="0 0 24 20"
         aria-hidden="true"
         style={{
+          // Pops in with a little overshoot, settles tilted
+          '--enter-scale': 0,
+          '--enter-rotate': '15deg',
+          '--enter-dur': '0.45s',
+          '--enter-ease': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+          '--exit-scale': 0,
+          '--exit-rotate': '15deg',
+          transform: 'rotate(-12deg)',
           position: 'absolute',
           width: '1.1em',
           height: '0.9em',
@@ -59,17 +64,16 @@ const WizardHat = ({ visible }: { visible: boolean }) => (
           bottom: `calc(100% - ${HAT_BRIM_FROM_TOP})`,
           transformOrigin: '70% 100%',
           pointerEvents: 'none',
-        }}
+        } as React.CSSProperties}
       >
         <path d="M12 0 L6 16 L18 16 Z" fill="var(--primary, #3b82f6)" />
         <ellipse cx="12" cy="17" rx="12" ry="3" fill="var(--primary, #3b82f6)" />
         <circle cx="12" cy="1.5" r="2" fill="#fbbf24" />
         <circle cx="9" cy="8" r="1" fill="#fbbf24" opacity="0.7" />
         <circle cx="14" cy="5" r="0.8" fill="#fbbf24" opacity="0.5" />
-      </motion.svg>
-    )}
-  </AnimatePresence>
-);
+      </svg>
+  );
+};
 
 interface StandardStepsProps {
   wizardState: WizardState;
@@ -264,8 +268,8 @@ export function StandardSteps({
   if (!wizardState || !categories) return null;
 
   // Helper to handle single-select progression. No artificial delay — the
-  // AnimatePresence exit animation already gives a visual handoff to the
-  // next step, and a setTimeout here just made every click feel laggy.
+  // next step's entrance animation gives the visual handoff, and a
+  // setTimeout here just made every click feel laggy.
   //
   // Re-picking the answer a step already has (e.g. after jumping back via the
   // breadcrumb to check it) keeps every later answer and returns the user to
@@ -366,22 +370,18 @@ export function StandardSteps({
         {ON_SITE ? (
           // The linemaster.com page already carries the "Product Finder"
           // title, so embedded mode opens with just the prompt.
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          <p
+            style={{ '--enter-y': '16px' } as React.CSSProperties}
             // ! margins: the site's theme sets p{margin:0 0 10px}
-            className="!text-2xl !font-semibold text-center !mt-0 !mb-10"
+            className="lm-enter !text-2xl !font-semibold text-center !mt-0 !mb-10"
           >
             <span className="block mb-2">{wizardEyebrow}</span>
             Select your industry to begin. We'll guide you to the right footswitch.
-          </motion.p>
+          </p>
         ) : (<>
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center mb-16"
+        <div
+          className="lm-enter text-center mb-16"
+          style={{ '--enter-y': '24px', '--enter-dur': '0.6s' } as React.CSSProperties}
         >
           {wizardEyebrow}
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60 leading-tight">
@@ -390,7 +390,7 @@ export function StandardSteps({
           <p className="!text-xl !text-muted-foreground" style={{ textAlign: 'center', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>
             Select your industry to begin. We'll guide you to the right footswitch.
           </p>
-        </motion.div>
+        </div>
 
         <div className="flex items-center gap-4 w-full mb-8" aria-hidden="true">
           <div className="h-px flex-1 bg-border" />
@@ -406,12 +406,10 @@ export function StandardSteps({
             // Each card spans 4 rows of the outer grid and shares them through
             // CSS subgrid (photo / title / description / next choices), so
             // those rows line up across the three cards however text wraps.
-            <motion.div
+            <div
               key={category.id}
-              className="min-w-0 row-span-4 grid grid-rows-subgrid gap-y-0"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="lm-enter min-w-0 row-span-4 grid grid-rows-subgrid gap-y-0"
+              style={{ '--enter-y': '20px', '--enter-delay': `${0.15 + i * 0.08}s` } as React.CSSProperties}
             >
               <GlassCard
                 hoverEffect
@@ -432,16 +430,14 @@ export function StandardSteps({
                   apps={category.nextChoices ?? (applications || []).filter(a => a.parentCategory === category.id).map(a => a.label)}
                 />
               </GlassCard>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Shortcut for buyers who already know what they want */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.45, duration: 0.5 }}
-          className="flex flex-col items-center gap-3 mt-8"
+        <div
+          className="lm-enter flex flex-col items-center gap-3 mt-8"
+          style={{ '--enter-delay': '0.45s' } as React.CSSProperties}
         >
           <span className="!text-lg !font-medium">Already know what you need?</span>
           <Button
@@ -452,14 +448,12 @@ export function StandardSteps({
             Skip the questions: search &amp; compare all products
             <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </Button>
-        </motion.div>
+        </div>
 
         {/* Trust Badges */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          className="flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-14 pt-8 border-t border-border/50"
+        <div
+          style={{ '--enter-delay': '0.6s', '--enter-dur': '0.8s' } as React.CSSProperties}
+          className="lm-enter flex flex-wrap items-center justify-center gap-8 md:gap-12 max-w-3xl mx-auto mt-14 pt-8 border-t border-border/50"
         >
           <div className="flex items-center gap-3 text-muted-foreground">
             <ShieldCheck className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
@@ -473,7 +467,7 @@ export function StandardSteps({
             <Award className="!w-7 !h-7 !text-primary/60" aria-hidden="true" />
             <span className="!text-lg !font-medium">70+ Years of Excellence</span>
           </div>
-        </motion.div>
+        </div>
 
       </div>
       {wizardCompanion}
@@ -525,14 +519,12 @@ export function StandardSteps({
           }
         />
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={wizardState.step}
-            initial={{ opacity: 0, x: 12 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -12 }}
-            transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-          >
+        {/* Keyed so each step slides in fresh */}
+        <div
+          key={wizardState.step}
+          className="lm-enter"
+          style={{ '--enter-x': '12px', '--enter-dur': '0.18s' } as React.CSSProperties}
+        >
             {/* Step 0 Phase 2: Application Selection */}
             {wizardState.step === STEP.APPLICATION && (
               <div className="space-y-6">
@@ -782,8 +774,7 @@ export function StandardSteps({
                 </div>
               </div>
             )}
-          </motion.div>
-        </AnimatePresence>
+        </div>
       </div>
     </div>
     {wizardCompanion}

@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { ChevronLeft } from 'lucide-react';
-import { motion } from 'motion/react';
 import { cn } from '@/app/components/ui/utils';
 import { Button } from '@/app/components/ui/button';
 
@@ -41,14 +40,12 @@ export function StepProgress({
         aria-valuemax={100}
         aria-label={ariaLabel ?? `Wizard progress: step ${displayStep} of ${displayTotal}`}
       >
-        <motion.div
+        <div
           className={cn(
-            'h-full bg-gradient-to-r rounded-full',
+            'h-full bg-gradient-to-r rounded-full lm-progress-fill',
             accent === 'medical' ? 'from-red-600 to-rose-500' : 'from-primary to-primary/80 progress-glow',
           )}
-          initial={{ width: 0 }}
-          animate={{ width: `${progressPercent}%` }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          style={{ width: `${progressPercent}%` }}
         />
       </div>
     </div>

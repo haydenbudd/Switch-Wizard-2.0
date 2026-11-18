@@ -1,6 +1,6 @@
 import type { Product } from '@/app/lib/api';
 import type { WizardState } from '@/app/hooks/useWizardState';
-import { toast } from 'sonner';
+import { notify } from '@/app/utils/notify';
 import { optionLabel } from '@/app/data/options';
 
 type Labeled = ReadonlyArray<{ id: string; label: string }>;
@@ -106,7 +106,7 @@ export function quoteLinkProps(details: string) {
     rel: 'noopener noreferrer',
     onClick: () => {
       navigator.clipboard?.writeText(details)
-        .then(() => toast.success('Your details are copied — paste them into the Message box on the quote form.', { duration: 8000 }))
+        .then(() => notify.success('Your details are copied — paste them into the Message box on the quote form.', { duration: 8000 }))
         .catch(() => {});
     },
   };

@@ -11,7 +11,8 @@ import {
   parseShareParams, updateUrlWithState, clearShareParams,
   saveWizardStateToLocal, loadWizardStateFromLocal, clearWizardStateFromLocal,
 } from '@/app/utils/shareUrl';
-import { Toaster, toast } from 'sonner';
+import { LazyToaster } from '@/app/components/LazyToaster';
+import { notify } from '@/app/utils/notify';
 import { MedicalFlow } from '@/app/components/wizard/MedicalFlow';
 import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage, type PDFResults } from '@/app/components/wizard/ResultsPage';
@@ -48,7 +49,7 @@ function WizardApp() {
   // Show toast when data fetch fails
   useEffect(() => {
     if (dataError) {
-      toast.info('Using cached product data — live data unavailable', { id: 'data-error', duration: 5000 });
+      notify.info('Using cached product data — live data unavailable', { id: 'data-error', duration: 5000 });
     }
   }, [dataError]);
 
@@ -208,7 +209,7 @@ function WizardApp() {
       // a bare "please try again" toast hides the actual cause (dynamic
       // import 404, jspdf crash, etc.) and we can't diagnose remotely.
       const detail = err instanceof Error ? err.message : String(err);
-      toast.error(`PDF generation failed: ${detail.slice(0, 140)}`, { duration: 10000 });
+      notify.error(`PDF generation failed: ${detail.slice(0, 140)}`, { duration: 10000 });
     }
   }, [wizardState, filterProducts, applications, technologies, actions, environments, features, duties]);
 
@@ -228,7 +229,7 @@ function WizardApp() {
       />
       {/* Toasts (PDF errors, quote copy confirmation) — previously only
           mounted for the standard flow, so medical screens showed none */}
-      <Toaster position="top-right" />
+      <LazyToaster position="top-right" />
       {confirmResetDialog}
       </>
     );
@@ -308,7 +309,7 @@ function WizardApp() {
       )}
       </main>
     </div>
-    <Toaster position="top-right" />
+    <LazyToaster position="top-right" />
     {confirmResetDialog}
     </>
   );

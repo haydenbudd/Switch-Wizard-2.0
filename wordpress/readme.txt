@@ -4,7 +4,7 @@ Tags: product finder, wizard, foot switch, linemaster
 Requires at least: 5.6
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.1.1
+Stable tag: 2.1.4
 License: Proprietary
 
 Interactive product-finder wizard for Linemaster foot pedal switches.

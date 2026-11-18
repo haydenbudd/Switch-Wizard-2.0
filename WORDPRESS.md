@@ -38,7 +38,11 @@ Optional settings:
 ## When you need to update the plugin itself
 
 Only when `wordpress/linemaster-product-finder.php` changes. The main case is
-the chunk file names: the plugin enqueues `vendor-motion.js`,
-`vendor-radix.js` and `app.js` by name, so if the `manualChunks` setup in
+the chunk file names: the plugin enqueues `vendor-radix.js` and `app.js`
+by name, so if the `manualChunks` setup in
 `vite.config.ts` changes, update the `$vendors` list in the PHP file, bump its
 version, and re-upload the zip.
+
+`public/assets/vendor-motion.js` is an empty placeholder kept for plugin
+versions up to 2.1.3, which still request that file. It can be deleted once
+every site runs 2.1.4 or later.

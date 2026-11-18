@@ -1,6 +1,8 @@
 // Analytics tracking for wizard events
 // Persists events to Supabase wizard_events table
 
+import { insertWizardEvent } from '@/app/lib/publicRest';
+
 // Lazily initialized: crypto.randomUUID is secure-context-only, so calling it
 // at module top level would crash the whole bundle on plain-http hosts
 // (staging/intranet WordPress sites).
@@ -26,20 +28,9 @@ interface WizardStepData {
 }
 
 function persist(event_type: string, flow?: string, step?: number, data: Record<string, unknown> = {}) {
-  // Dynamic import keeps @supabase/supabase-js out of the eager bundle.
-  // Inserts are fire-and-forget — tracking must never affect the wizard.
-  import('@/app/lib/supabase')
-    .then(({ supabase }) =>
-      supabase
-        .from('wizard_events')
-        .insert({ session_id: getSessionId(), event_type, flow, step, data })
-    )
-    .then((result) => {
-      if (result?.error) console.warn('[Analytics] persist failed:', result.error.message);
-    })
-    .catch(() => {
-      // Chunk failed to load (offline, blocked) — drop the event silently
-    });
+  // Plain REST insert (no @supabase/supabase-js); fire-and-forget —
+  // tracking must never affect the wizard.
+  insertWizardEvent({ session_id: getSessionId(), event_type, flow, step, data });
 }
 
 export function trackWizardStep(step: number, flow: string, data: WizardStepData = {}) {

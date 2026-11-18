@@ -8,7 +8,7 @@ import type { Product } from '@/app/lib/api';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { RefreshCw, Download, ArrowLeft, SlidersHorizontal, ArrowUp, Check, Search, Link, GitCompareArrows, Mail, Menu } from 'lucide-react';
 import { buildShareUrl } from '@/app/utils/shareUrl';
-import { toast } from 'sonner';
+import { notify } from '@/app/utils/notify';
 import { EnhancedSearch } from '@/app/components/EnhancedSearch';
 import { FilterChip } from '@/app/components/FilterChip';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
@@ -22,15 +22,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator
 } from '@/app/components/ui/dropdown-menu';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerDescription,
-  DrawerClose,
-} from '@/app/components/ui/drawer';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
+
+const MobileActionsDrawer = lazy(() => import('@/app/components/wizard/MobileActionsDrawer'));
 import { getProcessedProducts } from '@/app/utils/productFilters';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 
@@ -158,12 +152,15 @@ export function ResultsPage({
 
   // Mobile action drawer state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  // Mount (and load) the drawer only once it has been opened
+  const drawerRequested = useRef(false);
+  if (mobileDrawerOpen) drawerRequested.current = true;
 
   const handleCompareToggle = useCallback((id: string) => {
     setCompareIds(prev => {
       if (prev.includes(id)) return prev.filter(x => x !== id);
       if (prev.length >= MAX_COMPARE) {
-        toast.info(`You can compare up to ${MAX_COMPARE} products — remove one to add another`);
+        notify.info(`You can compare up to ${MAX_COMPARE} products — remove one to add another`);
         return prev;
       }
       return [...prev, id];
@@ -328,16 +325,16 @@ export function ResultsPage({
     // navigator.clipboard is undefined on non-secure (http) pages — calling
     // .writeText on it would throw synchronously, bypassing the .catch below
     if (!navigator.clipboard?.writeText) {
-      toast.error('Copying requires a secure (https) connection');
+      notify.error('Copying requires a secure (https) connection');
       return;
     }
     navigator.clipboard.writeText(url).then(() => {
-      toast.success('Link copied to clipboard');
+      notify.success('Link copied to clipboard');
     }).catch((err: unknown) => {
       if (err instanceof DOMException && err.name === 'NotAllowedError') {
-        toast.error('Clipboard access denied — copy the URL from the address bar instead');
+        notify.error('Clipboard access denied — copy the URL from the address bar instead');
       } else {
-        toast.error('Failed to copy link');
+        notify.error('Failed to copy link');
       }
     });
   };
@@ -797,45 +794,21 @@ export function ResultsPage({
         </Button>
       </div>
 
-      <Drawer open={mobileDrawerOpen} onOpenChange={setMobileDrawerOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Actions</DrawerTitle>
-            <DrawerDescription>{finalResults.length} products found</DrawerDescription>
-          </DrawerHeader>
-          <div className="flex flex-col gap-2 p-4 pb-8">
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-full gap-2 justify-start" onClick={onBack}>
-                <ArrowLeft className="w-6 h-6" /> Go Back
-              </Button>
-            </DrawerClose>
-            <DrawerClose asChild>
-              <Button asChild className="w-full gap-2 justify-start">
-                <a {...quoteLink}><Mail className="w-6 h-6" /> Request a Quote</a>
-              </Button>
-            </DrawerClose>
-            {!isBrowseAll && (
-              <>
-                <DrawerClose asChild>
-                  <Button variant="outline" className="w-full gap-2 justify-start" onClick={handleCopyLink}>
-                    <Link className="w-6 h-6" /> Copy Share Link
-                  </Button>
-                </DrawerClose>
-                <DrawerClose asChild>
-                  <Button variant="outline" className="w-full gap-2 justify-start" onClick={() => onGeneratePDF(pdfResults)}>
-                    <Download className="w-6 h-6" /> Download PDF
-                  </Button>
-                </DrawerClose>
-              </>
-            )}
-            <DrawerClose asChild>
-              <Button variant="outline" className="w-full gap-2 justify-start !text-destructive" onClick={onReset}>
-                <RefreshCw className="w-6 h-6" /> Reset Wizard
-              </Button>
-            </DrawerClose>
-          </div>
-        </DrawerContent>
-      </Drawer>
+      {drawerRequested.current && (
+        <Suspense fallback={null}>
+          <MobileActionsDrawer
+            open={mobileDrawerOpen}
+            onOpenChange={setMobileDrawerOpen}
+            resultCount={finalResults.length}
+            showShareActions={!isBrowseAll}
+            quoteLink={quoteLink}
+            onBack={onBack}
+            onCopyLink={handleCopyLink}
+            onDownloadPDF={() => onGeneratePDF(pdfResults)}
+            onReset={onReset}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
