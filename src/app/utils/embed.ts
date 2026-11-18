@@ -3,10 +3,9 @@
  * its own standalone GitHub Pages site. The host page already supplies the
  * page title, branding and light theme, so embedded mode drops the app's own.
  *
- * Detected from the DOM at runtime: the live site loads the regular GitHub
- * Pages build (not the __LM_EMBED_MODE__ WordPress build), and embeds differ
- * — the WordPress plugin renders #lm-wizard-root, while linemaster.com's
- * current embed uses a bare #lm-product-finder > #root, the same markup as
+ * Detected from the DOM at runtime: every embed loads the same GitHub Pages
+ * build, and embeds differ — the WordPress plugin renders #lm-wizard-root,
+ * while a bare embed uses #lm-product-finder > #root, the same markup as
  * the standalone page. So the standalone index.html marks itself with
  * data-lm-standalone, and everything else counts as embedded.
  */

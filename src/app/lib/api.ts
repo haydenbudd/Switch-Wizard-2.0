@@ -1,62 +1,5 @@
 import { supabase } from './supabase';
 import { transformRow, type StockSwitchRow } from './transformProduct';
-import { projectId, publicAnonKey } from '../../../utils/supabase/info';
-
-const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/make-server-963c7b83`;
-
-async function getAuthToken(): Promise<string> {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.access_token || publicAnonKey;
-}
-
-async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-
-  try {
-    const token = await getAuthToken();
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 120000);
-
-    // finally (not just the happy path) so a failed fetch doesn't leave a
-    // 120s timer armed that later aborts an already-dead controller
-    try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        cache: 'no-store',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          ...options.headers,
-        },
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        let error;
-        try {
-          error = JSON.parse(errorText);
-        } catch {
-          error = { error: errorText || 'Unknown error' };
-        }
-        throw new Error(error.error || `HTTP ${response.status}: ${errorText}`);
-      }
-
-      return await response.json();
-    } finally {
-      clearTimeout(timeoutId);
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        throw new Error('Request timeout - backend server may be starting up or unavailable');
-      }
-      throw error;
-    }
-    throw new Error('Unknown error occurred');
-  }
-}
 
 export interface Product {
   id: string;
@@ -285,29 +228,4 @@ export async function deleteAllProducts(): Promise<void> {
     .neq('id', 0); // delete all rows
 
   if (error) throw new Error(error.message);
-}
-
-// Options API calls
-export async function fetchOptions(): Promise<Option[]> {
-  const data = await fetchAPI('/options');
-  return data.options || [];
-}
-
-export async function fetchOptionsByCategory(category: string): Promise<Option[]> {
-  const data = await fetchAPI(`/options/${category}`);
-  return data.options || [];
-}
-
-export async function createOrUpdateOption(option: Partial<Option>): Promise<Option> {
-  const data = await fetchAPI('/options', {
-    method: 'POST',
-    body: JSON.stringify(option),
-  });
-  return data.option;
-}
-
-export async function deleteOption(id: string): Promise<void> {
-  await fetchAPI(`/options/${id}`, {
-    method: 'DELETE',
-  });
 }

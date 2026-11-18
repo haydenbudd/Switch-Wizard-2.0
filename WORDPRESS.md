@@ -1,59 +1,44 @@
 # WordPress Deployment Guide
 
-Step-by-step instructions for publishing the Linemaster Product Finder to your WordPress site.
+The WordPress plugin is a thin wrapper: it registers the `[switch-wizard]`
+shortcode and loads the wizard's JavaScript and CSS straight from GitHub Pages
+(`https://haydenbudd.github.io/Switch-Wizard-2.0/assets/`). There is no
+separate WordPress build. Pushing to `main` deploys GitHub Pages, and every
+page using the plugin picks up the change automatically.
 
-## 1. Build the plugin
+## Install the plugin
 
-```bash
-npm run build:wordpress
-```
+1. Zip the `wordpress/` folder as `linemaster-product-finder.zip`, with the
+   folder inside renamed to `linemaster-product-finder/`:
 
-This runs the WordPress-specific Vite build and assembles the plugin directory at `dist-wordpress/linemaster-product-finder/`.
+   ```bash
+   cp -r wordpress linemaster-product-finder
+   zip -r linemaster-product-finder.zip linemaster-product-finder
+   rm -r linemaster-product-finder
+   ```
 
-## 2. Create the zip
+2. In WordPress admin go to **Plugins → Add New → Upload Plugin**, choose the
+   zip, click **Install Now**, then **Activate**.
 
-```bash
-cd dist-wordpress
-zip -r linemaster-product-finder.zip linemaster-product-finder/
-```
+## Add to a page
 
-## 3. Upload to WordPress
-
-1. Log in to your WordPress admin (`linemaster.com/wp-admin`)
-2. Go to **Plugins → Add New → Upload Plugin**
-3. Choose `linemaster-product-finder.zip`
-4. Click **Install Now**
-
-## 4. Activate
-
-Click **Activate Plugin** after it finishes installing.
-
-## 5. Add to a page
-
-1. Go to **Pages → Add New** (or edit an existing page)
-2. Add a **Shortcode** block (or Custom HTML block) and paste:
+Add a **Shortcode** block (or Custom HTML block) and paste:
 
 ```
 [switch-wizard]
 ```
 
-3. **Publish** / **Update** the page.
-
-The wizard will render inline on that page.
-
-## Optional shortcode settings
+Optional settings:
 
 ```
 [switch-wizard height="600px"]              — custom min-height
 [switch-wizard class="full-width-section"]  — add a CSS class to the wrapper
 ```
 
-## Updating later
+## When you need to update the plugin itself
 
-When you make changes to the wizard code:
-
-1. Run `npm run build:wordpress` again
-2. Zip the output
-3. In WordPress: **Plugins → Deactivate** the old version → **Delete** it → **Upload** the new zip → **Activate**
-
-Or if you have FTP/SSH access, you can replace the files directly in `wp-content/plugins/linemaster-product-finder/` without the deactivate/reinstall cycle.
+Only when `wordpress/linemaster-product-finder.php` changes. The main case is
+the chunk file names: the plugin enqueues `vendor-motion.js`,
+`vendor-radix.js` and `app.js` by name, so if the `manualChunks` setup in
+`vite.config.ts` changes, update the `$vendors` list in the PHP file, bump its
+version, and re-upload the zip.
