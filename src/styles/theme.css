@@ -3,31 +3,32 @@
 :root {
   --font-size: 16px;
 
-  /* Precision Industrial — Light Theme */
-  --background: #f0f1f5;
-  --foreground: #0f172a;
-  --card: rgba(255, 255, 255, 0.72);
-  --card-foreground: #0f172a;
+  /* Light theme, matched to linemaster.com (PreSpec page): white page,
+     navy text, the site's #243E88 brand blue */
+  --background: #ffffff;
+  --foreground: #081b2f;
+  --card: #ffffff;
+  --card-foreground: #081b2f;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #1e40af;
+  --popover-foreground: #081b2f;
+  --primary: #243e88;
   --primary-foreground: #ffffff;
-  --secondary: rgba(15, 23, 42, 0.04);
-  --secondary-foreground: #0f172a;
-  --muted: rgba(15, 23, 42, 0.05);
-  --muted-foreground: #475569;
-  --accent: rgba(15, 23, 42, 0.03);
-  --accent-foreground: #0f172a;
+  --secondary: rgba(8, 27, 47, 0.04);
+  --secondary-foreground: #081b2f;
+  --muted: rgba(8, 27, 47, 0.05);
+  --muted-foreground: #4b5563;
+  --accent: rgba(8, 27, 47, 0.03);
+  --accent-foreground: #081b2f;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: rgba(15, 23, 42, 0.08);
+  --border: #e3e7ed;
   --input: transparent;
   --input-background: rgba(15, 23, 42, 0.04);
   --switch-background: #cbd5e1;
   --font-weight-medium: 600;
   --font-weight-normal: 400;
-  --ring: rgba(30, 64, 175, 0.25);
-  --chart-1: #1e40af;
+  --ring: rgba(36, 62, 136, 0.25);
+  --chart-1: #243e88;
   --chart-2: #059669;
   --chart-3: #d97706;
   --chart-4: #7c3aed;
@@ -38,29 +39,40 @@
   --accent-warm: #d97706;
   --accent-warm-foreground: #ffffff;
 
-  /* Enhanced glass — crisper, more substance */
-  --glass-bg: rgba(255, 255, 255, 0.62);
-  --glass-border: rgba(255, 255, 255, 0.55);
-  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.07), 0 1.5px 4px rgba(15, 23, 42, 0.05);
-  --glass-shadow-inset: rgba(255, 255, 255, 0.7) 0px 1px 0px 0px inset, rgba(255, 255, 255, 0.15) 0px 0px 0px 0.5px inset;
-  --glass-blur: 20px;
-  --glass-bg-hover: rgba(255, 255, 255, 0.82);
+  /* linemaster.com accents. The site itself uses #5D88BA for "Learn More"
+     pills and #F37324 for Submit; both are too light for white 14px text
+     (WCAG AA), so buttons use the site's darker eyebrow blue and a deeper
+     orange from the same family. */
+  --brand-navy: #081b2f;
+  --brand-steel: #3f6a9b;
+  --brand-orange: #c2550b;
+  --brand-orange-hover: #a5480a;
+
+  /* Cards: flat white with a hairline border, like the site's sections
+     (the --glass-* names are kept so every card picks this up) */
+  --glass-bg: #ffffff;
+  --glass-border: #e3e7ed;
+  --glass-shadow: 0 1px 2px rgba(8, 27, 47, 0.05);
+  --glass-shadow-inset: 0 0 0 0 transparent;
+  --glass-bg-hover: #ffffff;
+  --card-hover-border: #5d88ba;
+  --card-hover-shadow: 0 12px 28px rgba(8, 27, 47, 0.09);
 
   /* Selection accent */
-  --selection-bg: rgba(30, 64, 175, 0.06);
-  --selection-border: rgba(30, 64, 175, 0.25);
-  --selection-ring: rgba(30, 64, 175, 0.15);
-  --selection-glow: 0 0 0 1px rgba(30, 64, 175, 0.12), 0 4px 16px rgba(30, 64, 175, 0.10);
+  --selection-bg: rgba(36, 62, 136, 0.04);
+  --selection-border: #243e88;
+  --selection-ring: rgba(36, 62, 136, 0.15);
+  --selection-glow: 0 0 0 1px #243e88;
 
   /* Sidebar */
   --sidebar: rgba(255, 255, 255, 0.72);
   --sidebar-foreground: #0f172a;
-  --sidebar-primary: #1e40af;
+  --sidebar-primary: #243e88;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: rgba(15, 23, 42, 0.04);
   --sidebar-accent-foreground: #0f172a;
   --sidebar-border: rgba(15, 23, 42, 0.06);
-  --sidebar-ring: rgba(30, 64, 175, 0.25);
+  --sidebar-ring: rgba(36, 62, 136, 0.25);
 }
 
 .dark,
@@ -97,12 +109,15 @@
   --accent-warm: #f59e0b;
   --accent-warm-foreground: #0f172a;
 
+  --brand-steel: #4f7cb0;
+  --card-hover-border: rgba(143, 178, 220, 0.5);
+  --card-hover-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+
   /* Glass — dark: solid dark surface for clear contrast */
   --glass-bg: rgba(15, 23, 42, 0.95);
   --glass-border: rgba(226, 232, 240, 0.15);
   --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
   --glass-shadow-inset: rgba(226, 232, 240, 0.10) 0px 1px 0px 0px inset, rgba(226, 232, 240, 0.05) 0px 0px 0px 0.5px inset;
-  --glass-blur: 16px;
   --glass-bg-hover: rgba(30, 41, 59, 0.97);
 
   --selection-bg: rgba(59, 130, 246, 0.08);
@@ -147,6 +162,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-steel: var(--brand-steel);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-hover: var(--brand-orange-hover);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -227,19 +246,19 @@
   h1 {
     font-weight: var(--font-weight-medium);
     line-height: 1.15;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.01em;
   }
 
   h2 {
     font-weight: var(--font-weight-medium);
     line-height: 1.2;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.01em;
   }
 
   h3 {
     font-weight: var(--font-weight-medium);
     line-height: 1.25;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   h4 {
@@ -263,13 +282,20 @@
   }
 }
 
-/* Glass card utility */
+/* Card surface (the name predates the flat look): solid, hairline border,
+   no backdrop blur */
 .glass-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), var(--glass-shadow-inset);
+}
+
+/* Hover for clickable cards: steel blue edge and a soft lift, like the
+   site's hover states. In this stylesheet (not a Tailwind hover: class)
+   because .glass-card's own border and shadow would win over a utility. */
+.glass-card.lm-card-hover:hover {
+  border-color: var(--card-hover-border);
+  box-shadow: var(--card-hover-shadow);
 }
 
 .dark .glass-card,
@@ -281,8 +307,8 @@
 /* Base page background */
 body,
 #lm-product-finder {
-  background-color: var(--background, #f0f1f5);
-  color: var(--foreground, #0f172a);
+  background-color: var(--background, #ffffff);
+  color: var(--foreground, #081b2f);
 }
 .dark body,
 #lm-product-finder.lm-dark,
@@ -292,12 +318,10 @@ body,
   color: var(--foreground, #e2e8f0);
 }
 
-/* Embedded on linemaster.com: plain white so the finder reads as part of
-   the page rather than a tinted box, with card edges drawn by a light
-   border instead of the white glass edge (invisible on white). */
+/* Embedded on linemaster.com: always plain white, so the finder reads as
+   part of the page rather than a tinted box. */
 .lm-on-site:not(.lm-dark) {
   --background: #ffffff;
-  --glass-border: rgba(15, 23, 42, 0.08);
   background-color: #ffffff;
 }
 
@@ -399,24 +423,6 @@ body,
   }
 }
 
-/* Subtle grain texture overlay for depth */
-.grain-overlay::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.025;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-}
-
-.dark .grain-overlay::after,
-.lm-dark .grain-overlay::after {
-  opacity: 0.04;
-  mix-blend-mode: screen;
-}
-
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -475,12 +481,15 @@ body,
   padding: 0;
 }
 
-/* Progress bar glow */
-.progress-glow {
-  box-shadow: 0 0 8px rgba(30, 64, 175, 0.3), 0 0 2px rgba(30, 64, 175, 0.5);
+/* Front-page band on GitHub Pages: navy with a faint blueprint grid and a
+   soft blue glow, after the hero on linemaster.com's PreSpec page. */
+.lm-hero-band {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px) 0 0 / 48px 48px,
+    radial-gradient(ellipse at 70% 15%, rgba(47, 86, 184, 0.9) 0%, transparent 60%),
+    linear-gradient(160deg, #0b1e3f 0%, #081b2f 55%, #0d2a5c 100%);
+  /* Eyebrow on navy: light steel blue, white on hover */
+  --brand-steel: #8fb2dc;
+  --primary: #ffffff;
 }
-.dark .progress-glow,
-.lm-dark .progress-glow {
-  box-shadow: 0 0 8px rgba(59, 130, 246, 0.3), 0 0 2px rgba(59, 130, 246, 0.5);
-}
-

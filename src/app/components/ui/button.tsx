@@ -5,12 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/app/components/ui/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-primary !text-primary-foreground shadow hover:bg-primary/90",
+          "bg-primary !text-primary-foreground font-bold hover:bg-primary/90",
+        // The main action on a screen, styled like linemaster.com's
+        // "REQUEST A QUOTE" pill: bold uppercase
+        cta:
+          "bg-primary !text-primary-foreground font-bold uppercase tracking-[0.03em] hover:bg-primary/90",
+        // Request a Quote: the site keeps orange for its conversion action
+        quote:
+          "bg-brand-orange !text-white font-bold uppercase tracking-[0.03em] hover:bg-brand-orange-hover",
+        // Secondary actions, like the site's steel blue "Learn More" pills
+        steel:
+          "bg-brand-steel !text-white font-bold hover:bg-brand-steel/90",
         destructive:
           "bg-destructive !text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
@@ -22,8 +32,8 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-sm",
-        lg: "h-10 rounded-md px-8",
+        sm: "h-8 px-3 text-sm",
+        lg: "h-10 px-8",
         icon: "h-9 w-9",
       },
     },

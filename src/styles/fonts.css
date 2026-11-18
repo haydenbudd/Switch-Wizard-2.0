@@ -1,10 +1,12 @@
-/* Outfit — geometric display face with futuristic precision */
-/* DM Sans — technical, clean body text */
-/* Font files loaded via index.html <link> tag */
+/* Proxima Nova is linemaster.com's typeface. The site loads it (Adobe Fonts)
+   on every page, so inside the embed the wizard picks it up at no cost.
+   It's licensed to linemaster.com only, so the standalone GitHub Pages site
+   falls back to Outfit (headings) and DM Sans (text), loaded via the
+   index.html <link> tag. */
 
 :root {
-  --font-display: 'Outfit', system-ui, sans-serif;
-  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-display: proxima-nova, 'Outfit', system-ui, sans-serif;
+  --font-body: proxima-nova, 'DM Sans', system-ui, sans-serif;
 }
 
 body {
@@ -15,8 +17,8 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
 }
 
-/* Step titles and hero text get extra tracking */
+/* Step titles and hero text: the site's headings run slightly tight */
 .text-3xl, .text-4xl, .text-5xl, .text-6xl {
   font-family: var(--font-display);
-  letter-spacing: -0.035em;
+  letter-spacing: -0.01em;
 }

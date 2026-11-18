@@ -10,7 +10,10 @@
     <link rel="dns-prefetch" href="https://linemaster.com" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   </head>
-  <body>
+  <!-- margin reset inline: the app's CSS is scoped to #lm-product-finder
+       (it also runs inside linemaster.com), and Vite would scope a <style>
+       block here the same way. -->
+  <body style="margin: 0">
     <!-- data-lm-standalone: this is the GitHub Pages site, not an embed
          (see src/app/utils/embed.ts) -->
     <div id="lm-product-finder" data-lm-standalone>

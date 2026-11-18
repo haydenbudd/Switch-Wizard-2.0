@@ -56,7 +56,7 @@ export const OptionCard = memo(function OptionCard({
           : "h-full flex flex-col items-center text-center justify-center min-h-[150px] p-5 relative transition-all duration-300 animate-card-enter border-2",
         selected
           ? "!border-primary bg-primary/[0.04] dark:bg-primary/[0.08] shadow-[var(--selection-glow)]"
-          : "hover:!border-primary/40",
+          : "hover:!border-[var(--card-hover-border)]",
         isDisabled && "opacity-50 cursor-not-allowed grayscale",
         className
       )}

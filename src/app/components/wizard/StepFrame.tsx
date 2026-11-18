@@ -16,7 +16,8 @@ interface StepProgressProps {
   ariaLabel?: string;
 }
 
-/** 700px progress block: "Step X of Y" label plus animated bar. */
+/** 700px progress block: a large "03 of 10" counter (styled after the stage
+ *  counter on linemaster.com's PreSpec page) plus animated bar. */
 export function StepProgress({
   displayStep,
   displayTotal,
@@ -27,13 +28,22 @@ export function StepProgress({
 }: StepProgressProps) {
   return (
     <div className="mx-auto mb-8" style={{ maxWidth: '700px' }}>
-      {/* items-baseline: the 12px label shares the 16px step text's baseline */}
-      <div className="flex justify-between items-baseline !text-base !font-medium !text-muted-foreground mb-2.5 tracking-wide">
-        <span className="uppercase">Step {displayStep} of {displayTotal}</span>
+      {/* items-baseline: the small labels share the big number's baseline */}
+      <div className="flex justify-between items-baseline mb-3">
+        <span>
+          {/* Screen readers get "Step 3 of 10"; the zero-padded number is visual */}
+          <span className="sr-only">Step {displayStep} of {displayTotal}</span>
+          <span aria-hidden="true" className="flex items-baseline gap-1.5">
+            <span className="!text-[40px] !leading-none !font-bold !text-foreground tabular-nums" style={{ fontFamily: 'var(--font-display)' }}>
+              {String(displayStep).padStart(2, '0')}
+            </span>
+            <span className="!text-[15px] !font-semibold !text-brand-steel">of {displayTotal}</span>
+          </span>
+        </span>
         {label && <span className="text-xs text-red-500 font-semibold tracking-widest uppercase">{label}</span>}
       </div>
       <div
-        className="h-1.5 bg-border rounded-full overflow-hidden"
+        className="h-1 bg-border rounded-full overflow-hidden"
         role="progressbar"
         aria-valuenow={progressPercent}
         aria-valuemin={0}
@@ -42,8 +52,8 @@ export function StepProgress({
       >
         <div
           className={cn(
-            'h-full bg-gradient-to-r rounded-full lm-progress-fill',
-            accent === 'medical' ? 'from-red-600 to-rose-500' : 'from-primary to-primary/80 progress-glow',
+            'h-full rounded-full lm-progress-fill',
+            accent === 'medical' ? 'bg-gradient-to-r from-red-600 to-rose-500' : 'bg-primary',
           )}
           style={{ width: `${progressPercent}%` }}
         />
@@ -79,7 +89,7 @@ export function StepHeading({
 }) {
   return (
     <div className={cn('text-center mb-7', className)}>
-      <h2 className="!text-3xl md:!text-4xl !font-bold tracking-tight block mb-2">{title}</h2>
+      <h2 className="!text-3xl md:!text-4xl !font-bold tracking-[-0.01em] block mb-2">{title}</h2>
       {subtitle && <p className="!text-lg !text-muted-foreground">{subtitle}</p>}
       {children}
     </div>
