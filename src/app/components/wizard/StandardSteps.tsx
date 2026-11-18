@@ -142,17 +142,27 @@ function CategoryVisual({ image, icon: Icon }: { image?: string | string[]; icon
  */
 function CategoryPreview({ apps }: { apps: string[] }) {
   if (apps.length < 2) return null;
+  // Plain text rather than a list of pills — and so nothing for
+  // linemaster.com's list styling (bullets on every ul/li) to latch onto.
+  // ! margins: the site's theme also sets p{margin:0 0 10px}.
   return (
-    <div className="mt-4 w-full">
-      <p className="!text-xs !font-semibold uppercase tracking-wider !text-muted-foreground mb-2">Next, choose from</p>
-      {/* !list-none: linemaster.com's theme puts bullets on every ul/li, and
-          unlayered host CSS beats Tailwind's layered preflight/utilities */}
-      <ul className="flex flex-wrap justify-center gap-1.5 !list-none !pl-0" aria-label="Applications in this industry">
-        {apps.map(a => (
-          <li key={a} className="!list-none !text-sm px-2.5 py-0.5 rounded-full bg-primary/8 !text-primary">{a}</li>
-        ))}
-      </ul>
+    <div className="mt-6 w-full">
+      <p className="!mt-0 !mb-1.5 !text-xs !font-semibold uppercase tracking-wider !text-muted-foreground">Next, choose from</p>
+      <p className="!my-0 !text-sm !font-medium !text-primary leading-relaxed">{apps.join(', ')}</p>
     </div>
+  );
+}
+
+/** "Industrial & Manufacturing" -> two lines, broken after the "&", so all
+ *  three industry titles are the same height and line up across the cards. */
+function CategoryTitle({ label }: { label: string }) {
+  const [first, ...rest] = label.split(' & ');
+  if (!rest.length) return <>{label}</>;
+  return (
+    <>
+      <span className="block">{first} &amp;</span>
+      <span className="block">{rest.join(' & ')}</span>
+    </>
   );
 }
 
@@ -367,9 +377,12 @@ export function StandardSteps({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto" style={{ maxWidth: '960px' }}>
           {(categories || []).map((category, i) => (
+            // Each card spans 4 rows of the outer grid and shares them through
+            // CSS subgrid (photo / title / description / next choices), so
+            // those rows line up across the three cards however text wraps.
             <motion.div
               key={category.id}
-              className="min-w-0"
+              className="min-w-0 row-span-4 grid grid-rows-subgrid gap-y-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 + i * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
@@ -378,19 +391,20 @@ export function StandardSteps({
                 hoverEffect
                 interactive
                 aria-label={category.label}
-                className="p-6 md:p-7 h-full transition-all duration-300 group"
+                className="row-span-4 grid grid-rows-subgrid gap-y-0 justify-items-center text-center min-w-0 p-8 md:p-6 lg:p-10 transition-all duration-300 group"
                 onClick={() => onCategorySelect(category.id)}
               >
-                <div className="flex flex-col items-center text-center h-full min-w-0">
-                  <CategoryVisual image={category.image} icon={category.icon} />
-                  <span className="!text-2xl !font-semibold tracking-tight mb-2 w-full">{category.label}</span>
-                  <p className="!text-base !text-muted-foreground">
-                    {category.description}
-                  </p>
-                  <CategoryPreview
-                    apps={category.nextChoices ?? (applications || []).filter(a => a.parentCategory === category.id).map(a => a.label)}
-                  />
-                </div>
+                <CategoryVisual image={category.image} icon={category.icon} />
+                {/* Slightly smaller in the narrow 3-column range (768-1023px) */}
+                <span className="!text-2xl md:!text-xl lg:!text-2xl !font-semibold tracking-tight mb-2 w-full">
+                  <CategoryTitle label={category.label} />
+                </span>
+                <p className="!my-0 !text-base !text-muted-foreground">
+                  {category.description}
+                </p>
+                <CategoryPreview
+                  apps={category.nextChoices ?? (applications || []).filter(a => a.parentCategory === category.id).map(a => a.label)}
+                />
               </GlassCard>
             </motion.div>
           ))}
