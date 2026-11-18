@@ -47,21 +47,3 @@ export function GlassCard({
     </div>
   );
 }
-
-export function MedicalGlassCard({ 
-  children, 
-  className,
-  ...props 
-}: GlassCardProps) {
-  return (
-    <GlassCard 
-      className={cn(
-        "border-red-500/10 dark:border-red-400/10 bg-gradient-to-br from-white/80 to-red-50/30 dark:from-gray-900/80 dark:to-red-950/10",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </GlassCard>
-  );
-}

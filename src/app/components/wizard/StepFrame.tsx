@@ -3,14 +3,11 @@ import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/app/components/ui/utils';
 import { Button } from '@/app/components/ui/button';
 
-type Accent = 'primary' | 'medical';
-
 interface StepProgressProps {
   displayStep: number;
   displayTotal: number;
   /** Defaults to the standard flow's (step - 1) / total. */
   progressPercent?: number;
-  accent?: Accent;
   /** Right side of the "Step X of Y" row. */
   label?: string;
   ariaLabel?: string;
@@ -22,7 +19,6 @@ export function StepProgress({
   displayStep,
   displayTotal,
   progressPercent = Math.round(((displayStep - 1) / displayTotal) * 100),
-  accent = 'primary',
   label,
   ariaLabel,
 }: StepProgressProps) {
@@ -40,7 +36,7 @@ export function StepProgress({
             <span className="!text-[15px] !font-semibold !text-brand-steel">of {displayTotal}</span>
           </span>
         </span>
-        {label && <span className="text-xs text-red-500 font-semibold tracking-widest uppercase">{label}</span>}
+        {label && <span className="!text-xs !font-bold !text-brand-steel tracking-[0.12em] uppercase">{label}</span>}
       </div>
       <div
         className="h-1 bg-border rounded-full overflow-hidden"
@@ -51,10 +47,7 @@ export function StepProgress({
         aria-label={ariaLabel ?? `Wizard progress: step ${displayStep} of ${displayTotal}`}
       >
         <div
-          className={cn(
-            'h-full rounded-full lm-progress-fill',
-            accent === 'medical' ? 'bg-gradient-to-r from-red-600 to-rose-500' : 'bg-primary',
-          )}
+          className="h-full rounded-full lm-progress-fill bg-primary"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
