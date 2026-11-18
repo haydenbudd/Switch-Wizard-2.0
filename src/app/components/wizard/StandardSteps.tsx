@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, Fragment, lazy, Suspense, type ElementType } from 'react';
+import { useState, useEffect, useRef, Fragment, lazy, Suspense } from 'react';
 import { cn } from '@/app/components/ui/utils';
 import { ON_SITE } from '@/app/utils/embed';
-import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
+import { ProductVisual } from '@/app/components/wizard/ProductVisual';
 import { ArrowRight, Check, ShieldCheck, ShieldOff, Award, Flag, Search } from 'lucide-react';
 import { GlassCard } from '@/app/components/GlassCard';
 import { OptionCard } from '@/app/components/OptionCard';
@@ -101,44 +101,6 @@ interface StandardStepsProps {
   onResumeOrContinue: () => void;
   /** Breadcrumb jump that remembers where the user came from. */
   onJumpToStep: (step: number) => void;
-}
-
-/**
- * Start-screen industry card visual: a real Linemaster product photo, or the
- * category icon if the photo can't load (offline, image CDN blocked).
- */
-function CategoryVisual({ image, icon: Icon }: { image?: string | string[]; icon?: ElementType }) {
-  const [failed, setFailed] = useState(false);
-  const images = image ? (Array.isArray(image) ? image : [image]) : [];
-  if (images.length && !failed) {
-    const width = images.length > 1 ? 200 : 320;
-    return (
-      <div className="w-full h-24 md:h-32 mb-4 flex items-center justify-center gap-2 shrink-0">
-        {images.map(src => (
-          <img
-            key={src}
-            src={getProxiedImageUrl(src, { width })}
-            srcSet={getProxiedImageSrcSet(src, width)}
-            alt=""
-            loading="eager"
-            onError={() => setFailed(true)}
-            // Side-by-side photos share the width in proportion to their
-            // aspect ratio, so a square and a wide photo end up the same height
-            onLoad={images.length > 1 ? (e) => {
-              const img = e.currentTarget;
-              if (img.naturalHeight) img.style.flexGrow = String(img.naturalWidth / img.naturalHeight);
-            } : undefined}
-            className={`max-h-full object-contain transition-transform duration-300 group-hover:scale-105 ${images.length > 1 ? 'flex-1 basis-0 min-w-0' : 'max-w-full'}`}
-          />
-        ))}
-      </div>
-    );
-  }
-  return (
-    <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary/8 text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 mb-4 shrink-0">
-      {Icon && <Icon className="w-8 h-8" aria-hidden="true" />}
-    </div>
-  );
 }
 
 /**
@@ -429,7 +391,7 @@ export function StandardSteps({
                 className="row-span-4 grid grid-rows-subgrid gap-y-0 justify-items-center text-center min-w-0 p-8 md:p-6 lg:p-10 transition-all duration-300 group"
                 onClick={() => onCategorySelect(category.id)}
               >
-                <CategoryVisual image={category.image} icon={category.icon} />
+                <ProductVisual image={category.image} icon={category.icon} />
                 {/* Slightly smaller in the narrow 3-column range (768-1023px) */}
                 <span className="!text-2xl md:!text-xl lg:!text-2xl !font-semibold tracking-[-0.01em] mb-2 w-full">
                   <CategoryTitle label={category.label} />
