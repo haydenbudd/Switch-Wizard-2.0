@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { MedicalGlassCard } from '@/app/components/GlassCard';
+import { GlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { Check, Package, Settings, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, Download, ExternalLink, ArrowRight } from 'lucide-react';
+import { Check, Package, Settings, Mail, CircleDot, ToggleLeft, Sun, Droplets, Download, ExternalLink, ArrowRight } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
 import { ProductVisual } from '@/app/components/wizard/ProductVisual';
 import { WizardState } from '@/app/hooks/useWizardState';
@@ -24,7 +24,7 @@ import {
   type StepContext,
 } from '@/app/utils/wizardSteps';
 import type { Option } from '@/app/data/options';
-import { NO_PREFERENCE, hasPreference } from '@/app/utils/preference';
+import { hasPreference } from '@/app/utils/preference';
 import { configQuoteText, quoteLinkProps } from '@/app/utils/quote';
 
 
@@ -34,14 +34,12 @@ const AERO_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/electro-su
 const STOCK_FORK_IMAGE = 'https://linemaster.com/cdn/images/products/153/153-a-shadow@1200.png';
 const PRESPEC_URL = 'https://linemaster.com/prespec-by-linemaster/';
 
-// Medical-specific action options. Variable and No Preference were missing,
-// and action is a hard filter — so variable-speed medical switches could
-// never be reached from this path.
+// Medical-specific action options. Every stock medical switch is momentary
+// or maintained (no variable-speed medical models), so there's no Variable
+// Speed or No Preference card here.
 const MEDICAL_ACTIONS = [
   { id: 'momentary', label: 'Momentary', description: 'Active while pressed — ideal for surgical tools', icon: CircleDot },
   { id: 'maintained', label: 'Maintained', description: 'Toggle on/off — for diagnostic and therapy equipment', icon: ToggleLeft },
-  { id: 'variable', label: 'Variable Speed', description: 'Output varies with pedal pressure — e.g. drills, pumps', icon: Gauge },
-  { id: NO_PREFERENCE, label: 'No Preference', description: 'Show all medical switches', icon: Ban },
 ];
 
 // Medical-specific environment options
@@ -181,8 +179,9 @@ export function MedicalFlow({
       case 2: // Channel selection
         {
           const channelCards = [
-            { id: 'crescent', label: 'Crescent Channel', description: 'Classic ergonomic housing with curved profile.', image: CRESCENT_IMAGE },
-            { id: 'aero', label: 'Aero Channel', description: 'Low-profile, streamlined design.', image: AERO_IMAGE },
+            { id: 'crescent', label: 'Crescent Channel', description: 'Classic ergonomic housing with curved profile.', image: CRESCENT_IMAGE, mirror: false },
+            // mirror: flipped to face the same way as the Crescent photo
+            { id: 'aero', label: 'Aero Channel', description: 'Low-profile, streamlined design.', image: AERO_IMAGE, mirror: true },
           ];
           return (
             <div className="space-y-6">
@@ -197,30 +196,32 @@ export function MedicalFlow({
                     aria-checked={wizardState.selectedChannel === ch.id}
                     tabIndex={0}
                     className={cn(
-                      "group relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all duration-200",
+                      "group relative cursor-pointer rounded-[10px] overflow-hidden border-2 bg-card transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
                       wizardState.selectedChannel === ch.id
-                        ? "border-red-500 shadow-lg shadow-red-500/10"
-                        : "border-gray-200 dark:border-gray-700 hover:border-red-300 dark:hover:border-red-700 hover:shadow-md"
+                        ? "border-primary shadow-[var(--card-hover-shadow)]"
+                        : "border-border hover:border-[var(--card-hover-border)] hover:shadow-[var(--card-hover-shadow)]"
                     )}
                   >
-                    <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-800">
+                    {/* object-contain: the Aero photo is much wider than 4:3 and
+                        was cropped by object-cover */}
+                    <div className="aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-800 flex items-center justify-center p-6">
                       <img
                         src={ch.image}
                         alt={ch.label}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        // transform (mirror) and the hover scale use separate
+                        // CSS properties, so they combine
+                        style={ch.mirror ? { transform: 'scaleX(-1)' } : undefined}
+                        className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>
                     <div className="p-5">
-                      <h3 className={cn(
-                        "font-semibold text-lg mb-1 transition-colors",
-                        wizardState.selectedChannel === ch.id ? "text-red-600 dark:text-red-400" : "text-foreground"
-                      )}>
+                      <h3 className="!text-xl !font-bold !text-foreground !leading-snug !mt-0 !mb-1">
                         {ch.label}
                       </h3>
-                      <p className="text-sm text-muted-foreground">{ch.description}</p>
+                      <p className="!text-sm !text-muted-foreground !my-0">{ch.description}</p>
                     </div>
                     {wizardState.selectedChannel === ch.id && (
-                      <div className="absolute top-3 right-3 bg-red-500 rounded-full p-1.5 text-white shadow-md" aria-hidden="true">
+                      <div className="absolute top-3 right-3 bg-primary rounded-full p-1.5 !text-white shadow-md" aria-hidden="true">
                         <Check className="w-4 h-4" />
                       </div>
                     )}
@@ -238,7 +239,7 @@ export function MedicalFlow({
               title="Number of Buttons"
               subtitle={<>
                 How many buttons does your switch need?
-                <span className="block text-xs mt-1 text-red-400">
+                <span className="block !text-sm !font-semibold mt-1 !text-brand-steel">
                   {wizardState.selectedChannel === 'aero'
                     ? `Aero with ${optionLabel(pedalDesigns, wizardState.selectedPedalDesign).toLowerCase()} supports up to ${maxButtons} button${maxButtons > 1 ? 's' : ''}`
                     : `Crescent supports up to ${maxButtons} buttons`}
@@ -312,13 +313,13 @@ export function MedicalFlow({
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
         <div className="text-center mb-4">
-          <div className="mx-auto w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <Check className="w-8 h-8 text-red-600" aria-hidden="true" />
+          <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <Check className="w-8 h-8 !text-primary" aria-hidden="true" />
           </div>
         </div>
         <StepHeading title="Your Custom Switch Configuration" subtitle="Review your selections below." />
 
-        <MedicalGlassCard className="p-6 md:p-8">
+        <GlassCard className="p-6 md:p-8">
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {configEntries.map(({ label, value }) => (
               <div key={label} className="flex justify-between items-center py-3 first:pt-0 last:pb-0">
@@ -327,11 +328,11 @@ export function MedicalFlow({
               </div>
             ))}
           </div>
-        </MedicalGlassCard>
+        </GlassCard>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
           <Button
-            className="bg-red-600 hover:bg-red-700 text-white px-6"
+            className="px-6"
             onClick={() => onGeneratePDF()}
           >
             <Download className="w-4 h-4 mr-2" aria-hidden="true" />
@@ -339,11 +340,7 @@ export function MedicalFlow({
           </Button>
           {/* Opens the contact page and copies the configuration so the buyer
               doesn't have to retype it or attach the PDF */}
-          <Button
-            asChild
-            variant="outline"
-            className="border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30"
-          >
+          <Button asChild variant="quote" className="px-6">
             <a {...quoteLink}>
               <Mail className="w-4 h-4 mr-2" aria-hidden="true" />
               Request a Quote
@@ -473,7 +470,7 @@ export function MedicalFlow({
                     description={action.description}
                     icon={action.icon}
                     selected={wizardState.selectedAction === action.id}
-                    count={action.id === NO_PREFERENCE ? undefined : getActionCount(action.id)}
+                    count={getActionCount(action.id)}
                     onClick={() => handleActionSelect(action.id)}
                     index={i}
                   />
@@ -562,7 +559,7 @@ export function MedicalFlow({
   const label = isBuilder ? 'Custom Builder' : 'Medical';
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-red-50/30 to-white dark:from-gray-900 dark:to-black relative">
+    <div className="min-h-screen dark:bg-gradient-to-b dark:from-gray-900 dark:to-black relative">
       <Header onReset={onReset} />
       <div className="container mx-auto px-4 pt-24 pb-20 relative z-10">
 
@@ -570,7 +567,6 @@ export function MedicalFlow({
           displayStep={builderDisplayStep}
           displayTotal={builderDisplayTotal}
           progressPercent={progressPercent}
-          accent="medical"
           label={label}
           ariaLabel={`${label} wizard progress: step ${builderDisplayStep} of ${builderDisplayTotal}`}
         />
