@@ -278,10 +278,6 @@
   border-color: var(--glass-border, rgba(226, 232, 240, 0.15));
 }
 
-.glass-card-hover:hover {
-  background: var(--glass-bg-hover);
-}
-
 /* Base page background */
 body,
 #lm-product-finder {
@@ -321,34 +317,7 @@ body,
     radial-gradient(ellipse at 50% 85%, rgba(5, 150, 105, 0.04) 0%, transparent 50%);
 }
 
-/* Medical gradient */
-.mesh-gradient-medical {
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(220, 38, 38, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 40% 80%, rgba(217, 119, 6, 0.03) 0%, transparent 50%);
-}
-
-.dark .mesh-gradient-medical,
-.lm-dark .mesh-gradient-medical {
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(239, 68, 68, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(167, 139, 250, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 40% 80%, rgba(251, 191, 36, 0.03) 0%, transparent 50%);
-}
-
 /* Animations */
-@keyframes glass-appear {
-  from {
-    opacity: 0;
-    transform: translateY(12px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 /* Staggered card entrance — apply delay per card index */
 @keyframes card-enter {
   from {
@@ -361,26 +330,6 @@ body,
   }
 }
 
-/* Refined pulse ring — replaces jarring animate-ping */
-@keyframes pulse-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  70% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-}
-
-.animate-glass-appear {
-  animation: glass-appear 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
 .animate-card-enter {
   opacity: 0;
   animation: card-enter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -391,10 +340,6 @@ body,
     animation-duration: 0.01ms;
     opacity: 1;
   }
-}
-
-.animate-pulse-ring {
-  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 /* Subtle grain texture overlay for depth */

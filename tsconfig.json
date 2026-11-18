@@ -18,8 +18,5 @@
     "types": ["vite/client"],
     "paths": { "@/*": ["./src/*"] }
   },
-  "include": ["src", "utils"],
-  // Figma Make scaffolding kept for reference — not part of the app
-  // (uses figma:asset imports that only resolve inside Figma's bundler)
-  "exclude": ["src/imports"]
+  "include": ["src", "utils"]
 }
