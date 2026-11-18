@@ -145,8 +145,10 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
       wizardState.setStep(STEP.APPLICATION);
       wizardState.setSelectedCategory('');
       wizardState.setSelectedApplication('');
-    } else if (wizardState.step === STEP.RESULTS && wizardState.selectedApplication === 'medical') {
-      // Medical stock results → back to the medical Environment question
+    } else if (wizardState.flow === 'standard' && wizardState.step === STEP.RESULTS && wizardState.selectedApplication === 'medical') {
+      // Medical stock results → back to the medical Environment question.
+      // Checks the flow: the custom builder's step 9 (Custom Labeling)
+      // shares the number and must go back to step 8 instead.
       wizardState.setFlow('medical');
       wizardState.setStep(MEDICAL_STEP.ENVIRONMENT);
     } else {
