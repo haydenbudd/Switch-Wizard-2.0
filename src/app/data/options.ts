@@ -132,7 +132,7 @@ export const categories: Option[] = [
       'https://linemaster.com/cdn/images/products/161/161-a-shadow@400.png',
       'https://linemaster.com/cdn/images/products/378/378-a-shadow@400.png',
     ],
-    description: 'Specialty trades and everyday general-purpose use',
+    description: 'Specialty trades and general-purpose use',
   },
 ];
 

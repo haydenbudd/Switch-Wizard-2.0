@@ -148,8 +148,31 @@ function CategoryPreview({ apps }: { apps: string[] }) {
   return (
     <div className="mt-6 w-full">
       <p className="!mt-0 !mb-1.5 !text-xs !font-semibold uppercase tracking-wider !text-muted-foreground">Next, choose from</p>
-      <p className="!my-0 !text-sm !font-medium !text-primary leading-relaxed">{apps.join(', ')}</p>
+      {/* Each name stays together (no "Custom Aero /" | "Crescent" splits),
+          and text-balance evens out the lines instead of leaving one short. */}
+      <p className="!my-0 !text-sm !font-medium !text-primary leading-relaxed text-balance">
+        {apps.map((a, i) => (
+          <span key={a}>
+            {/* inline-block keeps a name whole when it fits, and still lets it
+                wrap inside itself in a card too narrow for it */}
+            <span className="inline-block max-w-full">{a}{i < apps.length - 1 && ','}</span>
+            {i < apps.length - 1 && ' '}
+          </span>
+        ))}
+      </p>
     </div>
+  );
+}
+
+/** Keeps hyphenated words such as "general-purpose" from breaking at the
+ *  hyphen ("general-" | "purpose") when the line wraps. */
+function KeepHyphenated({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(/(\S+-\S+)/).map((part, i) =>
+        i % 2 ? <span key={i} className="whitespace-nowrap">{part}</span> : part
+      )}
+    </>
   );
 }
 
@@ -375,7 +398,9 @@ export function StandardSteps({
         </div>
         </>)}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mx-auto" style={{ maxWidth: '960px' }}>
+        {/* Tighter gap in the narrow 3-column range (768-1023px) so the cards
+            are wide enough for "Custom Aero / Crescent" on one line */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-5 lg:gap-8 mx-auto" style={{ maxWidth: '960px' }}>
           {(categories || []).map((category, i) => (
             // Each card spans 4 rows of the outer grid and shares them through
             // CSS subgrid (photo / title / description / next choices), so
@@ -399,8 +424,8 @@ export function StandardSteps({
                 <span className="!text-2xl md:!text-xl lg:!text-2xl !font-semibold tracking-tight mb-2 w-full">
                   <CategoryTitle label={category.label} />
                 </span>
-                <p className="!my-0 !text-base !text-muted-foreground">
-                  {category.description}
+                <p className="!my-0 !text-base !text-muted-foreground text-balance">
+                  <KeepHyphenated text={category.description} />
                 </p>
                 <CategoryPreview
                   apps={category.nextChoices ?? (applications || []).filter(a => a.parentCategory === category.id).map(a => a.label)}
