@@ -6,7 +6,7 @@ import { X, ExternalLink, ChevronUp, ChevronDown, GitCompareArrows, Mail, Trash2
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { useState, useEffect, Fragment } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { usePresence } from '@/app/hooks/usePresence';
 import {
   optionLabel,
   connections,
@@ -27,7 +27,6 @@ import {
   getCircuitColor,
 } from '@/app/lib/attributeColors';
 
-const MotionDiv = motion.div;
 
 /** How many products can be compared side by side. */
 export const MAX_COMPARE = 4;
@@ -119,6 +118,8 @@ function useIsNarrow(): boolean {
 export function CompareProducts({ products, open, onOpenChange, onRemove, onClear }: CompareProductsProps) {
   const [diffOnly, setDiffOnly] = useState(false);
   const isNarrow = useIsNarrow();
+  // Keeps the table mounted while it collapses
+  const panel = usePresence(open && products.length >= 2, 250);
 
   if (products.length === 0) return null;
   const canCompare = products.length >= 2;
@@ -150,15 +151,11 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
   const tableMinWidth = labelWidth + products.length * (isNarrow ? 190 : 190);
 
   return (
-    <AnimatePresence>
-      <MotionDiv
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+      <div
         // Only the card itself takes taps: the transparent padding around it
         // (80px tall on website phones) must not block the page underneath
-        className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
+        className="lm-enter fixed bottom-0 left-0 right-0 z-50 pointer-events-none"
+        style={{ '--enter-y': '100%', '--enter-dur': '0.35s' } as React.CSSProperties}
       >
         {/* On linemaster.com the site's own floating buttons (cookie settings
             bottom-left, PDF bottom-right) sit in the page corners — keep the
@@ -241,15 +238,12 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
             </div>
 
             {/* Comparison table */}
-            <AnimatePresence initial={false}>
-              {expanded && (
-                <MotionDiv
+            {panel.mounted && (
+              // Grid-rows 0fr <-> 1fr animates the panel's height to/from auto
+              <div className={`grid ${panel.exiting ? 'lm-collapse' : 'lm-expand'}`}>
+                <div
                   id="compare-panel"
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 250 }}
-                  className="overflow-hidden border-t border-border/50 bg-background"
+                  className="min-h-0 overflow-hidden border-t border-border/50 bg-background"
                 >
                   {/* Toolbar */}
                   <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-6 py-2.5 bg-muted/20">
@@ -411,12 +405,11 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
                       </tbody>
                     </table>
                   </div>
-                </MotionDiv>
-              )}
-            </AnimatePresence>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </MotionDiv>
-    </AnimatePresence>
+      </div>
   );
 }

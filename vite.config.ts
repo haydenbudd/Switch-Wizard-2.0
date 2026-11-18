@@ -24,7 +24,6 @@ export default defineConfig({
         chunkFileNames: 'assets/[name].js',
         assetFileNames: 'assets/[name][extname]',
         manualChunks: {
-          'vendor-motion': ['motion'],
           // Only the Radix packages the wizard itself loads eagerly.
           // Admin-only packages (e.g. react-select) must NOT be listed:
           // the object form of manualChunks pulls listed modules into an

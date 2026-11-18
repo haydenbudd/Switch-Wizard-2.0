@@ -318,6 +318,63 @@ body,
 }
 
 /* Animations */
+/* Entrance / exit animations (replace the motion library).
+ * .lm-enter animates FROM the offset set by --enter-x/-y/-scale/-rotate to
+ * the element's own style; .lm-exit animates TO the --exit-* offset. Tune
+ * per element with --enter-dur / --enter-delay / --exit-dur. Fill mode is
+ * "backwards" (not "both") so a finished entrance releases transform and
+ * hover transforms keep working. */
+@keyframes lm-enter {
+  from {
+    opacity: 0;
+    transform: translate(var(--enter-x, 0), var(--enter-y, 0))
+      scale(var(--enter-scale, 1)) rotate(var(--enter-rotate, 0deg));
+  }
+}
+.lm-enter {
+  animation: lm-enter var(--enter-dur, 0.5s) var(--enter-ease, cubic-bezier(0.16, 1, 0.3, 1))
+    var(--enter-delay, 0s) backwards;
+}
+@keyframes lm-exit {
+  to {
+    opacity: 0;
+    transform: translate(var(--exit-x, 0), var(--exit-y, 0))
+      scale(var(--exit-scale, 1)) rotate(var(--exit-rotate, 0deg));
+  }
+}
+.lm-exit {
+  animation: lm-exit var(--exit-dur, 0.2s) ease-in forwards;
+  pointer-events: none;
+}
+/* Height to/from auto for a grid wrapper whose single child has
+   min-height: 0 (the compare table) */
+@keyframes lm-expand {
+  from { grid-template-rows: 0fr; opacity: 0; }
+  to { grid-template-rows: 1fr; opacity: 1; }
+}
+@keyframes lm-collapse {
+  from { grid-template-rows: 1fr; opacity: 1; }
+  to { grid-template-rows: 0fr; opacity: 0; }
+}
+.lm-expand {
+  grid-template-rows: 1fr;
+  animation: lm-expand 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.lm-collapse {
+  grid-template-rows: 0fr;
+  animation: lm-collapse 0.25s ease-in;
+}
+
+/* Progress bar fill grows from zero on first paint, then eases to each
+   new width */
+@keyframes lm-grow {
+  from { width: 0; }
+}
+.lm-progress-fill {
+  animation: lm-grow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Staggered card entrance — apply delay per card index */
 @keyframes card-enter {
   from {

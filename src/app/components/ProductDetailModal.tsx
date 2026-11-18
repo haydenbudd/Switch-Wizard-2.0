@@ -7,7 +7,7 @@ import { getPortalContainer } from '@/app/utils/portalContainer';
 import { productQuoteText, quoteLinkProps } from '@/app/utils/quote';
 import { ipBadgeLabel, ipMeaning } from '@/app/utils/ipRating';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { motion, AnimatePresence } from 'motion/react';
+import { usePresence } from '@/app/hooks/usePresence';
 import {
   X,
   ExternalLink,
@@ -44,7 +44,6 @@ import {
   type AttributeColor,
 } from '@/app/lib/attributeColors';
 
-const MotionDiv = motion.div;
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -124,6 +123,8 @@ export function ProductDetailModal({ product, open, onClose, hideTopChoice }: Pr
     returnFocusRef.current = document.activeElement as HTMLElement | null;
   }
   wasOpen.current = open;
+  // Keeps the dialog mounted while its exit animation plays
+  const { mounted, exiting } = usePresence(open, 200);
 
   if (!product) return null;
 
@@ -161,17 +162,13 @@ export function ProductDetailModal({ product, open, onClose, hideTopChoice }: Pr
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
-      <AnimatePresence>
-        {open && (
+        {mounted && (
           <DialogPrimitive.Portal container={getPortalContainer()} forceMount>
             {/* Backdrop — Radix dismisses on click and traps focus */}
             <DialogPrimitive.Overlay asChild forceMount>
-              <MotionDiv
-                className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
+              <div
+                className={`fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm ${exiting ? 'lm-exit' : 'lm-enter'}`}
+                style={{ '--enter-dur': '0.2s' } as React.CSSProperties}
               />
             </DialogPrimitive.Overlay>
 
@@ -185,12 +182,12 @@ export function ProductDetailModal({ product, open, onClose, hideTopChoice }: Pr
               forceMount
               aria-label={`${product.series} product details`}
             >
-              <MotionDiv
-                className="fixed left-[50%] top-[50%] z-[61] w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border/60 bg-background shadow-2xl"
-                initial={{ opacity: 0, scale: 0.92, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                transition={{ type: 'spring', damping: 28, stiffness: 350 }}
+              <div
+                className={`fixed left-[50%] top-[50%] z-[61] w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto translate-x-[-50%] translate-y-[-50%] rounded-2xl border border-border/60 bg-background shadow-2xl ${exiting ? 'lm-exit' : 'lm-enter'}`}
+                style={{
+                  '--enter-y': '30px', '--enter-scale': 0.92, '--enter-dur': '0.35s',
+                  '--exit-y': '20px', '--exit-scale': 0.95,
+                } as React.CSSProperties}
               >
                 {/* Visually hidden title for assistive tech — the visible h2 below is decorative styling */}
                 <DialogPrimitive.Title className="sr-only">{product.series}</DialogPrimitive.Title>
@@ -334,11 +331,10 @@ export function ProductDetailModal({ product, open, onClose, hideTopChoice }: Pr
                 )}
               </div>
             </div>
-          </MotionDiv>
+          </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
         )}
-      </AnimatePresence>
     </DialogPrimitive.Root>
   );
 }

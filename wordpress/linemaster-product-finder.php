@@ -3,7 +3,7 @@
  * Plugin Name: Linemaster Product Finder
  * Plugin URI:  https://linemaster.com
  * Description: Interactive product-finder wizard that helps customers select the right Linemaster foot pedal switch. Assets served from GitHub Pages.
- * Version:     2.1.3
+ * Version:     2.1.4
  * Author:      Linemaster
  * Author URI:  https://linemaster.com
  * License:     Proprietary
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LM_FINDER_VERSION', '2.1.3' );
+define( 'LM_FINDER_VERSION', '2.1.4' );
 
 // GitHub Pages base URL — assets are served from here.
 // Updates deploy automatically when you push to the main branch.
@@ -81,7 +81,7 @@ function lm_finder_enqueue_assets() {
 	// Vendor chunks (loaded before the app entry). jspdf is NOT listed:
 	// it lives in the lazily-imported generatePDF chunk since 2.1.2 and
 	// only loads when the user clicks Download PDF.
-	$vendors = array( 'vendor-motion', 'vendor-radix' );
+	$vendors = array( 'vendor-radix' );
 	foreach ( $vendors as $vendor ) {
 		wp_enqueue_script(
 			'lm-finder-' . $vendor,

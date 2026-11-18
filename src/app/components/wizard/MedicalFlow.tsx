@@ -6,7 +6,6 @@ import { OptionCard } from '@/app/components/OptionCard';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
 import { cn } from '@/app/components/ui/utils';
-import { motion, AnimatePresence } from 'motion/react';
 import { Header } from '@/app/components/Header';
 import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
 import { OptionGrid } from '@/app/components/wizard/OptionGrid';
@@ -27,7 +26,6 @@ import type { Option } from '@/app/data/options';
 import { NO_PREFERENCE, hasPreference } from '@/app/utils/preference';
 import { configQuoteText, quoteLinkProps } from '@/app/utils/quote';
 
-const MotionDiv = motion.div;
 
 const CRESCENT_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/neuro-and-ent-1-optimized.png';
 const AERO_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/electro-surgical-cardiac-2-optimized.png';
@@ -114,7 +112,7 @@ export function MedicalFlow({
     return base.length; // 'any' = no filter
   };
 
-  // No artificial setTimeout delays — AnimatePresence already provides the
+  // No artificial setTimeout delays — the next step's entrance animation is the
   // visual handoff to the next step, and waiting just makes clicks feel laggy.
   // (Matches the snappiness pattern in StandardSteps.handleSingleSelect.)
   const handleForkSelect = (path: 'stock' | 'custom') => {
@@ -563,17 +561,13 @@ export function MedicalFlow({
       <div className="min-h-screen mesh-gradient-light dark:bg-gradient-to-b dark:from-gray-900 dark:to-black relative">
         <Header onReset={onReset} />
         <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
-          <AnimatePresence mode="wait">
-            <MotionDiv
-              key={`${wizardState.step}-${wizardState.selectedMedicalPath}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {renderStep()}
-            </MotionDiv>
-          </AnimatePresence>
+          <div
+            key={`${wizardState.step}-${wizardState.selectedMedicalPath}`}
+            className="lm-enter"
+            style={{ '--enter-y': '20px', '--enter-dur': '0.3s' } as React.CSSProperties}
+          >
+            {renderStep()}
+          </div>
         </div>
       </div>
     );
@@ -606,17 +600,13 @@ export function MedicalFlow({
 
         <div className="max-w-4xl mx-auto">
           {/* Content Area with Animation */}
-          <AnimatePresence mode="wait">
-            <MotionDiv
-              key={`${wizardState.step}-${isCustomPath ? 'custom' : 'stock'}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {renderStep()}
-            </MotionDiv>
-          </AnimatePresence>
+          <div
+            key={`${wizardState.step}-${isCustomPath ? 'custom' : 'stock'}`}
+            className="lm-enter"
+            style={{ '--enter-x': '20px', '--enter-dur': '0.3s' } as React.CSSProperties}
+          >
+            {renderStep()}
+          </div>
         </div>
       </div>
     </div>

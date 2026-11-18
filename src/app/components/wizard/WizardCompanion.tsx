@@ -2,7 +2,7 @@
 // string stays out of the main bundle) — see the lazy() import in
 // StandardSteps.tsx. Default export required by React.lazy.
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'motion/react';
+import { usePresence } from '@/app/hooks/usePresence';
 import { getPortalContainer } from '@/app/utils/portalContainer';
 
 const WIZARD_ASCII = `\
@@ -81,24 +81,23 @@ interface WizardCompanionProps {
   onDismiss: () => void;
 }
 
-// Companion stays mounted once lazily loaded; `visible` gates AnimatePresence
+// Companion stays mounted once lazily loaded; `visible` drives usePresence
 // so the slide-out exit animation still plays on dismiss.
 export default function WizardCompanion({ visible, onDismiss }: WizardCompanionProps) {
+  const { mounted, exiting } = usePresence(visible, 250);
   return createPortal(
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ x: '100%', opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: '100%', opacity: 0 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-          className="hidden md:block"
+    <>
+      {mounted && (
+        <div
+          className={`hidden md:block ${exiting ? 'lm-exit' : 'lm-enter'}`}
           style={{
+            '--enter-x': '100%', '--enter-dur': '0.5s',
+            '--exit-x': '100%', '--exit-dur': '0.25s',
             position: 'fixed',
             bottom: '24px',
             right: '24px',
             zIndex: 99999,
-          }}
+          } as React.CSSProperties}
           onClick={onDismiss}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); onDismiss(); } }}
           role="button"
@@ -163,9 +162,9 @@ export default function WizardCompanion({ visible, onDismiss }: WizardCompanionP
 {WIZARD_ASCII}
             </pre>
           </div>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>,
+    </>,
     getPortalContainer()
   );
 }
