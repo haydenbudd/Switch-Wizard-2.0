@@ -409,7 +409,9 @@ export function ResultsPage({
             <Button variant="ghost" size="icon" onClick={onBack} title="Back" aria-label={isBrowseAll ? 'Back to start' : 'Go back to wizard'} className="flex shrink-0 h-12 w-12">
               <ArrowLeft className="w-7 h-7" aria-hidden="true" />
             </Button>
-            <h2 className="!text-3xl !font-bold !text-foreground">
+            {/* !my-0: linemaster.com's theme gives h1-h3 a 20px top margin
+                (10px bottom), which pushed the heading below the arrow */}
+            <h2 className="!text-3xl !font-bold !text-foreground !my-0">
               {isBrowseAll ? 'All Products' : 'Recommended Products'}
               <span className="!text-lg font-normal !text-muted-foreground ml-3">
                 ({finalResults.length}
@@ -639,7 +641,7 @@ export function ResultsPage({
             <>
               {finalClose.length > 0 && (
                 <div className="flex items-center gap-3 mb-4">
-                  <h3 className="!text-2xl !font-bold !text-foreground">Perfect Matches</h3>
+                  <h3 className="!text-2xl !font-bold !text-foreground !my-0">Perfect Matches</h3>
                   <span className="!text-base !text-muted-foreground tabular-nums">({finalPerfect.length})</span>
                 </div>
               )}
@@ -665,7 +667,7 @@ export function ResultsPage({
             <div className={finalPerfect.length > 0 ? 'mt-12' : ''}>
               <div className="flex flex-col gap-1 mb-4">
                 <div className="flex items-center gap-3">
-                  <h3 className="!text-2xl !font-bold !text-foreground">Close Matches</h3>
+                  <h3 className="!text-2xl !font-bold !text-foreground !my-0">Close Matches</h3>
                   <span className="!text-base !text-muted-foreground tabular-nums">({finalClose.length})</span>
                 </div>
                 {/* Large enough that "these aren't exact matches" can't be

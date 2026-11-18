@@ -368,24 +368,28 @@ export function StandardSteps({
   if (wizardState.step === STEP.APPLICATION && !wizardState.selectedCategory) {
     return (
       <Fragment>
-      <div className={`${ON_SITE ? 'pt-14' : ''} pb-12`}>
+      <div className={`${ON_SITE ? 'pt-6' : ''} pb-12`}>
         {ON_SITE ? (
-          // The linemaster.com page already carries the "Product Finder"
-          // title, so embedded mode opens with just the prompt.
-          <div className="px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
-          <p
-            style={{ '--enter-y': '16px' } as React.CSSProperties}
-            // ! margins: the site's theme sets p{margin:0 0 10px}
-            className="lm-enter !text-2xl !font-semibold text-center !mt-0 !mb-10"
-          >
-            <span className="block mb-2">{wizardEyebrow}</span>
-            Select your industry to begin. We'll guide you to the right footswitch.
-          </p>
+        // linemaster.com: the same navy band, but contained and rounded so it
+        // lines up under the page's own "Product Finder" title (1170px is the
+        // site's content column). The title is already there, so the band
+        // carries just the eyebrow and the prompt.
+        <div className="px-4 sm:px-8">
+          <div className="lm-hero-band mx-auto rounded-[14px] px-6 pt-14 pb-36 md:pb-40" style={{ maxWidth: '1170px' }}>
+            <p
+              style={{ '--enter-y': '16px' } as React.CSSProperties}
+              // ! margins: the site's theme sets p{margin:0 0 10px}
+              className="lm-enter !text-2xl !font-semibold !text-white text-center !mt-0 !mb-0"
+            >
+              <span className="block mb-2">{wizardEyebrow}</span>
+              Select your industry to begin. We'll guide you to the right footswitch.
+            </p>
           </div>
+        </div>
         ) : (
         // Navy band with a faint blueprint grid, after the PreSpec page's
-        // hero. GitHub Pages only: on linemaster.com the page has its own
-        // header. -mt-4 pulls it up under the (transparent) toolbar row.
+        // hero. Full width on GitHub Pages. -mt-4 pulls it up under the
+        // (transparent) toolbar row.
         <div className="lm-hero-band -mt-4 px-4 pt-24 pb-36 md:pb-40">
           <div
             className="lm-enter text-center"
@@ -402,11 +406,13 @@ export function StandardSteps({
         </div>
         )}
 
-        <div className="px-4 sm:px-8 lg:px-[10%] xl:px-[15%]">
+        {/* On linemaster.com the cards sit 16px further in than the band on
+            small screens, so a strip of navy still shows beside them */}
+        <div className={`${ON_SITE ? 'px-8 sm:px-12' : 'px-4 sm:px-8'} lg:px-[10%] xl:px-[15%]`}>
         {/* Tighter gap in the narrow 3-column range (768-1023px) so the cards
-            are wide enough for "Custom Aero / Crescent" on one line. On
-            GitHub Pages the cards overlap the bottom of the navy band. */}
-        <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-5 lg:gap-8 mx-auto${ON_SITE ? '' : ' relative z-10 -mt-24 md:-mt-28'}`} style={{ maxWidth: '960px' }}>
+            are wide enough for "Custom Aero / Crescent" on one line. The
+            cards overlap the bottom of the navy band. */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-5 lg:gap-8 mx-auto relative z-10 -mt-24 md:-mt-28" style={{ maxWidth: '960px' }}>
           {(categories || []).map((category, i) => (
             // Each card spans 4 rows of the outer grid and shares them through
             // CSS subgrid (photo / title / description / next choices), so

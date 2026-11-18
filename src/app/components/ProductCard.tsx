@@ -123,7 +123,7 @@ export const ProductCard = memo(function ProductCard({ product, isComparing, onC
       <div className="flex flex-col flex-1">
         <div className="mb-2">
           <div className="flex items-center justify-between">
-            <h3 className="!font-bold !text-xl !text-foreground group-hover:!text-primary transition-colors">
+            <h3 className="!font-bold !text-xl !text-foreground group-hover:!text-primary transition-colors !my-0">
               {product.series}
             </h3>
             {product.part_number && (
