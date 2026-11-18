@@ -7,14 +7,10 @@ interface HeaderProps {
   onReset: () => void;
 }
 
-const IS_EMBEDDED = typeof __LM_EMBED_MODE__ !== 'undefined' && __LM_EMBED_MODE__;
-
 function toggleDarkClass(dark: boolean) {
-  // In standalone mode, apply .dark on <html> for next-themes.
-  // In WordPress embed mode, skip this to avoid affecting the host page.
-  if (!IS_EMBEDDED) {
-    document.documentElement.classList.toggle('dark', dark);
-  }
+  // Apply .dark on <html> for next-themes. The toggle is hidden on
+  // linemaster.com, so this only runs on the standalone page.
+  document.documentElement.classList.toggle('dark', dark);
   // Always apply .lm-dark on the scoping container
   // (postcss-prefix-selector rewrites .dark → #lm-product-finder.lm-dark)
   document.getElementById('lm-product-finder')?.classList.toggle('lm-dark', dark);
@@ -31,9 +27,7 @@ export function Header({ onReset }: HeaderProps) {
     // opens, which is where the wizard was seen flipping to dark on its own.
     const dark = ON_SITE
       ? false
-      : IS_EMBEDDED
-        ? container?.classList.contains('lm-dark') ?? false
-        : document.documentElement.classList.contains('dark');
+      : document.documentElement.classList.contains('dark');
     setIsDark(dark);
     // Sync the scoping container on mount
     container?.classList.toggle('lm-dark', dark);
