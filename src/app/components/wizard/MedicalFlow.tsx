@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { GlassCard, MedicalGlassCard } from '@/app/components/GlassCard';
+import { MedicalGlassCard } from '@/app/components/GlassCard';
 import { Button } from '@/app/components/ui/button';
-import { ArrowLeft, Check, Heart, Package, Settings, Info, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, Download, ExternalLink, ArrowRight } from 'lucide-react';
+import { Check, Package, Settings, Mail, CircleDot, ToggleLeft, Gauge, Ban, Sun, Droplets, Download, ExternalLink, ArrowRight } from 'lucide-react';
 import { OptionCard } from '@/app/components/OptionCard';
+import { ProductVisual } from '@/app/components/wizard/ProductVisual';
 import { WizardState } from '@/app/hooks/useWizardState';
 import type { Product } from '@/app/lib/api';
 import { cn } from '@/app/components/ui/utils';
@@ -29,6 +30,9 @@ import { configQuoteText, quoteLinkProps } from '@/app/utils/quote';
 
 const CRESCENT_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/neuro-and-ent-1-optimized.png';
 const AERO_IMAGE = 'https://linemaster.com/wp-content/uploads/2025/04/electro-surgical-cardiac-2-optimized.png';
+// Explosion Proof Medical 600 (601-EX): a stock medical switch with no guard
+const STOCK_FORK_IMAGE = 'https://linemaster.com/cdn/images/products/153/153-a-shadow@1200.png';
+const PRESPEC_URL = 'https://linemaster.com/prespec-by-linemaster/';
 
 // Medical-specific action options. Variable and No Preference were missing,
 // and action is a hard filter — so variable-speed medical switches could
@@ -357,140 +361,102 @@ export function MedicalFlow({
       case 0: // Brief transitional state while setTimeout fires
         return null;
 
-      case 1: // Fork step - "How would you like to proceed?"
+      case 1: { // Fork step - "How would you like to proceed?"
+        // ! classes throughout: on linemaster.com the theme's heading and
+        // paragraph sizes/margins beat Tailwind's layered utilities.
+        const forkCards = [
+          {
+            id: 'stock' as const,
+            title: 'Browse Stock Products',
+            description: 'Explore our catalog of standard medical-grade footswitches.',
+            image: STOCK_FORK_IMAGE,
+            icon: Package,
+          },
+          {
+            id: 'custom' as const,
+            // Non-breaking hyphen keeps "Semi‑Custom" on one line
+            title: 'Build a Semi\u2011Custom Switch',
+            description: 'Start from our Aero or Crescent housing, then choose treadles, buttons, connection and labeling.',
+            image: AERO_IMAGE,
+            icon: Settings,
+          },
+        ];
         return (
-          <div className="flex items-center justify-center min-h-[400px]">
-            <GlassCard className="max-w-2xl w-full p-8 md:p-10">
-              <div className="text-center mb-6">
-                <p className="text-sm font-semibold text-blue-500 tracking-wide mb-2 uppercase">
-                  Medical &amp; Healthcare
+          // No outer card: laid out like the other steps, with Back in the
+          // row above (see the fork layout below)
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-8">
+              <p className="!text-sm !font-bold !text-brand-steel tracking-[0.08em] uppercase !mt-0 !mb-2">
+                Medical &amp; Healthcare
+              </p>
+              <h2 className="!text-3xl md:!text-4xl !font-bold !text-foreground tracking-[-0.01em] !my-0">
+                How would you like to proceed?
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5" role="radiogroup" aria-label="Choose how to proceed">
+              {forkCards.map(card => {
+                const selected = wizardState.selectedMedicalPath === card.id;
+                return (
+                  <div
+                    key={card.id}
+                    onClick={() => handleForkSelect(card.id)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleForkSelect(card.id); } }}
+                    role="radio"
+                    aria-checked={selected}
+                    tabIndex={0}
+                    className={cn(
+                      'group relative cursor-pointer rounded-[10px] border-2 bg-card px-5 pt-6 pb-6 md:px-6 flex flex-col items-center text-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
+                      selected
+                        ? 'border-primary shadow-[var(--card-hover-shadow)]'
+                        : 'border-border hover:border-[var(--card-hover-border)] hover:shadow-[var(--card-hover-shadow)]'
+                    )}
+                  >
+                    <ProductVisual image={card.image} icon={card.icon} heightClass="h-32 md:h-40" />
+                    <h3 className="!text-xl !font-bold !text-foreground !leading-snug !mt-0 !mb-2">
+                      {card.title}
+                    </h3>
+                    <p className="!text-sm !text-muted-foreground !leading-relaxed !my-0">
+                      {card.description}
+                    </p>
+                    {selected && (
+                      <div className="absolute top-3 right-3 bg-primary rounded-full p-1 !text-white" aria-hidden="true">
+                        <Check className="w-3.5 h-3.5" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Fully custom: the PRESPEC program, in the same navy as the
+                front-page band */}
+            <a
+              href={PRESPEC_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="lm-hero-band group mt-5 flex flex-col md:flex-row md:items-center gap-5 md:gap-8 rounded-[10px] p-6 md:p-8 !no-underline hover:!no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#3f6a9b]"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="!text-xs !font-bold !text-brand-steel tracking-[0.12em] uppercase !mt-0 !mb-2">
+                  Fully custom &middot; PRESPEC Program
                 </p>
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                  How would you like to proceed?
-                </h2>
-              </div>
-
-              <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-8 flex gap-3">
-                <Info className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" />
-                <p className="text-sm text-blue-700 dark:text-blue-300">
-                  Medical customers can browse our standard catalog of medical-grade products or configure a semi-custom solution tailored to your specifications.
+                <h3 className="!text-2xl !font-bold !text-white !leading-snug !mt-0 !mb-2">
+                  Designing a new medical device?
+                </h3>
+                <p className="!text-base !text-white/80 !leading-relaxed !my-0">
+                  PRESPEC is Linemaster&rsquo;s design-phase development program: our engineers work with your team to design a fully custom foot control early in your device&rsquo;s development.
                 </p>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" role="radiogroup" aria-label="Choose how to proceed">
-                {/* Browse Stock Products */}
-                <div
-                  onClick={() => handleForkSelect('stock')}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleForkSelect('stock'); } }}
-                  role="radio"
-                  aria-checked={wizardState.selectedMedicalPath === 'stock'}
-                  tabIndex={0}
-                  className={cn(
-                    "relative cursor-pointer rounded-xl p-6 border-2 transition-all duration-200",
-                    wizardState.selectedMedicalPath === 'stock'
-                      ? "border-blue-500 bg-gradient-to-br from-white to-blue-50/80 dark:from-gray-800 dark:to-blue-950/30 shadow-lg shadow-blue-500/10"
-                      : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md"
-                  )}
-                >
-                  <div className={cn(
-                    "p-3 rounded-xl w-fit mb-4 transition-colors",
-                    wizardState.selectedMedicalPath === 'stock'
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-500"
-                  )}>
-                    <Package className="w-6 h-6" aria-hidden="true" />
-                  </div>
-                  <h3 className={cn(
-                    "font-semibold text-lg mb-1 transition-colors",
-                    wizardState.selectedMedicalPath === 'stock' ? "text-blue-700 dark:text-blue-300" : ""
-                  )}>
-                    Browse Stock Products
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Explore our existing catalog of medical-grade footswitches
-                  </p>
-                  {wizardState.selectedMedicalPath === 'stock' && (
-                    <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
-                      <Check className="w-3 h-3" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Configure Semi-Custom Solution */}
-                <div
-                  onClick={() => handleForkSelect('custom')}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleForkSelect('custom'); } }}
-                  role="radio"
-                  aria-checked={wizardState.selectedMedicalPath === 'custom'}
-                  tabIndex={0}
-                  className={cn(
-                    "relative cursor-pointer rounded-xl p-6 border-2 transition-all duration-200",
-                    wizardState.selectedMedicalPath === 'custom'
-                      ? "border-blue-500 bg-gradient-to-br from-white to-blue-50/80 dark:from-gray-800 dark:to-blue-950/30 shadow-lg shadow-blue-500/10"
-                      : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md"
-                  )}
-                >
-                  <div className={cn(
-                    "p-3 rounded-xl w-fit mb-4 transition-colors",
-                    wizardState.selectedMedicalPath === 'custom'
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-500"
-                  )}>
-                    <Settings className="w-6 h-6" aria-hidden="true" />
-                  </div>
-                  <h3 className={cn(
-                    "font-semibold text-lg mb-1 transition-colors",
-                    wizardState.selectedMedicalPath === 'custom' ? "text-blue-700 dark:text-blue-300" : ""
-                  )}>
-                    Configure Semi-Custom Solution
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Design a semi-custom medical-grade footswitch to your specifications
-                  </p>
-                  {wizardState.selectedMedicalPath === 'custom' && (
-                    <div className="absolute top-3 right-3 bg-blue-500 rounded-full p-1 text-white" aria-hidden="true">
-                      <Check className="w-3 h-3" />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Full Custom CTA */}
-              <div className="mt-4">
-                <a
-                  href="https://linemaster.com/custom-footswitches/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 p-5 text-center hover:border-blue-400 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-all duration-200 group"
-                >
-                  <div className="flex items-center justify-center gap-2 text-muted-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    <ExternalLink className="w-4 h-4" aria-hidden="true" />
-                    <span className="font-medium text-sm">
-                      We also offer full custom control solutions
-                    </span>
-                  </div>
-                </a>
-              </div>
-
-              <div className="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
-                <Button variant="ghost" onClick={onBack} className="text-muted-foreground">
-                  <ArrowLeft className="w-4 h-4 mr-2" aria-hidden="true" />
-                  Back
-                </Button>
-                {wizardState.selectedMedicalPath ? (
-                  // Came back to this screen with a path already chosen
-                  <Button onClick={onContinue} className="gap-1">
-                    Continue <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                  </Button>
-                ) : (
-                  <span className="text-sm text-muted-foreground">
-                    Select an option to continue
-                  </span>
-                )}
-              </div>
-            </GlassCard>
+              <span className="inline-flex shrink-0 self-start md:self-center items-center gap-2 rounded-full bg-white px-5 py-3 !text-sm !font-bold uppercase tracking-[0.03em] !text-[#081b2f] transition-colors group-hover:bg-white/90">
+                Explore PRESPEC
+                <ExternalLink className="w-4 h-4" aria-hidden="true" />
+                <span className="sr-only">(opens in a new tab)</span>
+              </span>
+            </a>
           </div>
         );
+      }
 
       case 2:
         // Stock path: Action Selection
@@ -558,9 +524,21 @@ export function MedicalFlow({
   // Fork step (and transitional step 0) use self-contained layout
   if (wizardState.step <= 1) {
     return (
-      <div className="min-h-screen mesh-gradient-light dark:bg-gradient-to-b dark:from-gray-900 dark:to-black relative">
+      <div className="min-h-screen dark:bg-gradient-to-b dark:from-gray-900 dark:to-black relative">
         <Header onReset={onReset} />
-        <div className="container mx-auto px-4 py-8 pt-24 relative z-10">
+        <div className="container mx-auto px-4 py-8 pt-24 pb-20 relative z-10">
+          {wizardState.step === 1 && (
+            // Back sits top-left, as on every other step
+            <StepNavRow
+              onBack={onBack}
+              rightAction={wizardState.selectedMedicalPath ? (
+                // Came back to this screen with a path already chosen
+                <Button variant="outline" onClick={onContinue} className="gap-1">
+                  Continue <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                </Button>
+              ) : undefined}
+            />
+          )}
           <div
             key={`${wizardState.step}-${wizardState.selectedMedicalPath}`}
             className="lm-enter"
