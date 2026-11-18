@@ -1,6 +1,15 @@
 import { useCallback, useMemo } from 'react';
 import { WizardState } from '@/app/hooks/useWizardState';
 import { trackWizardStep } from '@/app/utils/analytics';
+import {
+  STEP,
+  MEDICAL_STEP,
+  getSequenceKey,
+  nextStep,
+  prevStep,
+  stepPosition,
+  type StepContext,
+} from '@/app/utils/wizardSteps';
 
 interface CategoryOption {
   id: string;
@@ -28,14 +37,23 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
   }, [technologies]);
   const skipsTechStep = onlyTechnologyFor(wizardState.selectedApplication) !== null;
 
+  // The answers the step order's skip rules read (see utils/wizardSteps)
+  const stepContext = useMemo<StepContext>(() => ({
+    technology: wizardState.selectedTechnology,
+    channel: wizardState.selectedChannel,
+    technologyAutoAnswered: skipsTechStep,
+  }), [wizardState.selectedTechnology, wizardState.selectedChannel, skipsTechStep]);
+  const sequenceKey = getSequenceKey(wizardState.flow, wizardState.selectedMedicalPath);
+
   const clearDownstreamSelections = useCallback((fromStep: number) => {
-    if (fromStep <= 1) { wizardState.setSelectedAction(''); }
-    if (fromStep <= 2) { wizardState.setSelectedEnvironment(''); }
-    if (fromStep <= 3) { wizardState.setSelectedDuty(''); }
-    if (fromStep <= 4) { wizardState.setSelectedConnection(''); }
-    if (fromStep <= 5) { wizardState.setSelectedCircuitCount(''); }
-    if (fromStep <= 6) { wizardState.setSelectedGuard(''); }
-    if (fromStep <= 7) { wizardState.setSelectedFeatures([]); }
+    // Clears the answers of every step after `fromStep`
+    if (fromStep < STEP.ACTION) { wizardState.setSelectedAction(''); }
+    if (fromStep < STEP.ENVIRONMENT) { wizardState.setSelectedEnvironment(''); }
+    if (fromStep < STEP.DUTY) { wizardState.setSelectedDuty(''); }
+    if (fromStep < STEP.CONNECTION) { wizardState.setSelectedConnection(''); }
+    if (fromStep < STEP.CIRCUITS) { wizardState.setSelectedCircuitCount(''); }
+    if (fromStep < STEP.GUARD) { wizardState.setSelectedGuard(''); }
+    if (fromStep < STEP.FEATURES) { wizardState.setSelectedFeatures([]); }
   }, [wizardState.setSelectedAction, wizardState.setSelectedEnvironment, wizardState.setSelectedDuty, wizardState.setSelectedConnection, wizardState.setSelectedCircuitCount, wizardState.setSelectedGuard, wizardState.setSelectedFeatures]);
 
   const handleCategorySelect = useCallback((categoryId: string) => {
@@ -47,16 +65,23 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
       wizardState.setSelectedTechnology('');
       clearDownstreamSelections(0);
       wizardState.setFlow('medical');
-      wizardState.setStep(1);
-      trackWizardStep(0, 'medical', { application: 'medical' });
+      wizardState.setStep(MEDICAL_STEP.FORK);
+      trackWizardStep(STEP.APPLICATION, 'medical', { application: 'medical' });
     }
   }, [categories, clearDownstreamSelections, wizardState.setSelectedCategory, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
+
+  // First question after picking an industry: Technology, unless the
+  // industry offers only one technology and it's answered automatically.
+  const firstStepAfterApplication = useCallback((appId: string) => nextStep('standard', STEP.APPLICATION, {
+    ...stepContext,
+    technologyAutoAnswered: onlyTechnologyFor(appId) !== null,
+  }), [stepContext, onlyTechnologyFor]);
 
   const handleApplicationSelect = useCallback((id: string) => {
     // Re-picking the same industry (e.g. after jumping back via the
     // breadcrumb to check it) must not wipe every later answer.
     if (id === wizardState.selectedApplication && wizardState.flow === 'standard') {
-      const target = wizardState.resumeStep ?? (onlyTechnologyFor(id) ? 2 : 1);
+      const target = wizardState.resumeStep ?? firstStepAfterApplication(id);
       wizardState.setResumeStep(null);
       wizardState.setStep(target);
       return;
@@ -77,9 +102,9 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
         wizardState.setStep(target);
       } else {
         wizardState.setSelectedTechnology('');
-        wizardState.setStep(1);
+        wizardState.setStep(STEP.TECHNOLOGY);
       }
-      trackWizardStep(0, 'standard', { application: id, source: 'edit' });
+      trackWizardStep(STEP.APPLICATION, 'standard', { application: id, source: 'edit' });
       return;
     }
     wizardState.setResumeStep(null);
@@ -88,75 +113,49 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
     wizardState.setFlow('standard');
     const onlyTech = onlyTechnologyFor(id);
     wizardState.setSelectedTechnology(onlyTech ?? '');
-    wizardState.setStep(onlyTech ? 2 : 1);
-    trackWizardStep(0, 'standard', { application: id });
-  }, [clearDownstreamSelections, onlyTechnologyFor, technologies, wizardState.selectedTechnology, wizardState.selectedApplication, wizardState.flow, wizardState.resumeStep, wizardState.setResumeStep, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
+    wizardState.setStep(firstStepAfterApplication(id));
+    trackWizardStep(STEP.APPLICATION, 'standard', { application: id });
+  }, [clearDownstreamSelections, onlyTechnologyFor, firstStepAfterApplication, technologies, wizardState.selectedTechnology, wizardState.selectedApplication, wizardState.flow, wizardState.resumeStep, wizardState.setResumeStep, wizardState.setSelectedApplication, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
   // Skip the questions entirely: land on the results page with no wizard
   // answers, which scores every product as a match (see scoreAndSplit) —
   // i.e. the full catalog with search, More Filters, and Compare.
   const handleBrowseAll = useCallback(() => {
     wizardState.resetWizard();
-    wizardState.setStep(9);
-    trackWizardStep(9, 'standard', { source: 'browse_all' });
+    wizardState.setStep(STEP.RESULTS);
+    trackWizardStep(STEP.RESULTS, 'standard', { source: 'browse_all' });
   }, [wizardState.resetWizard, wizardState.setStep]);
 
   const handleBack = useCallback(() => {
     // Browse-all mode (no application chosen) has no wizard steps behind it
-    if (wizardState.step === 9 && wizardState.flow === 'standard' && !wizardState.selectedApplication) {
-      wizardState.setStep(0);
+    if (wizardState.step === STEP.RESULTS && wizardState.flow === 'standard' && !wizardState.selectedApplication) {
+      wizardState.setStep(STEP.APPLICATION);
       wizardState.setSelectedCategory('');
       return;
     }
-    if (wizardState.step === 0 && wizardState.selectedCategory) {
+    if (wizardState.step === STEP.APPLICATION && wizardState.selectedCategory) {
       wizardState.setSelectedCategory('');
       wizardState.setSelectedApplication('');
       return;
     }
-    if (wizardState.step === 0) return;
-    if (wizardState.flow === 'medical' && wizardState.step === 1) {
+    if (wizardState.step === STEP.APPLICATION) return;
+    if (wizardState.flow === 'medical' && wizardState.step === MEDICAL_STEP.FORK) {
+      // Medical fork → back to the industry picker
       wizardState.setFlow('standard');
-      wizardState.setStep(0);
+      wizardState.setStep(STEP.APPLICATION);
       wizardState.setSelectedCategory('');
       wizardState.setSelectedApplication('');
-    } else if (wizardState.step === 9 && wizardState.selectedApplication === 'medical') {
+    } else if (wizardState.step === STEP.RESULTS && wizardState.selectedApplication === 'medical') {
+      // Medical stock results → back to the medical Environment question
       wizardState.setFlow('medical');
-      wizardState.setStep(3);
-    } else if (wizardState.flow === 'medical' && wizardState.selectedMedicalPath === 'custom') {
-      let prevStep = wizardState.step - 1;
-      if (prevStep === 8 && wizardState.selectedChannel === 'crescent') {
-        prevStep--;
-      }
-      wizardState.setStep(prevStep);
+      wizardState.setStep(MEDICAL_STEP.ENVIRONMENT);
     } else {
-      let prevStep = wizardState.step - 1;
-      if (prevStep === 6 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
-        prevStep--;
-      }
-      if (prevStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
-        prevStep--;
-      }
-      if (prevStep === 1 && skipsTechStep) prevStep = 0;
-      wizardState.setStep(prevStep);
+      wizardState.setStep(prevStep(sequenceKey, wizardState.step, stepContext));
     }
-  }, [wizardState.step, wizardState.flow, wizardState.selectedCategory, wizardState.selectedApplication, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, skipsTechStep, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
+  }, [wizardState.step, wizardState.flow, wizardState.selectedCategory, wizardState.selectedApplication, sequenceKey, stepContext, wizardState.setFlow, wizardState.setStep, wizardState.setSelectedCategory, wizardState.setSelectedApplication]);
 
   const handleContinue = useCallback(() => {
-    let newStep = wizardState.step + 1;
-
-    if (wizardState.flow === 'medical' && wizardState.selectedMedicalPath === 'custom') {
-      if (newStep === 8 && wizardState.selectedChannel === 'crescent') {
-        newStep++;
-      }
-    } else {
-      if (newStep === 5 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
-        newStep++;
-      }
-      if (newStep === 6 && (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless')) {
-        newStep++;
-      }
-    }
-
+    const newStep = nextStep(sequenceKey, wizardState.step, stepContext);
     wizardState.setStep(newStep);
     trackWizardStep(newStep, wizardState.flow, {
       application: wizardState.selectedApplication,
@@ -165,7 +164,7 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
       environment: wizardState.selectedEnvironment,
       features: wizardState.selectedFeatures,
     });
-  }, [wizardState.step, wizardState.flow, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedFeatures, wizardState.setStep]);
+  }, [wizardState.step, wizardState.flow, sequenceKey, stepContext, wizardState.selectedTechnology, wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.selectedFeatures, wizardState.setStep]);
 
   // Advance from a step whose answer is unchanged: return to where the user
   // was before they jumped back to edit, otherwise just go to the next step.
@@ -187,14 +186,14 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
     // into standard steps the buyer never saw.
     if (wizardState.selectedApplication === 'medical') {
       wizardState.setResumeStep(null);
-      if (target <= 1) {
+      if (target <= STEP.TECHNOLOGY) {
         wizardState.setFlow('standard');
-        wizardState.setStep(0);
+        wizardState.setStep(STEP.APPLICATION);
         wizardState.setSelectedCategory('');
         wizardState.setSelectedApplication('');
       } else {
         wizardState.setFlow('medical');
-        wizardState.setStep(target >= 3 ? 3 : 2);
+        wizardState.setStep(target >= STEP.ENVIRONMENT ? MEDICAL_STEP.ENVIRONMENT : MEDICAL_STEP.ACTION);
       }
       return;
     }
@@ -205,9 +204,9 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
   const handleViewMedicalProducts = useCallback(() => {
     // No technology filter: wired and wireless medical switches both qualify
     wizardState.setSelectedTechnology('');
-    wizardState.setStep(9);
+    wizardState.setStep(STEP.RESULTS);
     wizardState.setFlow('standard');
-    trackWizardStep(9, 'standard', {
+    trackWizardStep(STEP.RESULTS, 'standard', {
       application: wizardState.selectedApplication,
       action: wizardState.selectedAction,
       environment: wizardState.selectedEnvironment,
@@ -215,29 +214,14 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
     });
   }, [wizardState.selectedApplication, wizardState.selectedAction, wizardState.selectedEnvironment, wizardState.setSelectedTechnology, wizardState.setFlow, wizardState.setStep]);
 
-  const totalSteps = useMemo(() => {
-    if (wizardState.flow === 'medical') {
-      if (wizardState.selectedMedicalPath === 'custom') {
-        return wizardState.selectedChannel === 'crescent' ? 10 : 11;
-      }
-      return 6;
-    }
-    let steps = 9;
-    if (wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless') steps -= 2;
-    if (skipsTechStep) steps -= 1;
-    return steps;
-  }, [wizardState.flow, wizardState.selectedTechnology, wizardState.selectedMedicalPath, wizardState.selectedChannel, skipsTechStep]);
+  // Standard flow progress. Position of a step among the steps the user
+  // sees (0 = industry pick); the count is the questions before Results.
+  const totalSteps = stepPosition('standard', STEP.RESULTS, stepContext);
 
-  const skipsConnectionStep = wizardState.selectedTechnology === 'pneumatic' || wizardState.selectedTechnology === 'wireless';
-
-  const getProgressStep = useCallback((rawStep: number) => {
-    if (rawStep <= 0) return 0;
-    let step = rawStep;
-    if (skipsTechStep && rawStep > 1) step--;
-    if (skipsConnectionStep && rawStep > 5) step--;
-    if (skipsConnectionStep && rawStep > 6) step--;
-    return step;
-  }, [skipsConnectionStep, skipsTechStep]);
+  const getProgressStep = useCallback(
+    (rawStep: number) => stepPosition('standard', rawStep, stepContext),
+    [stepContext],
+  );
 
   const getDisplayStep = useCallback((rawStep: number) => getProgressStep(rawStep) + 1, [getProgressStep]);
 
@@ -251,6 +235,7 @@ export function useWizardNavigation({ wizardState, categories, technologies }: U
     handleResumeOrContinue,
     jumpToStep,
     handleViewMedicalProducts,
+    stepContext,
     totalSteps,
     getProgressStep,
     getDisplayStep,

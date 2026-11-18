@@ -14,19 +14,20 @@ import type { OptionCount } from '@/app/hooks/useProductFiltering';
 import { motion, AnimatePresence } from 'motion/react';
 import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
 import { OptionGrid } from '@/app/components/wizard/OptionGrid';
+import { STEP, skipsWiringSteps } from '@/app/utils/wizardSteps';
 
 const LazyWizardCompanion = lazy(() => import('@/app/components/wizard/WizardCompanion'));
 
-// Current answer for each single-select step (1–7), used to tell a re-pick
-// of the same option apart from a real change.
+// Current answer for each single-select step (Technology to Safety Guard),
+// used to tell a re-pick of the same option apart from a real change.
 const STEP_ANSWER: Record<number, (s: WizardState) => string> = {
-  1: s => s.selectedTechnology,
-  2: s => s.selectedAction,
-  3: s => s.selectedEnvironment,
-  4: s => s.selectedDuty,
-  5: s => s.selectedConnection,
-  6: s => s.selectedCircuitCount,
-  7: s => s.selectedGuard,
+  [STEP.TECHNOLOGY]: s => s.selectedTechnology,
+  [STEP.ACTION]: s => s.selectedAction,
+  [STEP.ENVIRONMENT]: s => s.selectedEnvironment,
+  [STEP.DUTY]: s => s.selectedDuty,
+  [STEP.CONNECTION]: s => s.selectedConnection,
+  [STEP.CIRCUITS]: s => s.selectedCircuitCount,
+  [STEP.GUARD]: s => s.selectedGuard,
 };
 
 // Magic wand cursor as inline SVG data URI
@@ -224,15 +225,15 @@ export function StandardSteps({
 
   // Step titles for screen reader announcements
   const stepTitles: Record<number, string> = {
-    0: 'Select Your Application',
-    1: 'Select Technology',
-    2: 'Select Action Type',
-    3: 'Operating Environment',
-    4: 'Duty Rating',
-    5: 'Connection Type',
-    6: 'Circuits Controlled',
-    7: 'Safety Guard',
-    8: 'Additional Features',
+    [STEP.APPLICATION]: 'Select Your Application',
+    [STEP.TECHNOLOGY]: 'Select Technology',
+    [STEP.ACTION]: 'Select Action Type',
+    [STEP.ENVIRONMENT]: 'Operating Environment',
+    [STEP.DUTY]: 'Duty Rating',
+    [STEP.CONNECTION]: 'Connection Type',
+    [STEP.CIRCUITS]: 'Circuits Controlled',
+    [STEP.GUARD]: 'Safety Guard',
+    [STEP.FEATURES]: 'Additional Features',
   };
 
   // Announce step changes to screen readers and move focus
@@ -283,7 +284,7 @@ export function StandardSteps({
     // later answer and go straight back. Only answers the new choice makes
     // meaningless are dropped — Pneumatic / Wireless skip wiring + circuits.
     if (wizardState.resumeStep !== null) {
-      if (stepIndex === 1 && (value === 'pneumatic' || value === 'wireless')) {
+      if (stepIndex === STEP.TECHNOLOGY && skipsWiringSteps(value)) {
         wizardState.setSelectedConnection('');
         wizardState.setSelectedCircuitCount('');
       }
@@ -358,7 +359,7 @@ export function StandardSteps({
   );
 
   // Step 0: Category Selection
-  if (wizardState.step === 0 && !wizardState.selectedCategory) {
+  if (wizardState.step === STEP.APPLICATION && !wizardState.selectedCategory) {
     return (
       <Fragment>
       <div className={`${ON_SITE ? 'pt-14' : 'pt-20'} pb-12 px-4 sm:px-8 lg:px-[10%] xl:px-[15%]`}>
@@ -509,7 +510,7 @@ export function StandardSteps({
         <StepNavRow
           onBack={onBack}
           rightAction={
-            wizardState.step === 8 ? (
+            wizardState.step === STEP.FEATURES ? (
               <Button variant="ghost" onClick={onResumeOrContinue} className="text-muted-foreground hover:text-foreground">
                 Skip <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
               </Button>
@@ -517,7 +518,7 @@ export function StandardSteps({
               // Step already answered (user came back to review it): let them
               // move on without re-clicking a card.
               <Button variant="outline" onClick={onResumeOrContinue} className="gap-1">
-                {wizardState.resumeStep === 9 ? 'Back to results' : 'Continue'}
+                {wizardState.resumeStep === STEP.RESULTS ? 'Back to results' : 'Continue'}
                 <ArrowRight className="w-4 h-4" aria-hidden="true" />
               </Button>
             ) : null
@@ -533,7 +534,7 @@ export function StandardSteps({
             transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
           >
             {/* Step 0 Phase 2: Application Selection */}
-            {wizardState.step === 0 && (
+            {wizardState.step === STEP.APPLICATION && (
               <div className="space-y-6">
                 <StepHeading
                   title="Select Your Application"
@@ -564,7 +565,7 @@ export function StandardSteps({
             )}
 
             {/* Step 1: Technology */}
-            {wizardState.step === 1 && (
+            {wizardState.step === STEP.TECHNOLOGY && (
               <div className="space-y-6">
                 <StepHeading title="Select Technology" subtitle="Choose the switching mechanism for your application">
                   <p className="!text-sm !text-muted-foreground/80 mt-3 italic">
@@ -581,8 +582,8 @@ export function StandardSteps({
                         description={tech.description}
                         icon={tech.icon}
                         selected={wizardState.selectedTechnology === tech.id}
-                        {...countProps(1, tech.id)}
-                        onClick={() => handleSingleSelect(tech.id, wizardState.setSelectedTechnology, 1)}
+                        {...countProps(STEP.TECHNOLOGY, tech.id)}
+                        onClick={() => handleSingleSelect(tech.id, wizardState.setSelectedTechnology, STEP.TECHNOLOGY)}
                         index={i}
                       />
                     ))}
@@ -591,7 +592,7 @@ export function StandardSteps({
             )}
 
             {/* Step 2: Action */}
-            {wizardState.step === 2 && (
+            {wizardState.step === STEP.ACTION && (
               <div className="space-y-6">
                 <StepHeading title="Select Action Type" subtitle="How should the switch activate and deactivate?" />
                 <OptionGrid sm={2} md={4} className="w-full" role="radiogroup" aria-label="Select action type">
@@ -604,8 +605,8 @@ export function StandardSteps({
                         description={action.description}
                         icon={action.icon}
                         selected={wizardState.selectedAction === action.id}
-                        {...(action.id === NO_PREFERENCE ? {} : countProps(2, action.id))}
-                        onClick={() => handleSingleSelect(action.id, wizardState.setSelectedAction, 2)}
+                        {...(action.id === NO_PREFERENCE ? {} : countProps(STEP.ACTION, action.id))}
+                        onClick={() => handleSingleSelect(action.id, wizardState.setSelectedAction, STEP.ACTION)}
                         index={i}
                       />
                     ))}
@@ -614,7 +615,7 @@ export function StandardSteps({
             )}
 
             {/* Step 3: Environment */}
-            {wizardState.step === 3 && (
+            {wizardState.step === STEP.ENVIRONMENT && (
               <div className="space-y-6">
                 <StepHeading title="Operating Environment" subtitle="Where will the switch be used?" />
                 <OptionGrid sm={2} md={3} className="w-full" role="radiogroup" aria-label="Select operating environment">
@@ -625,8 +626,8 @@ export function StandardSteps({
                       icon={env.icon}
                       description={env.description}
                       selected={wizardState.selectedEnvironment === env.id}
-                      {...countProps(3, env.id)}
-                      onClick={() => handleSingleSelect(env.id, wizardState.setSelectedEnvironment, 3)}
+                      {...countProps(STEP.ENVIRONMENT, env.id)}
+                      onClick={() => handleSingleSelect(env.id, wizardState.setSelectedEnvironment, STEP.ENVIRONMENT)}
                       index={i}
                     />
                   ))}
@@ -635,7 +636,7 @@ export function StandardSteps({
             )}
 
             {/* Step 4: Duty Rating */}
-            {wizardState.step === 4 && (
+            {wizardState.step === STEP.DUTY && (
               <div className="space-y-6">
                 <StepHeading title="Duty Rating" subtitle="How heavy will the usage be?" />
                 <OptionGrid sm={2} md={4} className="w-full" role="radiogroup" aria-label="Select duty rating">
@@ -646,8 +647,8 @@ export function StandardSteps({
                       description={duty.description}
                       icon={duty.icon}
                       selected={wizardState.selectedDuty === duty.id}
-                      {...(duty.id === NO_PREFERENCE ? {} : countProps(4, duty.id))}
-                      onClick={() => handleSingleSelect(duty.id, wizardState.setSelectedDuty, 4)}
+                      {...(duty.id === NO_PREFERENCE ? {} : countProps(STEP.DUTY, duty.id))}
+                      onClick={() => handleSingleSelect(duty.id, wizardState.setSelectedDuty, STEP.DUTY)}
                       index={i}
                     />
                   ))}
@@ -656,7 +657,7 @@ export function StandardSteps({
             )}
 
             {/* Step 5: Connection Type */}
-            {wizardState.step === 5 && (
+            {wizardState.step === STEP.CONNECTION && (
               <div className="space-y-6">
                 <StepHeading title="Connection Type" subtitle="How should the switch connect to your equipment?" />
                 <OptionGrid sm={2} md={4} className="w-full" role="radiogroup" aria-label="Select connection type">
@@ -667,8 +668,8 @@ export function StandardSteps({
                       description={conn.description}
                       icon={conn.icon}
                       selected={wizardState.selectedConnection === conn.id}
-                      {...(conn.id === NO_PREFERENCE ? {} : countProps(5, conn.id))}
-                      onClick={() => handleSingleSelect(conn.id, wizardState.setSelectedConnection, 5)}
+                      {...(conn.id === NO_PREFERENCE ? {} : countProps(STEP.CONNECTION, conn.id))}
+                      onClick={() => handleSingleSelect(conn.id, wizardState.setSelectedConnection, STEP.CONNECTION)}
                       index={i}
                     />
                   ))}
@@ -677,7 +678,7 @@ export function StandardSteps({
             )}
 
             {/* Step 6: Circuits Controlled */}
-            {wizardState.step === 6 && (
+            {wizardState.step === STEP.CIRCUITS && (
               <div className="space-y-6">
                 <StepHeading title="Circuits Controlled" subtitle="How many circuits do you need to control?" />
                 <OptionGrid sm={2} md={3} className="w-full" role="radiogroup" aria-label="Select circuit count">
@@ -688,8 +689,8 @@ export function StandardSteps({
                       description={cc.description}
                       icon={cc.icon}
                       selected={wizardState.selectedCircuitCount === cc.id}
-                      {...(cc.id === NO_PREFERENCE ? {} : countProps(6, cc.id))}
-                      onClick={() => handleSingleSelect(cc.id, wizardState.setSelectedCircuitCount, 6)}
+                      {...(cc.id === NO_PREFERENCE ? {} : countProps(STEP.CIRCUITS, cc.id))}
+                      onClick={() => handleSingleSelect(cc.id, wizardState.setSelectedCircuitCount, STEP.CIRCUITS)}
                       index={i}
                     />
                   ))}
@@ -698,7 +699,7 @@ export function StandardSteps({
             )}
 
             {/* Step 7: Safety Guard */}
-            {wizardState.step === 7 && (
+            {wizardState.step === STEP.GUARD && (
               <div className="space-y-6">
                 <StepHeading title="Safety Guard" subtitle="Do you need protection against accidental activation?" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full" role="radiogroup" aria-label="Select safety guard option">
@@ -707,8 +708,8 @@ export function StandardSteps({
                     description="Safety guard prevents accidental activation."
                     icon={ShieldCheck}
                     selected={wizardState.selectedGuard === 'yes'}
-                    {...countProps(7, 'yes')}
-                    onClick={() => handleSingleSelect('yes', wizardState.setSelectedGuard, 7)}
+                    {...countProps(STEP.GUARD, 'yes')}
+                    onClick={() => handleSingleSelect('yes', wizardState.setSelectedGuard, STEP.GUARD)}
                     index={0}
                   />
                   <OptionCard
@@ -716,8 +717,8 @@ export function StandardSteps({
                     description="Show switches with or without a guard."
                     icon={ShieldOff}
                     selected={wizardState.selectedGuard === 'no'}
-                    {...countProps(7, 'no')}
-                    onClick={() => handleSingleSelect('no', wizardState.setSelectedGuard, 7)}
+                    {...countProps(STEP.GUARD, 'no')}
+                    onClick={() => handleSingleSelect('no', wizardState.setSelectedGuard, STEP.GUARD)}
                     index={1}
                   />
                 </div>
@@ -725,7 +726,7 @@ export function StandardSteps({
             )}
 
             {/* Step 8: Additional Features (Multi-select) */}
-            {wizardState.step === 8 && (
+            {wizardState.step === STEP.FEATURES && (
               <div className="space-y-6">
                 <StepHeading title="Additional Features" subtitle="Select any that apply, or skip to view results." />
                 <OptionGrid sm={2} gap={5} className="max-w-3xl mx-auto">
