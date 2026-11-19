@@ -311,7 +311,8 @@ export function MedicalFlow({
     const quoteLink = quoteLinkProps(configQuoteText(configEntries));
 
     return (
-      <div className="space-y-6 max-w-2xl mx-auto">
+      // 700px: the same column as the progress bar and Back row above
+      <div className="space-y-6 mx-auto" style={{ maxWidth: '700px' }}>
         <div className="text-center mb-4">
           <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
             <Check className="w-8 h-8 !text-primary" aria-hidden="true" />
@@ -528,6 +529,8 @@ export function MedicalFlow({
             // Back sits top-left, as on every other step
             <StepNavRow
               onBack={onBack}
+              // max-w-3xl: the width of the cards below
+              maxWidth={768}
               rightAction={wizardState.selectedMedicalPath ? (
                 // Came back to this screen with a path already chosen
                 <Button variant="outline" onClick={onContinue} className="gap-1">

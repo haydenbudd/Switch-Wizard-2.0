@@ -6,7 +6,7 @@ import { Button } from '@/app/components/ui/button';
 interface StepProgressProps {
   displayStep: number;
   displayTotal: number;
-  /** Defaults to the standard flow's (step - 1) / total. */
+  /** Defaults to step / total, so the last step shows a full bar. */
   progressPercent?: number;
   /** Right side of the "Step X of Y" row. */
   label?: string;
@@ -18,7 +18,7 @@ interface StepProgressProps {
 export function StepProgress({
   displayStep,
   displayTotal,
-  progressPercent = Math.round(((displayStep - 1) / displayTotal) * 100),
+  progressPercent = Math.round((displayStep / displayTotal) * 100),
   label,
   ariaLabel,
 }: StepProgressProps) {
@@ -55,12 +55,27 @@ export function StepProgress({
   );
 }
 
-/** 700px Back row with an optional right-side action. */
-export function StepNavRow({ onBack, rightAction }: { onBack: () => void; rightAction?: ReactNode }) {
+/** Ghost link-style button for the Back row: no side padding or hover fill,
+ *  so its arrow lines up with the column edge (a padded ghost button sat
+ *  16px in from the progress bar above it). */
+export const NAV_LINK_CLASS = 'px-0 hover:bg-transparent text-muted-foreground hover:text-foreground';
+
+/** Back row with an optional right-side action. 700px wide by default, the
+ *  same column as StepProgress; pass maxWidth to match wider content. */
+export function StepNavRow({
+  onBack,
+  rightAction,
+  maxWidth = 700,
+}: {
+  onBack: () => void;
+  rightAction?: ReactNode;
+  maxWidth?: number;
+}) {
   return (
-    <div className="flex items-center justify-between mx-auto mb-4" style={{ maxWidth: '700px' }}>
-      <Button variant="ghost" onClick={onBack} className="text-muted-foreground hover:text-foreground">
-        <ChevronLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back
+    <div className="flex items-center justify-between mx-auto mb-4" style={{ maxWidth: `${maxWidth}px` }}>
+      <Button variant="ghost" onClick={onBack} className={NAV_LINK_CLASS}>
+        {/* -ml-1: the chevron's own whitespace, so its tip meets the edge */}
+        <ChevronLeft className="w-4 h-4 -ml-1 mr-1" aria-hidden="true" /> Back
       </Button>
       {rightAction}
     </div>

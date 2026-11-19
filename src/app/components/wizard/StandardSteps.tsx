@@ -12,7 +12,7 @@ import { Button } from '@/app/components/ui/button';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import type { OptionCount } from '@/app/hooks/useProductFiltering';
 import { usePresence } from '@/app/hooks/usePresence';
-import { StepProgress, StepNavRow, StepHeading } from '@/app/components/wizard/StepFrame';
+import { StepProgress, StepNavRow, StepHeading, NAV_LINK_CLASS } from '@/app/components/wizard/StepFrame';
 import { OptionGrid } from '@/app/components/wizard/OptionGrid';
 import { STEP, skipsWiringSteps } from '@/app/utils/wizardSteps';
 
@@ -293,7 +293,9 @@ export function StandardSteps({
   const displayTotal = totalSteps + 1;
   const selectedCategoryLabel = (categories || []).find(c => c.id === wizardState.selectedCategory)?.label;
 
-  const progressPercent = Math.round(((displayStep - 1) / displayTotal) * 100);
+  // Step N of M fills N/M of the bar, so the last question shows a full bar
+  // (as in the medical builder). It used (N - 1)/M, which stopped at 90%.
+  const progressPercent = Math.round((displayStep / displayTotal) * 100);
 
   // Wizard companion easter egg — lazily loaded so the ASCII art stays out
   // of the main bundle until the user actually toggles it on. Stays mounted
@@ -311,7 +313,8 @@ export function StandardSteps({
     <span
       // Bold steel blue eyebrow, like "PRESPEC Program" on linemaster.com.
       // On the navy front-page band it uses a lighter blue (lm-hero-band).
-      className={`inline-block !font-bold !text-brand-steel cursor-pointer hover:!text-primary focus-visible:!text-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-md px-2 -mx-2 ${ON_SITE ? '!text-base' : '!text-lg md:!text-xl mb-3'}`}
+      // Sizes are 15% up from text-base (site) and text-lg/xl (Pages).
+      className={`inline-block !font-bold !text-brand-steel cursor-pointer hover:!text-primary focus-visible:!text-primary transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 rounded-md px-2 -mx-2 ${ON_SITE ? '!text-[1.15rem]' : '!text-[1.3rem] md:!text-[1.4375rem] mb-3'}`}
       onClick={() => setShowWizard(prev => !prev)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setShowWizard(prev => !prev); } }}
       role="button"
@@ -480,8 +483,8 @@ export function StandardSteps({
           onBack={onBack}
           rightAction={
             wizardState.step === STEP.FEATURES ? (
-              <Button variant="ghost" onClick={onResumeOrContinue} className="text-muted-foreground hover:text-foreground">
-                Skip <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
+              <Button variant="ghost" onClick={onResumeOrContinue} className={NAV_LINK_CLASS}>
+                Skip <ArrowRight className="w-4 h-4 ml-1 -mr-1" aria-hidden="true" />
               </Button>
             ) : currentAnswer ? (
               // Step already answered (user came back to review it): let them

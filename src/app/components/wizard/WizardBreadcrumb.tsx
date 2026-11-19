@@ -110,10 +110,9 @@ export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBrea
       )}
       <div className={wrap ? 'flex flex-wrap items-center gap-2 px-1' : 'flex items-center gap-2 overflow-x-auto pb-1 -mb-1 px-1 w-fit max-w-full mx-auto'}>
         {crumbs.map((c, idx) => (
+          // Chevron after the chip (not before the next one): when the row
+          // wraps, the new line starts with a chip instead of a stray arrow
           <div key={c.step} className="flex items-center gap-2 shrink-0">
-            {idx > 0 && (
-              <ChevronRight className="w-4 h-4 !text-muted-foreground/40" aria-hidden="true" />
-            )}
             <button
               type="button"
               onClick={() => onJumpToStep(c.step)}
@@ -124,6 +123,9 @@ export const WizardBreadcrumb = memo(function WizardBreadcrumb(props: WizardBrea
               <span className="!text-muted-foreground">{c.label}:</span>
               <span className="!font-semibold !text-foreground">{c.value}</span>
             </button>
+            {idx < crumbs.length - 1 && (
+              <ChevronRight className="w-4 h-4 !text-muted-foreground/40" aria-hidden="true" />
+            )}
           </div>
         ))}
       </div>

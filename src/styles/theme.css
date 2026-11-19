@@ -481,6 +481,31 @@ body,
   padding: 0;
 }
 
+/* linemaster.com's theme (Bootstrap 3 plugins.css plus style.css) styles
+   bare a and button elements and the .bg-primary class outside any cascade
+   layer, so those rules beat every Tailwind utility (utilities are layered):
+     a { background-color: transparent }  → the orange Request a Quote pills
+       were white text on white, which also pushed the visible PDF button off
+       center on the medical summary
+     button { font: inherit; text-transform: none }  → buttons lost bold,
+       their text size and uppercase
+     .bg-primary { background-color: #337ab7; color: #fff }  → Bootstrap's
+       blue instead of the brand navy
+   revert-layer hands each property back to the app's own layered CSS. The
+   scope prefix makes these (1,0,0), above all of those theme rules, and on
+   GitHub Pages (no theme CSS) they change nothing. */
+:where(a, button) {
+  background-color: revert-layer;
+  color: revert-layer;
+  font: revert-layer;
+  text-transform: revert-layer;
+  text-decoration: revert-layer;
+}
+:where(.bg-primary) {
+  background-color: revert-layer;
+  color: revert-layer;
+}
+
 /* Front-page band on GitHub Pages: navy with a faint blueprint grid and a
    soft blue glow, after the hero on linemaster.com's PreSpec page. */
 .lm-hero-band {
@@ -489,7 +514,9 @@ body,
     linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px) 0 0 / 48px 48px,
     radial-gradient(ellipse at 70% 15%, rgba(47, 86, 184, 0.9) 0%, transparent 60%),
     linear-gradient(160deg, #0b1e3f 0%, #081b2f 55%, #0d2a5c 100%);
-  /* Eyebrow on navy: light steel blue, white on hover */
-  --brand-steel: #8fb2dc;
+  /* Eyebrow on navy: light steel blue, white on hover. #cfdff3 keeps 4.7:1
+     even on a grid line where the blue glow is brightest (#8fb2dc was
+     2.9:1 there, below WCAG AA). */
+  --brand-steel: #cfdff3;
   --primary: #ffffff;
 }
