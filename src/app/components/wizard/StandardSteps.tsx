@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Fragment, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, Fragment, lazy, Suspense, type ReactNode } from 'react';
 import { cn } from '@/app/components/ui/utils';
 import { ON_SITE } from '@/app/utils/embed';
 import { ProductVisual } from '@/app/components/wizard/ProductVisual';
@@ -101,6 +101,8 @@ interface StandardStepsProps {
   onResumeOrContinue: () => void;
   /** Breadcrumb jump that remembers where the user came from. */
   onJumpToStep: (step: number) => void;
+  /** Front page "describe the switch you need" box. */
+  smartSearch?: ReactNode;
 }
 
 /**
@@ -179,6 +181,7 @@ export function StandardSteps({
   onContinue,
   onResumeOrContinue,
   onJumpToStep,
+  smartSearch,
 }: StandardStepsProps) {
   const [showWizard, setShowWizard] = useState(false);
   // Once toggled on, keep the lazy chunk mounted for exit animations
@@ -410,12 +413,14 @@ export function StandardSteps({
           ))}
         </div>
 
-        {/* Shortcut for buyers who already know what they want */}
+        {/* Shortcuts for buyers who already know what they want: describe
+            it in plain words, or open the full catalog */}
         <div
-          className="lm-enter flex flex-col items-center gap-3 mt-8"
+          className="lm-enter flex flex-col items-center gap-3 mt-10"
           style={{ '--enter-delay': '0.45s' } as React.CSSProperties}
         >
           <span className="!text-lg !font-medium">Already know what you need?</span>
+          {smartSearch && <div className="w-full mb-2">{smartSearch}</div>}
           <Button
             variant="cta"
             onClick={onBrowseAll}
