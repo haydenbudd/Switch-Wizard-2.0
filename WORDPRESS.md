@@ -46,3 +46,29 @@ version, and re-upload the zip.
 `public/assets/vendor-motion.js` is an empty placeholder kept for plugin
 versions up to 2.1.3, which still request that file. It can be deleted once
 every site runs 2.1.4 or later.
+
+## Pre-filled quote form
+
+Every Request a Quote button in the wizard opens
+`https://linemaster.com/request-a-quote/?Application=…&comments=…`, where
+`comments` holds the visitor's answers, the product(s) and a link back to
+their results. The quote form is Contact Form 7 (form ID 3293), which only
+fills a field from the URL when that field's tag has `default:get`. Until it
+does, the form opens empty and visitors paste the details the wizard copied
+to their clipboard.
+
+To turn pre-filling on, in WordPress admin go to **Contact → Contact Forms →
+Request a Quote** (ID 3293), and on the **Form** tab:
+
+1. Add `default:get` to the Message tag. For example
+   `[textarea* comments placeholder "Message *"]` becomes
+   `[textarea* comments default:get placeholder "Message *"]`.
+2. Add `default:get` to the Application tag, and make its "Application" text
+   a placeholder rather than a value, so a blank field isn't sent as the word
+   "Application". For example `[text Application "Application"]` becomes
+   `[text Application default:get placeholder "Application"]`.
+3. Save. Keep the field names exactly `comments` and `Application`: the
+   wizard sends parameters with those names, and they are case-sensitive.
+
+No change is needed on the **Mail** tab, as long as it already includes
+`[comments]` and `[Application]`.

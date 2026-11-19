@@ -47,3 +47,8 @@ export function trackPDFDownload(flow: string, data: WizardStepData = {}) {
 export function trackNoResults(data: WizardStepData = {}) {
   persist('no_results', undefined, undefined, { ...data });
 }
+
+/** Request a Quote clicks: where the button was, and what was being quoted. */
+export function trackQuoteClick(source: string, data: { application?: string; products?: string[] } = {}) {
+  persist('quote_click', undefined, undefined, { source, ...data });
+}

@@ -13,7 +13,8 @@ import { EnhancedSearch } from '@/app/components/EnhancedSearch';
 import { FilterChip } from '@/app/components/FilterChip';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
 import { SmartSearchSummary } from '@/app/components/wizard/SmartSearch';
-import { resultsQuoteText, quoteLinkProps } from '@/app/utils/quote';
+import { resultsQuoteText, quoteLinkProps, answerRows, type QuoteContext } from '@/app/utils/quote';
+import { optionLabel } from '@/app/data/options';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -405,12 +406,18 @@ export function ResultsPage({
     setCloseLimit(PAGE_SIZE);
   }, [finalPerfect, finalClose]);
 
-  const quoteLink = quoteLinkProps(resultsQuoteText({
-    wizardState,
-    sources: { applications, technologies, actions, environments, duties, connections, circuitCounts, features },
-    products: compareProducts.length > 0 ? compareProducts : finalResults,
-    needsCustom: needsCustomSolution,
-  }));
+  // What every Request a Quote button here sends to the quote form: the
+  // visitor's answers, their application and a link back to these results.
+  const quoteContext: QuoteContext = {
+    answers: answerRows(wizardState, { applications, technologies, actions, environments, duties, connections, circuitCounts, features }),
+    application: wizardState.selectedApplication ? optionLabel(applications, wizardState.selectedApplication) : undefined,
+    resultsUrl: isBrowseAll ? undefined : buildShareUrl(wizardState),
+  };
+  const quoteProducts = compareProducts.length > 0 ? compareProducts : finalResults;
+  const quoteLink = quoteLinkProps(
+    resultsQuoteText({ context: quoteContext, products: quoteProducts, needsCustom: needsCustomSolution }),
+    { source: 'results', application: quoteContext.application, products: quoteProducts },
+  );
 
   // What the PDF should list — exactly what's on screen
   const pdfResults: PDFResults = {
@@ -806,6 +813,7 @@ export function ResultsPage({
         open={detailProduct !== null}
         onClose={() => setDetailProduct(null)}
         hideTopChoice={detailProduct?.id !== topChoiceId}
+        quoteContext={quoteContext}
       />
 
       {/* Compare Slide-up Panel */}
@@ -815,6 +823,7 @@ export function ResultsPage({
         onOpenChange={setCompareOpen}
         onRemove={(id) => setCompareIds(prev => prev.filter(x => x !== id))}
         onClear={() => { setCompareIds([]); setCompareOpen(false); }}
+        quoteContext={quoteContext}
       />
 
       {/* Mobile Action Drawer */}
