@@ -5,6 +5,7 @@ import { ON_SITE } from '@/app/utils/embed';
 import { useProductData } from '@/app/hooks/useProductData';
 import { useWizardState, takeSnapshot, type WizardSnapshot } from '@/app/hooks/useWizardState';
 import { useWizardNavigation } from '@/app/hooks/useWizardNavigation';
+import { useWizardHistory } from '@/app/hooks/useWizardHistory';
 import { useProductFiltering } from '@/app/hooks/useProductFiltering';
 import { trackNoResults } from '@/app/utils/analytics';
 import {
@@ -78,34 +79,44 @@ function WizardApp() {
   } = useProductFiltering({ wizardState, products });
 
   // Restore wizard state on mount.
-  // Priority: share URL > localStorage > defaults.
+  // Priority: this history entry > share URL > localStorage > defaults.
+  //   - The history entry (a reload, or Back/Forward into the page from
+  //     another site) holds the exact screen the buyer was on.
   //   - Share URL always lands the user on the results page (it's the
   //     output of buildShareUrl, which is only invoked from results).
   //   - localStorage restores to the exact step the user last left off on.
+  //   - The restored screen replaces the page's history entry rather than
+  //     adding one, so browser Back from it still leaves the page.
   // State setters are stable (never change), so we capture them via ref to
   // avoid adding them as deps of this one-shot effect.
   const wizardSettersRef = useRef(wizardState);
   wizardSettersRef.current = wizardState;
+  const snapshot = takeSnapshot(wizardState);
+  const snapshotJson = JSON.stringify(snapshot);
+  const { replaceNext: replaceNextHistoryEntry, restoreFromEntry } = useWizardHistory(wizardState, snapshot, snapshotJson);
   useEffect(() => {
     const s = wizardSettersRef.current;
+    if (restoreFromEntry()) return;
     const shared = parseShareParams(window.location.search);
     if (shared) {
       // Share URLs always land on the results page
+      replaceNextHistoryEntry();
       s.applyPartial({ ...shared, step: STEP.RESULTS } as Partial<WizardSnapshot>);
       return;
     }
 
     // No share URL — try localStorage (resumes at the exact step)
     const persisted = loadWizardStateFromLocal();
-    if (persisted) s.applyPartial(persisted);
-  }, []);
+    if (persisted) {
+      replaceNextHistoryEntry();
+      s.applyPartial(persisted);
+    }
+  }, [replaceNextHistoryEntry, restoreFromEntry]);
 
   // Auto-save wizard state to localStorage whenever it meaningfully changes.
   // The serialized snapshot doubles as the change detector — the effect only
   // re-runs when a persisted field actually changed, and writes are skipped
   // while the wizard is pristine.
-  const snapshot = takeSnapshot(wizardState);
-  const snapshotJson = JSON.stringify(snapshot);
   useEffect(() => {
     const hasAnyInput =
       snapshot.step > 0 ||
@@ -121,7 +132,8 @@ function WizardApp() {
   // no-ops when none are present), so this is safe for organic users and
   // preserves the host page's params (e.g. WordPress ?page_id=).
   useEffect(() => {
-    if (wizardState.step === STEP.RESULTS) {
+    // flow check: the medical builder's Custom Labeling step shares step 9
+    if (wizardState.step === STEP.RESULTS && wizardState.flow === 'standard') {
       updateUrlWithState(wizardState);
     } else {
       clearShareParams();

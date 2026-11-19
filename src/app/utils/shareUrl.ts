@@ -71,10 +71,11 @@ export function parseShareParams(search: string): Partial<WizardState> | null {
   return state as Partial<WizardState>;
 }
 
-/** Update the browser URL bar with share params (no history entry) */
+/** Update the browser URL bar with share params (no history entry).
+ *  Keeps the entry's state object: useWizardHistory stores each step there. */
 export function updateUrlWithState(state: WizardState) {
   const url = buildShareUrl(state);
-  window.history.replaceState(null, '', url);
+  window.history.replaceState(window.history.state, '', url);
 }
 
 /** Clear the wizard's own share params from the URL bar.
@@ -94,7 +95,7 @@ export function clearShareParams() {
 
   const base = window.location.origin + window.location.pathname;
   const qs = params.toString();
-  window.history.replaceState(null, '', qs ? `${base}?${qs}` : base);
+  window.history.replaceState(window.history.state, '', qs ? `${base}?${qs}` : base);
 }
 
 // ──────────────────────────────────────────────────────────────────────
