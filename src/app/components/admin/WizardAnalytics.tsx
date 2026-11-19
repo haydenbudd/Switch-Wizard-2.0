@@ -68,6 +68,9 @@ export function WizardAnalytics() {
     // PDF downloads
     const pdfDownloads = typeCounts['pdf_download'] || 0;
 
+    // Request a Quote clicks (results, product details, compare, medical builder)
+    const quoteClicks = typeCounts['quote_click'] || 0;
+
     // No results
     const noResults = typeCounts['no_results'] || 0;
 
@@ -104,6 +107,7 @@ export function WizardAnalytics() {
       standardFlows,
       medicalFlows,
       pdfDownloads,
+      quoteClicks,
       noResults,
       resultViews,
       completionRate,
@@ -150,10 +154,11 @@ export function WizardAnalytics() {
       ) : (
         <>
           {/* Top stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             <StatCard label="Sessions" value={stats.totalSessions} />
             <StatCard label="Completion Rate" value={`${stats.completionRate}%`} />
             <StatCard label="PDF Downloads" value={stats.pdfDownloads} />
+            <StatCard label="Quote Requests" value={stats.quoteClicks} />
             <StatCard label="No Results" value={stats.noResults} />
           </div>
 

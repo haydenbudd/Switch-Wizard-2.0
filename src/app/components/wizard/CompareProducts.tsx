@@ -15,7 +15,7 @@ import {
   features as featureOptions,
 } from '@/app/data/options';
 import { ipShort, ipMeaning } from '@/app/utils/ipRating';
-import { productQuoteText, quoteLinkProps } from '@/app/utils/quote';
+import { productQuoteText, quoteLinkProps, type QuoteContext } from '@/app/utils/quote';
 import {
   colorClasses,
   getTechColor,
@@ -37,6 +37,8 @@ interface CompareProductsProps {
   onOpenChange: (open: boolean) => void;
   onRemove: (id: string) => void;
   onClear: () => void;
+  /** The visitor's answers, sent along with the product to the quote form. */
+  quoteContext?: QuoteContext;
 }
 
 interface CompareRow {
@@ -115,7 +117,7 @@ function useIsNarrow(): boolean {
   return narrow;
 }
 
-export function CompareProducts({ products, open, onOpenChange, onRemove, onClear }: CompareProductsProps) {
+export function CompareProducts({ products, open, onOpenChange, onRemove, onClear, quoteContext }: CompareProductsProps) {
   const [diffOnly, setDiffOnly] = useState(false);
   const isNarrow = useIsNarrow();
   // Keeps the table mounted while it collapses
@@ -387,7 +389,7 @@ export function CompareProducts({ products, open, onOpenChange, onRemove, onClea
                             <td key={product.id} className="px-3 py-3">
                               <div className="flex flex-col items-stretch gap-2">
                                 <Button asChild size="sm" variant="quote" className="gap-1.5 !text-sm">
-                                  <a {...quoteLinkProps(productQuoteText(product))}>
+                                  <a {...quoteLinkProps(productQuoteText(product, quoteContext), { source: 'compare', application: quoteContext?.application, products: [product] })}>
                                     <Mail className="w-4 h-4" aria-hidden="true" /> Request a Quote
                                   </a>
                                 </Button>

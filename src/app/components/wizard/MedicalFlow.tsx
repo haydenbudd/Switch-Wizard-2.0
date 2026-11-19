@@ -308,7 +308,7 @@ export function MedicalFlow({
     }
 
     // Contact page + configuration copied for its message box
-    const quoteLink = quoteLinkProps(configQuoteText(configEntries));
+    const quoteLink = quoteLinkProps(configQuoteText(configEntries), { source: 'medical_custom', application: 'Medical (semi-custom)' });
 
     return (
       // 700px: the same column as the progress bar and Back row above

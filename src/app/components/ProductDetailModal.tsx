@@ -4,7 +4,7 @@ import { Button } from '@/app/components/ui/button';
 import { ImageWithFallback } from '@/app/components/figma/ImageWithFallback';
 import { getProxiedImageUrl, getProxiedImageSrcSet } from '@/app/utils/imageProxy';
 import { getPortalContainer } from '@/app/utils/portalContainer';
-import { productQuoteText, quoteLinkProps } from '@/app/utils/quote';
+import { productQuoteText, quoteLinkProps, type QuoteContext } from '@/app/utils/quote';
 import { ipBadgeLabel, ipMeaning } from '@/app/utils/ipRating';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { usePresence } from '@/app/hooks/usePresence';
@@ -51,6 +51,8 @@ interface ProductDetailModalProps {
   onClose: () => void;
   /** Hide the Top Choice badge (skip-the-questions catalog). */
   hideTopChoice?: boolean;
+  /** The visitor's answers, sent along with the product to the quote form. */
+  quoteContext?: QuoteContext;
 }
 
 function MaterialIcon({ material }: { material: string }) {
@@ -111,7 +113,7 @@ function DetailedSpecs({ specs }: { specs: Record<string, string> }) {
   );
 }
 
-export function ProductDetailModal({ product, open, onClose, hideTopChoice }: ProductDetailModalProps) {
+export function ProductDetailModal({ product, open, onClose, hideTopChoice, quoteContext }: ProductDetailModalProps) {
   // Radix Dialog handles focus trap, scroll lock and Escape. Return focus is
   // manual: the dialog is opened from a card, not a Radix Trigger, so Radix
   // has nowhere to send focus back to and keyboard users landed on <body>.
@@ -313,7 +315,7 @@ export function ProductDetailModal({ product, open, onClose, hideTopChoice }: Pr
                   reorganized uploads, so it was removed rather than maintained.) */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button asChild variant="quote" className="flex-1 gap-2 !text-sm">
-                  <a {...quoteLinkProps(productQuoteText(product))}>
+                  <a {...quoteLinkProps(productQuoteText(product, quoteContext), { source: 'product', application: quoteContext?.application, products: [product] })}>
                     <Mail className="w-6 h-6" />
                     Request a Quote
                   </a>
