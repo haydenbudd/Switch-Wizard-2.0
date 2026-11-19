@@ -6,7 +6,7 @@ import { Button } from '@/app/components/ui/button';
 interface StepProgressProps {
   displayStep: number;
   displayTotal: number;
-  /** Defaults to the standard flow's (step - 1) / total. */
+  /** Defaults to step / total, so the last step shows a full bar. */
   progressPercent?: number;
   /** Right side of the "Step X of Y" row. */
   label?: string;
@@ -18,7 +18,7 @@ interface StepProgressProps {
 export function StepProgress({
   displayStep,
   displayTotal,
-  progressPercent = Math.round(((displayStep - 1) / displayTotal) * 100),
+  progressPercent = Math.round((displayStep / displayTotal) * 100),
   label,
   ariaLabel,
 }: StepProgressProps) {

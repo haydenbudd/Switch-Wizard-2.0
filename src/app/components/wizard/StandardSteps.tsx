@@ -293,7 +293,9 @@ export function StandardSteps({
   const displayTotal = totalSteps + 1;
   const selectedCategoryLabel = (categories || []).find(c => c.id === wizardState.selectedCategory)?.label;
 
-  const progressPercent = Math.round(((displayStep - 1) / displayTotal) * 100);
+  // Step N of M fills N/M of the bar, so the last question shows a full bar
+  // (as in the medical builder). It used (N - 1)/M, which stopped at 90%.
+  const progressPercent = Math.round((displayStep / displayTotal) * 100);
 
   // Wizard companion easter egg — lazily loaded so the ASCII art stays out
   // of the main bundle until the user actually toggles it on. Stays mounted
