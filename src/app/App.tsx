@@ -6,7 +6,7 @@ import { useProductData } from '@/app/hooks/useProductData';
 import { useWizardState, takeSnapshot, type WizardSnapshot } from '@/app/hooks/useWizardState';
 import { useWizardNavigation } from '@/app/hooks/useWizardNavigation';
 import { useProductFiltering } from '@/app/hooks/useProductFiltering';
-import { trackNoResults } from '@/app/utils/analytics';
+import { trackNoResults, trackWizardStep } from '@/app/utils/analytics';
 import {
   parseShareParams, updateUrlWithState, clearShareParams,
   saveWizardStateToLocal, loadWizardStateFromLocal, clearWizardStateFromLocal,
@@ -18,6 +18,8 @@ import { StandardSteps } from '@/app/components/wizard/StandardSteps';
 import { ResultsPage, type PDFResults } from '@/app/components/wizard/ResultsPage';
 import { ConfirmResetDialog } from '@/app/components/ConfirmResetDialog';
 import { STEP } from '@/app/utils/wizardSteps';
+import { SmartSearchBox } from '@/app/components/wizard/SmartSearch';
+import type { SmartSearchResult } from '@/app/utils/smartSearch';
 
 // Lazy load admin panel with fallback for environments like Figma Make
 const AdminContainer = lazy(() =>
@@ -139,7 +141,18 @@ function WizardApp() {
   const [materialFilter, setMaterialFilter] = useState<string[]>([]);
   const [technologyFilter, setTechnologyFilter] = useState<string[]>([]);
 
+  // "Describe the switch you need" search. `describedSearch` is set while
+  // its results are showing; `lastDescription` refills the box after Back.
+  const [describedSearch, setDescribedSearch] = useState<{ query: string; dropped: string[] } | null>(null);
+  const [lastDescription, setLastDescription] = useState('');
+  const onResultsPage = wizardState.step === STEP.RESULTS && wizardState.flow === 'standard';
+  useEffect(() => {
+    if (!onResultsPage) setDescribedSearch(null);
+  }, [onResultsPage]);
+
   const handleReset = useCallback(() => {
+    setDescribedSearch(null);
+    setLastDescription('');
     wizardState.resetWizard();
     setSearchTerm('');
     setSortBy('relevance');
@@ -171,8 +184,39 @@ function WizardApp() {
     setCordedFilter('all');
     setMaterialFilter([]);
     setTechnologyFilter([]);
+    setDescribedSearch(null);
     navBrowseAll();
   }, [navBrowseAll]);
+
+  // Described search → results page, with what was understood applied as
+  // wizard answers (scored like the guided flow) plus the keyword search
+  // and material filter for series names, part numbers and materials.
+  const handleSmartSearch = useCallback((r: SmartSearchResult) => {
+    wizardState.resetWizard();
+    wizardState.applyPartial({ ...r.answers, selectedCategory: r.category, step: STEP.RESULTS });
+    setSearchTerm(r.searchTerm);
+    setSortBy('relevance');
+    setDutyFilter([]);
+    setCordedFilter('all');
+    setMaterialFilter(r.materials);
+    setTechnologyFilter([]);
+    setDescribedSearch({ query: r.query, dropped: r.dropped.map(d => d.label) });
+    setLastDescription(r.query);
+    trackWizardStep(STEP.RESULTS, 'standard', {
+      source: 'smart_search',
+      query: r.query.slice(0, 200),
+      understood: r.chips.map(c => c.key),
+    });
+  }, [wizardState.resetWizard, wizardState.applyPartial]);
+
+  // Back (or Edit) from described-search results: the front page, with the
+  // description still in the box to refine
+  const handleBackToDescription = useCallback(() => {
+    wizardState.resetWizard();
+    setSearchTerm('');
+    setMaterialFilter([]);
+    clearWizardStateFromLocal();
+  }, [wizardState.resetWizard]);
 
   // Track no-results as a side effect — "no results" means the page is
   // actually empty (no exact AND no close matches), same as the buyer sees.
@@ -269,6 +313,14 @@ function WizardApp() {
           onContinue={handleContinue}
           onResumeOrContinue={handleResumeOrContinue}
           onJumpToStep={jumpToStep}
+          smartSearch={
+            <SmartSearchBox
+              products={products}
+              initialQuery={lastDescription}
+              onSearch={handleSmartSearch}
+              onBrowseAll={handleBrowseAll}
+            />
+          }
         />
       )}
 
@@ -286,9 +338,11 @@ function WizardApp() {
           scoredProducts={scoredProducts}
           getAlternativeProducts={getAlternativeProducts}
           needsCustomSolution={needsCustomSolution}
-          onBack={handleBack}
+          onBack={describedSearch ? handleBackToDescription : handleBack}
           onReset={requestReset}
           onGeneratePDF={handleGeneratePDF}
+          describedSearch={describedSearch ?? undefined}
+          onEditDescription={handleBackToDescription}
           connections={connections}
           circuitCounts={circuitCounts}
           onJumpToStep={jumpToStep}

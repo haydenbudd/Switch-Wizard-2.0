@@ -12,6 +12,7 @@ import { notify } from '@/app/utils/notify';
 import { EnhancedSearch } from '@/app/components/EnhancedSearch';
 import { FilterChip } from '@/app/components/FilterChip';
 import { WizardBreadcrumb } from '@/app/components/wizard/WizardBreadcrumb';
+import { SmartSearchSummary } from '@/app/components/wizard/SmartSearch';
 import { resultsQuoteText, quoteLinkProps } from '@/app/utils/quote';
 import {
   DropdownMenu,
@@ -68,6 +69,10 @@ interface ResultsPageProps {
   onBack: () => void;
   onReset: () => void;
   onGeneratePDF: (onScreen?: PDFResults) => void;
+  /** Set when these results came from the "describe the switch" box. */
+  describedSearch?: { query: string; dropped: string[] };
+  /** Back to the front page to change the description. */
+  onEditDescription?: () => void;
   connections: LabeledOption[];
   circuitCounts: LabeledOption[];
   /** Edit an earlier answer (breadcrumb chip) — returns here if unchanged. */
@@ -120,6 +125,8 @@ export function ResultsPage({
   onBack,
   onReset,
   onGeneratePDF,
+  describedSearch,
+  onEditDescription,
   connections,
   circuitCounts,
   onJumpToStep,
@@ -342,7 +349,23 @@ export function ResultsPage({
   // Browse-all mode: reached via the start page shortcut (or by removing the
   // application chip). There's no configuration, so the page is a plain
   // catalog — no "recommended" framing, no PDF summary or share link.
-  const isBrowseAll = wizardState.flow === 'standard' && !wizardState.selectedApplication;
+  const hasAnswers = Boolean(
+    wizardState.selectedApplication || wizardState.selectedTechnology || wizardState.selectedAction ||
+    wizardState.selectedEnvironment || wizardState.selectedDuty || wizardState.selectedConnection ||
+    wizardState.selectedCircuitCount || wizardState.selectedGuard || wizardState.selectedFeatures.length > 0
+  );
+  const isBrowseAll = wizardState.flow === 'standard' && !hasAnswers;
+
+  // Answers from a described search (or its share link) show as removable
+  // chips. The guided answers bar jumps back to each step instead, and the
+  // Technology and Action steps only list options once the answers before
+  // them are set, which a described search can leave empty.
+  const showDescribedSummary = Boolean(describedSearch) || (
+    hasAnswers && (
+      !wizardState.selectedApplication ||
+      (!wizardState.selectedTechnology && wizardState.selectedApplication !== 'medical')
+    )
+  );
 
   // On-page refinements (search box + More Filters). The wizard's own answers
   // are shown separately in the "Your answers" bar, where each one can be
@@ -450,7 +473,22 @@ export function ResultsPage({
 
         {/* The buyer's wizard answers — every one of them, each tappable to
             edit that step (unchanged answers bring them straight back). */}
-        {!isBrowseAll && (
+        {showDescribedSummary ? (
+          <SmartSearchSummary
+            wizardState={wizardState}
+            query={describedSearch?.query}
+            dropped={describedSearch?.dropped}
+            applications={applications}
+            technologies={technologies}
+            actions={actions}
+            environments={environments}
+            duties={duties}
+            connections={connections}
+            circuitCounts={circuitCounts}
+            features={features}
+            onEdit={onEditDescription}
+          />
+        ) : !isBrowseAll && (
           <WizardBreadcrumb
             wizardState={wizardState}
             applications={applications}

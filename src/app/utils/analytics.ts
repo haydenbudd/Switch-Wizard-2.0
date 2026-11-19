@@ -25,6 +25,9 @@ interface WizardStepData {
   environment?: string;
   features?: string[];
   source?: string;
+  /** Smart search: the buyer's description, and what was understood. */
+  query?: string;
+  understood?: string[];
 }
 
 function persist(event_type: string, flow?: string, step?: number, data: Record<string, unknown> = {}) {
