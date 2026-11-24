@@ -109,16 +109,18 @@ export function checkSessionTimeout(): boolean {
 }
 
 // Auth helpers
-export async function signInWithPassword(email: string, password: string) {
+export async function signInWithPassword(email: string, password: string, captchaToken?: string) {
   // Check if account is locked
   const lockStatus = checkAccountLocked();
   if (lockStatus.locked) {
     throw new Error(`Account locked. Try again in ${lockStatus.remainingTime} minutes.`);
   }
   
+  // Supabase Auth has captcha protection on, so sign-in needs the hCaptcha token
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
+    options: captchaToken ? { captchaToken } : undefined,
   });
 
   if (error) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { signInWithPassword } from '@/app/lib/supabase';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
@@ -6,24 +6,33 @@ import { Label } from '@/app/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Lock, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import { HCaptcha, type HCaptchaHandle } from './HCaptcha';
 
 export function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const captchaRef = useRef<HCaptchaHandle>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!captchaToken) {
+      setError('Please complete the captcha check first.');
+      return;
+    }
     setLoading(true);
     setError(null);
 
     try {
-      await signInWithPassword(email, password);
+      await signInWithPassword(email, password, captchaToken);
       // Auth state listener in AdminContainer will handle the redirect
     } catch (err) {
       console.error('Login failed:', err);
       setError(err instanceof Error ? err.message : 'Invalid credentials');
+      // A token works once, so a failed attempt needs a new check
+      captchaRef.current?.reset();
     } finally {
       setLoading(false);
     }
@@ -73,9 +82,14 @@ export function AdminLogin() {
                 required
               />
             </div>
+            <HCaptcha
+              ref={captchaRef}
+              onToken={setCaptchaToken}
+              onLoadError={(message) => setError(`${message}. Check your connection or ad blocker, then reload.`)}
+            />
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full" disabled={loading || !captchaToken}>
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </CardFooter>
