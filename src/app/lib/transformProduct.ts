@@ -162,8 +162,25 @@ const SERIES_IMAGES: Record<string, string> = {
   'airval hercules': 'https://linemaster.com/wp-content/uploads/2025/03/airval-hercules-duo_optimized.png',
 };
 
+/**
+ * The URL if it is plain http(s), else ''. Product links and images come from
+ * the database and end up in href/src on linemaster.com, so a javascript: or
+ * data: value saved there must never reach the page (React 18 still renders
+ * javascript: hrefs).
+ */
+export function safeHttpUrl(raw: string | null | undefined): string {
+  if (!raw) return '';
+  try {
+    const url = new URL(raw.trim());
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
 function deriveImage(row: StockSwitchRow): string {
-  const dbUrl = row.image_url && !row.image_url.includes('placeholder') ? row.image_url : null;
+  const safe = safeHttpUrl(row.image_url);
+  const dbUrl = safe && !safe.includes('placeholder') ? safe : null;
 
   // 1. Use DB image_url directly — it contains the correct CDN image ID from scraped data
   //    (Note: page ID ≠ CDN image ID, so never derive images from Link URLs)
@@ -208,7 +225,7 @@ export function transformRow(row: StockSwitchRow): Product {
     features: deriveFeatures(row),
     flagship: false,
     image: deriveImage(row),
-    link: row.Link || '',
+    link: safeHttpUrl(row.Link),
     pedal_count: row['Number of Pedals'] ?? undefined,
     stages: row.Stages ?? undefined,
     circuitry: row['Circuits Controlled'] != null ? String(row['Circuits Controlled']) : undefined,
